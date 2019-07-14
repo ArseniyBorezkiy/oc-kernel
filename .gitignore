@@ -1,6 +1,3 @@
 .idea
 .idea/*
-*.o
-*.bin
-*.iso
-*.elf
+kernel/bin/**

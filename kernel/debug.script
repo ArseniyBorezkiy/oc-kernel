@@ -1,0 +1,1 @@
+target remote | qemu-system-i386 -S -gdb stdio -kernel ./bin/kernel.elf
