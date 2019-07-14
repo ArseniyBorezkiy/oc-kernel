@@ -1,0 +1,6 @@
+.idea
+.idea/*
+*.o
+*.bin
+*.iso
+*.elf
