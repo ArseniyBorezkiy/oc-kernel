@@ -1,0 +1,2 @@
+/Users/arsenii/Desktop/OC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/arsenii/Desktop/OC/cmake-build-debug/CMakeFiles/edit_cache.dir

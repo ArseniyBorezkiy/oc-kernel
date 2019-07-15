@@ -25,12 +25,10 @@ void kclear() {
  * Print kernel message
  */
 void kprint(const char *str) {
-    unsigned int i = 0;
     unsigned int j = 0;
     while (str[j] != '\0') {
-        video_ptr[i] = str[j]; /* the character's ascii */
-        video_ptr[i+1] = 0x07; /* attribute-byte */
+        video_ptr[video_ptr_offset++] = str[j]; /* the character's ascii */
+        video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
         ++j;
-        i = i + 2;
     }
 }
