@@ -2,6 +2,7 @@
 
 #define IDT_SIZE 256
 #define INT_KEYBOARD 0x21
+#define INTERRUPT_GATE 0x8e
 
 /*
  * Interrupt table entry

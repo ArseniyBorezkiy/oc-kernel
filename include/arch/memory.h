@@ -1,3 +1,4 @@
 #pragma once
 
+#define CODE_SEGMENT_SELECTOR 0x08
 #define VIDEO_MEMORY_ADDR 0xb8000
