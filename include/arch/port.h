@@ -6,6 +6,9 @@
 #define PIC2_DATA_PORT 0xA1
 #define PIC_IQW_CMD 0x11
 
+#define KEYBOARD_STATUS_PORT 0x64
+#define KEYBOARD_DATA_PORT 0x60
+
 /*
  * Port operations
  */

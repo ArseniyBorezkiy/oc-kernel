@@ -9,10 +9,10 @@
 void kernel_start(void)
 {
 	kclear();
+    idt_init();
     keyboard_init();
 	kprint(MSG_KERNEL_START);
-    kprint(MSG_KERNEL_START);
 
-	return;
+	while(1);
 }
 

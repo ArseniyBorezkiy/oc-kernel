@@ -15,7 +15,7 @@
 start:
 	cli
 	mov $stack,%esp
-	call kernel_start
+	call kernel_start /* should never return */
 	hlt
 
 #

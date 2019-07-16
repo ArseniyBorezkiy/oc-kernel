@@ -1,5 +1,6 @@
 #include <arch/interrupt.h>
 #include <arch/port.h>
+#include <arch/memory.h>
 #include <utils/kprint.h>
 #include <messages.h>
 #include <types.h>
@@ -25,19 +26,18 @@ void idt_init(void)
     IDT[INT_KEYBOARD].type_attr = INTERRUPT_GATE;
     IDT[INT_KEYBOARD].offset_higherbits = HIGH_WORD(keyboard_address);
 
-    pic_init();
-
-    idt_address = (unsigned long)IDT ;
-    idt_ptr[0] = (LOW_WORD(idt_address) << 16) + (sizeof (struct IDT_entry) * IDT_SIZE);
+    idt_address = (unsigned long)IDT;
+    idt_ptr[0] = (LOW_WORD(idt_address) << 16) + (sizeof(struct IDT_entry) * IDT_SIZE);
     idt_ptr[1] = idt_address >> 16;
 
+    pic_init();
     load_idt(idt_ptr);
 }
 
 /*
  * PIC init
  */
-void pic_init() {
+void pic_init(void) {
     write_port(PIC1_CMD_PORT , PIC_IQW_CMD); /* init PIC1 */
     write_port(PIC2_CMD_PORT , PIC_IQW_CMD); /* init PIC2 */
 
@@ -50,15 +50,22 @@ void pic_init() {
     write_port(PIC1_DATA_PORT , 0x01); /* IQW4 no cascade */
     write_port(PIC2_DATA_PORT , 0x01); /* IQW4 no cascade */
 
-    write_port(PIC1_DATA_PORT , 0xff); /* disable irq */
-    write_port(PIC2_DATA_PORT , 0xff); /* disable irq */
+    write_port(PIC1_DATA_PORT , 0xff); /* disable irq PIC1 */
+    write_port(PIC2_DATA_PORT , 0xff); /* disable irq PIC2 */
 }
 
 /*
  * Keyboard handler
  */
-void keyboard_handler_main() {
+void keyboard_handler_main(void) {
+    write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
     kprint(MSG_IRQ1);
+
+    unsigned char status = read_port(KEYBOARD_STATUS_PORT);
+    char keycode;
+    if (status & 0x01) {
+        keycode = read_port(KEYBOARD_DATA_PORT);
+    }
 }
 
 /*
@@ -66,5 +73,5 @@ void keyboard_handler_main() {
  */
 void keyboard_init(void)
 {
-    write_port(0x21 , 0xFD); /* Enable IRQ1 */
+    write_port(PIC1_DATA_PORT, 0xFD); /* Enable IRQ1 */
 }

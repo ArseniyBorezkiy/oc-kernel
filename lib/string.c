@@ -1,3 +1,5 @@
+#include <lib/string.h>
+
 /*
  * Calculate string's length
  */

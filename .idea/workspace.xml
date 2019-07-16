@@ -10,10 +10,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ee28673-14c8-4ad0-bc5d-ddd682aa96f5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/lib/math.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/include/lib/string.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/math.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/interrupt.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/bin/interrupt.c.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/kc.o" beforeDir="false" afterPath="$PROJECT_DIR$/bin/kc.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/kernel.elf" beforeDir="false" afterPath="$PROJECT_DIR$/bin/kernel.elf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/kprint.o" beforeDir="false" afterPath="$PROJECT_DIR$/bin/kprint.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/string.o" beforeDir="false" afterPath="$PROJECT_DIR$/bin/string.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/arch/interrupt.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/arch/interrupt.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/arch/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/arch/memory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/arch/port.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/arch/port.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/messages.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/messages.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/arch/interrupt.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/arch/interrupt.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/kernel.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/kernel.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/kernel.s" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/kernel.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/utils/kprint.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/utils/kprint.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/string.c" beforeDir="false" afterPath="$PROJECT_DIR$/lib/string.c" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,20 +42,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="31" column="12" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+        <entry file="file://$PROJECT_DIR$/kernel/arch/interrupt.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
+            <state relative-caret-position="401">
+              <caret line="61" column="21" lean-forward="true" selection-start-line="61" selection-start-column="21" selection-end-line="61" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -65,21 +71,25 @@
         <option value="$PROJECT_DIR$/kernel/include/utils/kprint.h" />
         <option value="$PROJECT_DIR$/kernel/include/messages.h" />
         <option value="$PROJECT_DIR$/kernel/config/link.ld" />
-        <option value="$PROJECT_DIR$/kernel/kernel.s" />
-        <option value="$PROJECT_DIR$/lib/string.c" />
         <option value="$PROJECT_DIR$/kernel/Makefile" />
         <option value="$PROJECT_DIR$/CMakeList.txt" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/include/arch/port.h" />
-        <option value="$PROJECT_DIR$/include/messages.h" />
         <option value="$PROJECT_DIR$/kernel/arch/port.s" />
-        <option value="$PROJECT_DIR$/Makefile" />
-        <option value="$PROJECT_DIR$/include/arch/interrupt.h" />
-        <option value="$PROJECT_DIR$/kernel/arch/interrupt.s" />
-        <option value="$PROJECT_DIR$/kernel/arch/interrupt.c" />
-        <option value="$PROJECT_DIR$/kernel/kernel.c" />
-        <option value="$PROJECT_DIR$/kernel/utils/kprint.c" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/include/messages.h" />
+        <option value="$PROJECT_DIR$/include/arch/memory.h" />
+        <option value="$PROJECT_DIR$/include/lib/string.h" />
+        <option value="$PROJECT_DIR$/lib/string.c" />
+        <option value="$PROJECT_DIR$/include/arch/interrupt.h" />
+        <option value="$PROJECT_DIR$/Makefile" />
+        <option value="$PROJECT_DIR$/include/arch/port.h" />
+        <option value="$PROJECT_DIR$/kernel/kernel.c" />
+        <option value="$PROJECT_DIR$/kernel/arch/interrupt.s" />
+        <option value="$PROJECT_DIR$/kernel/kernel.s" />
+        <option value="$PROJECT_DIR$/kernel/utils/kprint.c" />
+        <option value="$PROJECT_DIR$/lib/math.c" />
+        <option value="$PROJECT_DIR$/include/lib/math.h" />
+        <option value="$PROJECT_DIR$/kernel/arch/interrupt.c" />
       </list>
     </option>
   </component>
@@ -105,6 +115,11 @@
             <path>
               <item name="OC" type="b2602c69:ProjectViewProjectNode" />
               <item name="OC" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OC" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OC" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -112,6 +127,12 @@
               <item name="OC" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
               <item name="arch" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OC" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OC" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OC" type="b2602c69:ProjectViewProjectNode" />
@@ -129,6 +150,11 @@
               <item name="OC" type="462c0819:PsiDirectoryNode" />
               <item name="kernel" type="462c0819:PsiDirectoryNode" />
               <item name="utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OC" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OC" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -182,7 +208,7 @@
       <workItem from="1563096244306" duration="1777000" />
       <workItem from="1563100392973" duration="35000" />
       <workItem from="1563206603758" duration="537000" />
-      <workItem from="1563207158716" duration="4860000" />
+      <workItem from="1563207158716" duration="11185000" />
     </task>
     <task id="LOCAL-00001" summary="Kernel stub">
       <created>1563122720207</created>
@@ -202,7 +228,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18629000" />
+    <option name="totallyTimeSpent" value="24954000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -220,7 +246,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3292232" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3292232" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="CMake" order="11" weight="0.3292232" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -295,13 +321,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/string.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="954">
-          <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
@@ -319,90 +338,130 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/arch/memory.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/sched/task.h">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/messages.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/kernel.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" lean-forward="true" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/arch/port.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" column="20" selection-start-line="22" selection-start-column="20" selection-end-line="22" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/arch/port.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="25" column="67" selection-start-line="25" selection-start-column="67" selection-end-line="25" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/arch/interrupt.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="20" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/arch/interrupt.s">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="17" lean-forward="true" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/kernel.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" lean-forward="true" selection-start-line="18" selection-end-line="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/arch/interrupt.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="31" column="12" selection-start-line="31" selection-start-column="12" selection-end-line="31" selection-end-column="12" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
           <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/lib/string.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/string.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="20" selection-start-column="20" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/messages.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/arch/port.s">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/arch/memory.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/interrupt.c.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5548" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/kprint.c.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-365">
+          <caret line="113" column="36" lean-forward="true" selection-start-line="113" selection-start-column="36" selection-end-line="113" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/arch/interrupt.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="20" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/arch/port.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/kernel.s">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="17" column="47" selection-start-line="17" selection-start-column="47" selection-end-line="17" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/kernel.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="13" lean-forward="true" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/arch/interrupt.s">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="954">
+          <caret line="53" column="4" lean-forward="true" selection-start-line="53" selection-start-column="4" selection-end-line="53" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/math.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="18" column="12" selection-start-line="18" selection-start-column="12" selection-end-line="18" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="566">
+          <caret line="35" column="34" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/lib/math.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="12" selection-start-line="6" selection-start-column="12" selection-end-line="6" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/arch/interrupt.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="401">
+          <caret line="61" column="21" lean-forward="true" selection-start-line="61" selection-start-column="21" selection-end-line="61" selection-end-column="21" />
         </state>
       </provider>
     </entry>

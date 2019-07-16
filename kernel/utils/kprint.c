@@ -3,7 +3,6 @@
 
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
 unsigned int video_ptr_offset = 0;
-unsigned int screensize = 80 * 25 * 2;
 
 /*
  * Clear kernel screen
@@ -14,11 +13,12 @@ void kclear() {
      * there are 25 lines each of 80 columns
      * each element takes 2 bytes
      */
-    while (video_ptr_offset < screensize) {
-        video_ptr[video_ptr_offset] = ' '; /* blank character */
-        video_ptr[video_ptr_offset + 1] = 0x07; /* attribute-byte */
-        video_ptr_offset += 2;
+    unsigned int i = 0;
+    while (i < SCREEN_SIZE) {
+        video_ptr[i++] = ' '; /* blank character */
+        video_ptr[i++] = 0x07; /* attribute-byte */
     }
+    video_ptr_offset = 0;
 }
 
 /*
@@ -26,9 +26,15 @@ void kclear() {
  */
 void kprint(const char *str) {
     unsigned int j = 0;
-    while (str[j] != '\0') {
-        video_ptr[video_ptr_offset++] = str[j]; /* the character's ascii */
-        video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
-        ++j;
+    while (str[j] != '\0' && video_ptr_offset < SCREEN_SIZE) {
+        if (str[j] != '\n') {
+            video_ptr[video_ptr_offset++] = str[j++]; /* the character's ascii */
+            video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
+        } else {
+            unsigned int offset = video_ptr_offset % SCREEN_WIDTH;
+            video_ptr_offset += (SCREEN_WIDTH - offset);
+            video_ptr_offset = min(SCREEN_SIZE, video_ptr_offset);
+            j++;
+        }
     }
 }

@@ -16,8 +16,10 @@ struct IDT_entry {
 };
 
 /*
- * Helpers
+ * Api
  */
 void load_idt(unsigned long *addr);
+void idt_init(void);
+void pic_init();
 void keyboard_handler();
 void keyboard_init();
