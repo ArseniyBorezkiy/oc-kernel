@@ -1,13 +1,18 @@
-OC
+# Operating system ARSUNIX.
 
-Dependencies:
+Well commented micro kernel based operating system made by Arsenii Boretskii
+for enjoy and study.
+
+### Info
+Target processor: i80386 (Protected mode).
+
+### Dependencies
 ```
-gcc
-qemu
+$ apt-get install gcc
+$ apt-get install qemu
 ```
 
-Build:
+### Build
 ```
-sudo make
+$ sudo make
 ```
-
