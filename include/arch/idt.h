@@ -1,6 +1,7 @@
 #pragma once
 
 #define IDT_SIZE 256
+#define INT_TIMER 0x20
 #define INT_KEYBOARD 0x21
 #define INTERRUPT_GATE 0x8e
 
@@ -18,8 +19,9 @@ struct IDT_entry {
 /*
  * Api
  */
-void load_idt(unsigned long *addr);
 void idt_init(void);
-void pic_init();
-void keyboard_handler();
-void keyboard_init();
+void asm_idt_load(unsigned long *addr);
+void idt_fill_entry(unsigned char offset, unsigned long addr);
+void ih_keyboard();
+void asm_ih_keyboard();
+void asm_ih_timer();

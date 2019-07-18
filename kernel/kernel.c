@@ -1,6 +1,7 @@
 #include <messages.h>
 #include <arch/memory.h>
-#include <arch/interrupt.h>
+#include <arch/idt.h>
+#include <arch/pic.h>
 #include <utils/kprint.h>
 
 /*
@@ -10,7 +11,7 @@ void kernel_start(void)
 {
 	kclear();
     idt_init();
-    keyboard_init();
+    pic_enable();
 	kprint(MSG_KERNEL_START);
 
 	while(1);
