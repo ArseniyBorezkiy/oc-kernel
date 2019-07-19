@@ -58,8 +58,7 @@ void ih_keyboard(void) {
     kprint(MSG_IRQ1);
 
     unsigned char status = read_port(KEYBOARD_STATUS_PORT);
-    char keycode;
     if (status & 0x01) {
-        keycode = read_port(KEYBOARD_DATA_PORT);
+        read_port(KEYBOARD_DATA_PORT);
     }
 }

@@ -1,4 +1,4 @@
-# Operating system ARSUNIX.
+# Operating system SKUCHUNIX.
 
 Well commented micro kernel based operating system made by Arsenii Boretskii
 for enjoy and study.

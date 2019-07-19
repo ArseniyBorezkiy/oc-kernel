@@ -1,5 +1,6 @@
 #include <utils/kprint.h>
 #include <arch/memory.h>
+#include <lib/math.h>
 
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
 unsigned int video_ptr_offset = 0;
