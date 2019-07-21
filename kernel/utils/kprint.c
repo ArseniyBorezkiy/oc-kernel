@@ -19,7 +19,7 @@ void kclear() {
     unsigned int i = 0;
     while (i < SCREEN_SIZE) {
         video_ptr[i++] = ' '; /* blank character */
-        video_ptr[i++] = 0x07; /* attribute-byte */
+        video_ptr[i++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
     }
     video_ptr_offset = 0;
 }
@@ -30,9 +30,7 @@ void kclear() {
 void kprint(const char *str, ...) {
     unsigned int j = 0;
     unsigned int number;
-    unsigned char digit;
-    char buffer[16];
-    char *current;
+    char str_num[16];
 
     va_list list;
     va_start(list, str);
@@ -40,46 +38,24 @@ void kprint(const char *str, ...) {
     while (str[j] != '\0' && video_ptr_offset < SCREEN_SIZE) {
         if (str[j] != '\n' && str[j] != '%') {
             video_ptr[video_ptr_offset++] = str[j++]; /* the character's ascii */
-            video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
+            video_ptr[video_ptr_offset++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
         } else if (str[j] == '%') {
             switch (str[++j]) {
                 case 'c':
                     video_ptr[video_ptr_offset++] = va_arg(list, char);
-                    video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
+                    video_ptr[video_ptr_offset++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
                     break;
                 case 'u':
                     number = va_arg(list, unsigned int);
-                    current = &buffer[0];
-                    do {
-                        digit = number % 10;
-                        number = number / 10;
-                        *current++ = digit | 0x30;
-                        *current++ = 0x07; /* attribute-byte */
-                    } while (number > 0);
-                    *current = 0;
-                    strcpy(&video_ptr[video_ptr_offset], &buffer[0]);
-                    video_ptr_offset += strlen(&buffer[0]);
+                    itoa(number, str_num, 10);
+                    strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
+                    video_ptr_offset += strlen(str_num) * 2;
                     break;
                 case 'X':
-                    video_ptr[video_ptr_offset++] = '0';
-                    video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
-                    video_ptr[video_ptr_offset++] = 'x';
-                    video_ptr[video_ptr_offset++] = 0x07; /* attribute-byte */
                     number = va_arg(list, unsigned int);
-                    current = &buffer[0];
-                    do {
-                        digit = number % 16;
-                        number = number / 16;
-                        if (digit < 10) {
-                            *current++ = digit | 0x30;
-                        } else {
-                            *current++ = (16 - digit) | 0x41;
-                        }
-                        *current++ = 0x07; /* attribute-byte */
-                    } while (number > 0);
-                    *current = 0;
-                    strcpy(&video_ptr[video_ptr_offset], &buffer[0]);
-                    video_ptr_offset += strlen(&buffer[0]);
+                    itoa(number, str_num, 16);
+                    strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
+                    video_ptr_offset += strlen(str_num) * 2;
                     break;
             }
             j += 1;

@@ -10,17 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6ee28673-14c8-4ad0-bc5d-ddd682aa96f5" name="Default Changelist" comment="Kernel stub">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/arch/idt.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/arch/idt.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/include/arch/memory.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/arch/memory.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/include/lib/string.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/lib/string.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/messages.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/messages.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/sched/task.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/sched/task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/utils/kprint.h" beforeDir="false" afterPath="$PROJECT_DIR$/include/utils/kprint.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/arch/idt.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/arch/idt.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/arch/idt.s" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/arch/idt.s" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/kernel.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/kernel.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/sched/task.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/sched/task.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/kernel/utils/kprint.c" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/utils/kprint.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/string.c" beforeDir="false" afterPath="$PROJECT_DIR$/lib/string.c" afterDir="false" />
     </list>
@@ -36,29 +28,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/string.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="608">
-              <caret line="131" column="30" selection-start-line="131" selection-start-column="30" selection-end-line="131" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/include/lib/string.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="11" column="32" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+            <state relative-caret-position="194">
+              <caret line="113" column="20" lean-forward="true" selection-start-line="113" selection-start-column="20" selection-end-line="113" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -102,7 +76,6 @@
         <option value="$PROJECT_DIR$/kernel/sched/sched.c" />
         <option value="$PROJECT_DIR$/kernel/utils/kmalloc.c" />
         <option value="$PROJECT_DIR$/include/utils/kmalloc.h" />
-        <option value="$PROJECT_DIR$/include/arch/memory.h" />
         <option value="$PROJECT_DIR$/include/types.h" />
         <option value="$PROJECT_DIR$/kernel/sched/task.s" />
         <option value="$PROJECT_DIR$/include/tasks/init.h" />
@@ -122,12 +95,13 @@
         <option value="$PROJECT_DIR$/lib/stdarg.c" />
         <option value="$PROJECT_DIR$/Makefile" />
         <option value="$PROJECT_DIR$/bin/kprint.c.txt" />
-        <option value="$PROJECT_DIR$/kernel/kernel.c" />
         <option value="$PROJECT_DIR$/include/lib/stdarg.h" />
-        <option value="$PROJECT_DIR$/kernel/utils/kprint.c" />
         <option value="$PROJECT_DIR$/include/messages.h" />
-        <option value="$PROJECT_DIR$/lib/string.c" />
+        <option value="$PROJECT_DIR$/include/arch/memory.h" />
         <option value="$PROJECT_DIR$/include/lib/string.h" />
+        <option value="$PROJECT_DIR$/kernel/kernel.c" />
+        <option value="$PROJECT_DIR$/kernel/utils/kprint.c" />
+        <option value="$PROJECT_DIR$/lib/string.c" />
       </list>
     </option>
   </component>
@@ -154,6 +128,12 @@
               <item name="OC" type="b2602c69:ProjectViewProjectNode" />
               <item name="OC" type="462c0819:PsiDirectoryNode" />
               <item name="include" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="OC" type="b2602c69:ProjectViewProjectNode" />
+              <item name="OC" type="462c0819:PsiDirectoryNode" />
+              <item name="include" type="462c0819:PsiDirectoryNode" />
+              <item name="arch" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="OC" type="b2602c69:ProjectViewProjectNode" />
@@ -253,7 +233,7 @@
       <workItem from="1563206603758" duration="537000" />
       <workItem from="1563207158716" duration="16574000" />
       <workItem from="1563555975682" duration="9676000" />
-      <workItem from="1563630086385" duration="14742000" />
+      <workItem from="1563630086385" duration="19121000" />
     </task>
     <task id="LOCAL-00001" summary="Kernel stub">
       <created>1563122720207</created>
@@ -273,7 +253,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="54761000" />
+    <option name="totallyTimeSpent" value="59140000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -291,7 +271,7 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.3292232" />
+      <window_info anchor="bottom" id="Terminal" order="9" visible="true" weight="0.3292232" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
       <window_info anchor="bottom" id="CMake" order="11" weight="0.3292232" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -426,13 +406,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/include/utils/kmalloc.h" />
-    <entry file="file://$PROJECT_DIR$/include/arch/memory.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/debug.script">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
@@ -609,38 +582,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/kernel.c">
+    <entry file="file://$PROJECT_DIR$/include/arch/memory.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="17" column="36" selection-start-line="17" selection-start-column="36" selection-end-line="17" selection-end-column="36" />
+        <state relative-caret-position="216">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/include/messages.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
-          <caret line="4" column="67" selection-start-line="4" selection-start-column="67" selection-end-line="4" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="34" column="18" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/string.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="131" column="30" selection-start-line="131" selection-start-column="30" selection-end-line="131" selection-end-column="30" />
+          <caret line="4" column="69" selection-start-line="4" selection-start-column="69" selection-end-line="4" selection-end-column="69" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/include/lib/string.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="32" selection-start-line="11" selection-start-column="32" selection-end-line="11" selection-end-column="32" />
+        <state relative-caret-position="270">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/utils/kprint.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="57" column="40" selection-start-line="57" selection-start-column="40" selection-end-line="57" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/kernel/kernel.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="17" column="71" selection-start-line="17" selection-start-column="71" selection-end-line="17" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/string.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="113" column="20" lean-forward="true" selection-start-line="113" selection-start-column="20" selection-end-line="113" selection-end-column="20" />
         </state>
       </provider>
     </entry>

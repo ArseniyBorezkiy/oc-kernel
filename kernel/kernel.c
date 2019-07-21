@@ -15,7 +15,7 @@ void kernel_start(void)
     /* init kernel */
 	kclear();
     idt_init();
-	kprint(MSG_KERNEL_START, 'A', 'B', (unsigned int)22);
+	kprint(MSG_KERNEL_START, 'A', 'B', (unsigned int)22, (unsigned int)22);
 
 	/* create kernel tasks */
     sched_create_task(TID_INIT, task_init);
