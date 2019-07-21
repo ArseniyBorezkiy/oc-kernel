@@ -3,9 +3,10 @@
 #include <lib/math.h>
 #include <lib/stdarg.h>
 #include <lib/string.h>
+#include <types.h>
 
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
-unsigned int video_ptr_offset = 0;
+size_t video_ptr_offset = 0;
 
 /*
  * Clear kernel screen
@@ -16,7 +17,7 @@ void kclear() {
      * there are 25 lines each of 80 columns
      * each element takes 2 bytes
      */
-    unsigned int i = 0;
+    size_t i = 0;
     while (i < SCREEN_SIZE) {
         video_ptr[i++] = ' '; /* blank character */
         video_ptr[i++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
@@ -28,8 +29,8 @@ void kclear() {
  * Print kernel message
  */
 void kprint(const char *str, ...) {
-    unsigned int j = 0;
-    unsigned int number;
+    size_t j = 0;
+    u_int number;
     char str_num[16];
 
     va_list list;
@@ -46,13 +47,13 @@ void kprint(const char *str, ...) {
                     video_ptr[video_ptr_offset++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
                     break;
                 case 'u':
-                    number = va_arg(list, unsigned int);
+                    number = va_arg(list, u_int);
                     itoa(number, str_num, 10);
                     strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
                     video_ptr_offset += strlen(str_num) * 2;
                     break;
                 case 'X':
-                    number = va_arg(list, unsigned int);
+                    number = va_arg(list, u_int);
                     itoa(number, str_num, 16);
                     strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
                     video_ptr_offset += strlen(str_num) * 2;
@@ -60,7 +61,7 @@ void kprint(const char *str, ...) {
             }
             j += 1;
         } else {
-            unsigned int offset = video_ptr_offset % SCREEN_WIDTH;
+            size_t offset = video_ptr_offset % SCREEN_WIDTH;
             video_ptr_offset += (SCREEN_WIDTH - offset);
             video_ptr_offset = min(SCREEN_SIZE, video_ptr_offset);
             j++;

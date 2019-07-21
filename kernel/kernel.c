@@ -12,23 +12,23 @@
  */
 void kernel_start(void)
 {
-    /* init kernel */
+  /* init kernel */
 	kclear();
-    idt_init();
-	kprint(MSG_KERNEL_START, 'A', 'B', (unsigned int)22, (unsigned int)22);
+  idt_init();
+	kprint(MSG_KERNEL_START, (size_t)&kernel_start);
 
 	/* create kernel tasks */
-    sched_create_task(TID_INIT, task_init);
-    sched_create_task(TID_TTY, task_tty);
+  sched_create_task(TID_INIT, task_init);
+  sched_create_task(TID_TTY, task_tty);
 
-    /* run kernel tasks */
-    sched_run_task_by_id(TID_TTY);
-    sched_run_task_by_id(TID_INIT);
+  /* run kernel tasks */
+  sched_run_task_by_id(TID_TTY);
+  sched_run_task_by_id(TID_INIT);
 
-    /* enable interrupts */
-    pic_enable();
-    asm_unlock();
+  /* enable interrupts */
+  pic_enable();
+  asm_unlock();
 
-    /* should never return */
+  /* should never return */
 	while(1);
 }

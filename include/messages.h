@@ -2,7 +2,7 @@
 
 #define MSG_KERNEL_PREFIX "[KERNEL]: "
 #define MSG_CRLN "\n"
-#define MSG_KERNEL_START (MSG_KERNEL_PREFIX "starting kernel %c%c%X%u" MSG_CRLN)
+#define MSG_KERNEL_START (MSG_KERNEL_PREFIX "starting kernel at %X" MSG_CRLN)
 #define MSG_IRQ1 (MSG_KERNEL_PREFIX "irq1" MSG_CRLN)
 
 #define MSG_SCHED_TID_EXISTS (MSG_KERNEL_PREFIX "task id already exists" MSG_CRLN)

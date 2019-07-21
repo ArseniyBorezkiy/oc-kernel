@@ -4,7 +4,7 @@
 /*
  * Init programmable interrupt controller
  */
-void pic_init(void) {
+void pic_init() {
     write_port(PIC1_CMD_PORT , PIC_IQW_CMD); /* init PIC1 */
     write_port(PIC2_CMD_PORT , PIC_IQW_CMD); /* init PIC2 */
 
@@ -24,7 +24,7 @@ void pic_init(void) {
 /*
  * Enable programmable interrupt controller
  */
-void pic_enable(void)
+void pic_enable()
 {
     write_port(PIC1_DATA_PORT, 0xFC); /* Enable IRQ0, IRQ1 */
 }

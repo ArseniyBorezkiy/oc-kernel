@@ -1,5 +1,6 @@
 #include <lib/string.h>
 #include <lib/stdarg.h>
+#include <types.h>
 
 /*
  * Calculate string's length
@@ -72,7 +73,7 @@ char *strext(register char *buf, register char *str, char sym) {
  */
 char *itoa(int value, char *str, int base) {
     char *original = str;
-    unsigned char digit;
+    char digit;
 
     do {
         digit = value % base;
@@ -109,7 +110,7 @@ char *itoa(int value, char *str, int base) {
  */
 char *strinv(char *str) {
     int i;
-    unsigned int n = strlen(str);
+    u_int n = strlen(str);
     char buf[n+2];
     char *cur = buf;
 
@@ -127,7 +128,7 @@ char *strinv(char *str) {
  * Print to string
  */
 unsigned int sprintf(char *s1, char *s2, ...) {
-    unsigned int j = 0;
+    u_int j = 0;
     char number[16];
     char *cur = s1;
 
@@ -146,13 +147,13 @@ unsigned int sprintf(char *s1, char *s2, ...) {
                     *cur++ = va_arg(list, char);
                     break;
                 case 'u':
-                    itoa(va_arg(list, unsigned int), number, 10);
+                    itoa(va_arg(list, u_int), number, 10);
                     strinv(number);
                     strcpy(cur, number);
                     cur += strlen(number);
                     break;
                 case 'X':
-                    itoa(va_arg(list, unsigned int), number, 16);
+                    itoa(va_arg(list, u_int), number, 16);
                     strinv(number);
                     strcpy(cur, number);
                     cur += strlen(number);
@@ -165,14 +166,14 @@ unsigned int sprintf(char *s1, char *s2, ...) {
 
     va_end(list);
 
-    return ((unsigned long)cur - (unsigned long)s1);
+    return ((size_t)cur - (size_t)s1);
 }
 
 /*
  * Print to limited string
  */
 unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
-    unsigned int j = 0;
+    u_int j = 0;
     char number[16];
     char *cur = s1;
 
@@ -191,12 +192,12 @@ unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
                     *cur++ = va_arg(list, char);
                     break;
                 case 'u':
-                    itoa(va_arg(list, unsigned int), number, 10);
+                    itoa(va_arg(list, u_int), number, 10);
                     strcpy(cur, number);
                     cur += strlen(number);
                     break;
                 case 'X':
-                    itoa(va_arg(list, unsigned int), number, 16);
+                    itoa(va_arg(list, u_int), number, 16);
                     strcpy(cur, number);
                     cur += strlen(number);
                     break;
@@ -208,5 +209,5 @@ unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
 
     va_end(list);
 
-    return ((unsigned long)cur - (unsigned long)s1);
+    return ((size_t)cur - (size_t)s1);
 }

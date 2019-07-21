@@ -1,7 +1,9 @@
 #pragma once
 
+#include <types.h>
+
 /*
  * POSIX math api
  */
-unsigned int min(unsigned int a, unsigned int b);
-unsigned int max(unsigned int a, unsigned int b);
+u_int min(u_int a, u_int b);
+u_int max(u_int a, u_int b);
