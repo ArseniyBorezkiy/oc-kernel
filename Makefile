@@ -17,7 +17,8 @@ all: build start
 #
 build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
-		./bin/kernel.s.o ./bin/kernel.c.o ./bin/kprint.c.o \
+		./bin/kernel.s.o ./bin/kernel.c.o \
+		./bin/kprint.c.o ./bin/panic.c.o \
 		./bin/math.c.o ./bin/string.c.o \
 		./bin/port.s.o ./bin/idt.s.o ./bin/idt.c.o ./bin/pic.c.o \
 		./bin/task.s.o ./bin/task.c.o \
@@ -32,8 +33,9 @@ build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kern
 	$(AS) $(AS_FLAGS) ./kernel/kernel.s -o ./bin/kernel.s.o
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
-build-kernel-utils: ./kernel/utils/kprint.c
+build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/panic.c
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/utils/panic.c -o ./bin/panic.c.o
 
 build-kernel-arch: ./kernel/arch/port.s ./kernel/arch/idt.s ./kernel/arch/pic.c ./kernel/arch/idt.c
 	$(AS) $(AS_FLAGS) ./kernel/arch/port.s -o ./bin/port.s.o
@@ -72,3 +74,4 @@ debug:
 #
 list:
 	$(CC) $(CC_FLAGS) -Wa,-adhln -ggdb -c ./kernel/kernel.c -o ./bin/kernel.c.o > ./bin/kernel.c.txt
+	$(CC) $(CC_FLAGS) -Wa,-adhln -ggdb -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o > ./bin/kprint.c.txt

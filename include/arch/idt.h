@@ -24,4 +24,7 @@ void asm_idt_load(unsigned long *addr);
 void idt_fill_entry(unsigned char offset, unsigned long addr);
 void ih_keyboard();
 void asm_ih_keyboard();
-void asm_ih_timer();
+void asm_ih_timer(unsigned long *ret_addr);
+void asm_lock();
+void asm_unlock();
+void asm_hlt();

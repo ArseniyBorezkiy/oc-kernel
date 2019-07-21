@@ -31,6 +31,8 @@ short int sched_find_task_index(unsigned short tid);
 short int sched_get_free_task_index();
 void sched_run_task_by_id(unsigned short tid);
 void sched_stop_task_by_id(unsigned short tid);
+unsigned int sched_find_task_to_run_index(unsigned short index);
+void sched_schedule(unsigned long *task_ret_addr);
 unsigned int asm_get_cs();
 unsigned int asm_get_ds();
 unsigned int asm_get_ss();

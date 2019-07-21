@@ -15,8 +15,7 @@ void kernel_start(void)
     /* init kernel */
 	kclear();
     idt_init();
-    pic_enable();
-	kprint(MSG_KERNEL_START);
+	kprint(MSG_KERNEL_START, 'A', 'B', (unsigned int)22);
 
 	/* create kernel tasks */
     sched_create_task(TID_INIT, task_init);
@@ -26,7 +25,10 @@ void kernel_start(void)
     sched_run_task_by_id(TID_TTY);
     sched_run_task_by_id(TID_INIT);
 
+    /* enable interrupts */
+    pic_enable();
+    asm_unlock();
+
     /* should never return */
 	while(1);
 }
-

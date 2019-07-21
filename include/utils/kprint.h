@@ -1,4 +1,4 @@
 #pragma once
 
 void kclear(); /* clear kernel screen */
-void kprint(); /* kernel print */
+void kprint(const char *str, ...); /* kernel print */

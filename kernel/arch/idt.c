@@ -1,6 +1,7 @@
 #include <arch/idt.h>
 #include <arch/pic.h>
 #include <arch/port.h>
+#include <sched/task.h>
 #include <arch/memory.h>
 #include <utils/kprint.h>
 #include <messages.h>
@@ -46,8 +47,9 @@ void idt_fill_entry(unsigned char offset, unsigned long handler) {
 /*
  * Timer interrupt handler
  */
-void ih_timer(void) {
+void ih_timer(unsigned long *ret_addr) {
     write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
+    sched_schedule(ret_addr); /* schedule next process */
 }
 
 /*
