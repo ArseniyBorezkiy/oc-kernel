@@ -1,6 +1,8 @@
 {
   "files.associations": {
     "math.h": "c",
-    "idt.h": "c"
+    "idt.h": "c",
+    "task.h": "c",
+    "messages.h": "c"
   }
 }

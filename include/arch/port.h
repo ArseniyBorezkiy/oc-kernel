@@ -8,5 +8,5 @@
 /*
  * Port operations
  */
-u_char read_port(u_char port);
-void write_port(u_char port, u_char data);
+extern u_char read_port(u_char port);
+extern void write_port(u_char port, u_char data);

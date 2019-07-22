@@ -1,5 +1,5 @@
 #
-# Tasks helpers
+# Registers
 #
 .code32
 .text

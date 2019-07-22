@@ -1,35 +1,40 @@
 #include <sched/task.h>
 #include <arch/memory.h>
 #include <arch/idt.h>
+#include <arch/reg.h>
 #include <utils/kprint.h>
-#include <utils/panic.h>
+#include <utils/kpanic.h>
 #include <messages.h>
 #include <types.h>
+
+static int sched_find_task_index(u_short tid);
+static int sched_get_free_task_index();
 
 /*
  * Tasks
  */
-struct sched_task tasks[MAX_TASKS_COUNT];
-void *stacks[TASK_STACK_SIZE][MAX_TASKS_COUNT];
-u_int current_index = -1;
+static struct sched_task tasks[MAX_TASKS_COUNT];
+static void *stacks[TASK_STACK_SIZE][MAX_TASKS_COUNT];
 
 /*
- * Create new task
+ * Api - Create new task
  */
-void sched_create_task(u_short tid, void *address) {
+extern bool sched_create_task(u_short tid, void *address) {
     struct sched_task *task;
-    u_short index;
+    int index;
 
     index = sched_get_free_task_index();
 
     /* check task has allocated */
     if (index == -1) {
         kprint(MSG_SCHED_TID_EXCEED);
+        return false;
     }
 
     /* deny tid duplicates */
     if (sched_find_task_index(tid) != -1) {
         kprint(MSG_SCHED_TID_EXISTS);
+        return false;
     }
 
     task = &tasks[index];
@@ -45,90 +50,56 @@ void sched_create_task(u_short tid, void *address) {
     task->ds = asm_get_ds();
     task->ss = asm_get_ss();
     task->sp = (size_t)&stacks[index] + sizeof(struct sched_task);
+
+    return true;
 }
 
 /*
- * Run task by id
+ * Api - Run task by id
  */
-void sched_run_task_by_id(u_short tid) {
+extern bool sched_run_task_by_id(u_short tid) {
     struct sched_task *task;
-    u_short index;
+    int index;
 
     index = sched_find_task_index(tid);
 
     /* check task found */
     if (index == -1) {
         kprint(MSG_SCHED_TID_UNKNOWN);
+        return false;
     }
 
     task = &tasks[index];
     task->is_running = true;
+
+    return true;
 }
 
 /*
- * Stop task by id
+ * Api - Stop task by id
  */
-void sched_stop_task_by_id(u_short tid) {
+extern bool sched_stop_task_by_id(u_short tid) {
     struct sched_task *task;
-    u_short index;
+    int index;
 
     index = sched_find_task_index(tid);
 
     /* check task found */
     if (index == -1) {
         kprint(MSG_SCHED_TID_UNKNOWN);
+        return false;
     }
 
     task = &tasks[index];
     task->is_running = false;
+
+    return true;
 }
 
 /*
- * Schedule task to run
+ * Api - Find first task to run from index
  */
-void sched_schedule(size_t *task_ret_addr) {
-    current_index = sched_find_task_to_run_index(current_index);
-
-    /* check task found */
-    if (current_index == -1) {
-        panic(MSG_SCHED_NO_TASKS);
-    }
-}
-
-/*
- * Find task by id
- */
-short int sched_find_task_index(u_short tid) {
-    int i;
-
-    for (i = 0; i < MAX_TASKS_COUNT; ++i) {
-        if (tasks[i].tid == tid && tasks[i].is_valid) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-/*
- * Get first free task entry
- */
-short int sched_get_free_task_index() {
-    int i;
-
-    for (i = 0; i < MAX_TASKS_COUNT; ++i) {
-        if (tasks[i].is_valid) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-/*
- * Find first task to run from index
- */
-unsigned int sched_find_task_to_run_index(u_short index) {
+extern int sched_find_task_to_run_index(int index) {
     struct sched_task *task;
     int i;
 
@@ -144,6 +115,36 @@ unsigned int sched_find_task_to_run_index(u_short index) {
     for (i = 0; i < index + 1; ++i) {
         task = &tasks[i];
         if (task->is_valid && task->is_running) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+/*
+ * Find task by id
+ */
+static int sched_find_task_index(u_short tid) {
+    int i;
+
+    for (i = 0; i < MAX_TASKS_COUNT; ++i) {
+        if (tasks[i].tid == tid && tasks[i].is_valid) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+/*
+ * Get first free task entry
+ */
+static int sched_get_free_task_index() {
+    int i;
+
+    for (i = 0; i < MAX_TASKS_COUNT; ++i) {
+        if (!tasks[i].is_valid) {
             return i;
         }
     }

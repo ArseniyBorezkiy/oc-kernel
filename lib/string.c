@@ -3,9 +3,9 @@
 #include <types.h>
 
 /*
- * Calculate string's length
+ * Api - Calculate string's length
  */
-int strlen(char *s)
+extern int strlen(char *s)
 {
     char *original = s;
 
@@ -15,10 +15,10 @@ int strlen(char *s)
 }
 
 /*
- * Strings' copy
+ * Api - Strings' copy
  * Copies second string to first
  */
-char *strcpy(register char *s1, register char *s2)
+extern char *strcpy(register char *s1, register char *s2)
 {
     char *original = s1;
 
@@ -29,9 +29,9 @@ char *strcpy(register char *s1, register char *s2)
 }
 
 /*
- * Compare strings
+ * Api - Compare strings
  */
-int strcmp(register char *s1, register char *s2)
+extern int strcmp(register char *s1, register char *s2)
 {
     while (1) {
         if (*s1 != *s2) return(*s1 - *s2);
@@ -42,10 +42,10 @@ int strcmp(register char *s1, register char *s2)
 }
 
 /*
- * Strings' concatenation
+ * Api - Strings' concatenation
  * Append second to the end of the first
  */
-char *strcat(register char *s1, register char *s2)
+extern char *strcat(register char *s1, register char *s2)
 {
     char *original = s1;
 
@@ -57,9 +57,9 @@ char *strcat(register char *s1, register char *s2)
 }
 
 /*
- * Extend string with attribute symbol
+ * Api - Extend string with attribute symbol
  */
-char *strext(register char *buf, register char *str, char sym) {
+extern char *strext(register char *buf, register char *str, char sym) {
     while (*str != '\0') {
         *buf++ = *str++;
         *buf++ = sym;
@@ -69,9 +69,9 @@ char *strext(register char *buf, register char *str, char sym) {
 }
 
 /*
- * Integer to string
+ * Api - Integer to string
  */
-char *itoa(int value, char *str, int base) {
+extern char *itoa(int value, char *str, int base) {
     char *original = str;
     char digit;
 
@@ -106,9 +106,9 @@ char *itoa(int value, char *str, int base) {
 }
 
 /*
- * Inverse string
+ * Api - Inverse string
  */
-char *strinv(char *str) {
+extern char *strinv(char *str) {
     int i;
     u_int n = strlen(str);
     char buf[n+2];
@@ -125,9 +125,9 @@ char *strinv(char *str) {
 }
 
 /*
- * Print to string
+ * Api - Print to string
  */
-unsigned int sprintf(char *s1, char *s2, ...) {
+extern unsigned int sprintf(char *s1, char *s2, ...) {
     u_int j = 0;
     char number[16];
     char *cur = s1;
@@ -170,9 +170,9 @@ unsigned int sprintf(char *s1, char *s2, ...) {
 }
 
 /*
- * Print to limited string
+ * Api - Print to limited string
  */
-unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
+extern unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
     u_int j = 0;
     char number[16];
     char *cur = s1;

@@ -5,5 +5,5 @@
 /*
  * POSIX math api
  */
-u_int min(u_int a, u_int b);
-u_int max(u_int a, u_int b);
+extern u_int min(u_int a, u_int b);
+extern u_int max(u_int a, u_int b);

@@ -9,9 +9,9 @@ char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
 size_t video_ptr_offset = 0;
 
 /*
- * Clear kernel screen
+ * Api - Clear kernel screen
  */
-void kclear() {
+extern void kclear() {
     /*
      * this loops clears the screen
      * there are 25 lines each of 80 columns
@@ -26,9 +26,9 @@ void kclear() {
 }
 
 /*
- * Print kernel message
+ * Api - Print kernel message
  */
-void kprint(const char *str, ...) {
+extern void kprint(const char *str, ...) {
     size_t j = 0;
     u_int number;
     char str_num[16];

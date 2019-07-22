@@ -1,21 +1,26 @@
 #include <arch/idt.h>
 #include <arch/pic.h>
+#include <arch/ih.h>
 #include <arch/port.h>
 #include <sched/task.h>
+#include <sched/sched.h>
 #include <arch/memory.h>
 #include <utils/kprint.h>
 #include <messages.h>
 #include <types.h>
 
+static void idt_fill_entry(u_char offset, size_t addr);
+extern void asm_idt_load(size_t *addr);
+
 /*
  * Interrupt descriptor table
  */
-struct IDT_entry IDT[IDT_SIZE];
+static struct IDT_entry IDT[IDT_SIZE];
 
 /*
- * Init interrupt descriptor table
+ * Api - Init interrupt descriptor table
  */
-void idt_init()
+extern void idt_init()
 {
     size_t idt_address;
     size_t idt_ptr[2];
@@ -36,31 +41,10 @@ void idt_init()
 /*
  * Fill interrupt descriptor table entry
  */
-void idt_fill_entry(u_char offset, size_t handler) {
+static void idt_fill_entry(u_char offset, size_t handler) {
     IDT[offset].offset_lowerbits = LOW_WORD(handler);
     IDT[offset].selector = CODE_SEGMENT_SELECTOR;
     IDT[offset].zero = 0;
     IDT[offset].type_attr = INTERRUPT_GATE;
     IDT[offset].offset_higherbits = HIGH_WORD(handler);
-}
-
-/*
- * Timer interrupt handler
- */
-void ih_timer(size_t *ret_addr) {
-    write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
-    sched_schedule(ret_addr); /* schedule next process */
-}
-
-/*
- * Keyboard interrupt handler
- */
-void ih_keyboard() {
-    write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
-    kprint(MSG_IRQ1);
-
-    u_char status = read_port(KEYBOARD_STATUS_PORT);
-    if (status & 0x01) {
-        read_port(KEYBOARD_DATA_PORT);
-    }
 }

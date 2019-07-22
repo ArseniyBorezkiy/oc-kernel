@@ -1,10 +1,10 @@
 #include <lib/math.h>
 
 /*
- * Minimun of two numbers
+ * Api - Minimun of two numbers
  */
 
-unsigned int min(unsigned int a, unsigned int b) {
+extern unsigned int min(unsigned int a, unsigned int b) {
     if (a <= b) {
         return a;
     }
@@ -13,10 +13,10 @@ unsigned int min(unsigned int a, unsigned int b) {
 }
 
 /*
- * Maximum of two numbers
+ * Api - Maximum of two numbers
  */
 
-unsigned int max(unsigned int a, unsigned int b) {
+extern unsigned int max(unsigned int a, unsigned int b) {
     if (a > b) {
         return a;
     }

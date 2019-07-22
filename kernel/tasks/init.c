@@ -3,9 +3,9 @@
 #include <messages.h>
 
 /*
- * Init task
+ * Api - Init task
  */
-void task_init() {
+extern void task_init() {
     while (1) {
         kprint(MSG_TASK_INIT_LAUNCHED);
     }

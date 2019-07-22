@@ -3,4 +3,4 @@
 /*
  * Api
  */
-void task_tty();
+extern void task_tty();

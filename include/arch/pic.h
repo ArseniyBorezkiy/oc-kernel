@@ -9,5 +9,5 @@
 /*
  * Api
  */
-void pic_init();
-void pic_enable();
+extern void pic_init();
+extern void pic_enable();

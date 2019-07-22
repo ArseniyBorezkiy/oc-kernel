@@ -28,14 +28,7 @@ struct sched_task {
 /*
  * Api
  */
-void sched_create_task(u_short tid, void *address);
-short int sched_find_task_index(u_short tid);
-short int sched_get_free_task_index();
-void sched_run_task_by_id(u_short tid);
-void sched_stop_task_by_id(u_short tid);
-unsigned int sched_find_task_to_run_index(u_short index);
-void sched_schedule(size_t *task_ret_addr);
-unsigned int asm_get_cs();
-unsigned int asm_get_ds();
-unsigned int asm_get_ss();
-unsigned int asm_get_flags();
+extern bool sched_create_task(u_short tid, void *address);
+extern bool sched_run_task_by_id(u_short tid);
+extern bool sched_stop_task_by_id(u_short tid);
+extern int sched_find_task_to_run_index(int index);

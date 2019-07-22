@@ -3,4 +3,4 @@
 /*
  * Api
  */
-void task_init();
+extern void task_init();

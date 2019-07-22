@@ -21,12 +21,8 @@ struct IDT_entry {
 /*
  * Api
  */
-void idt_init();
-void asm_idt_load(size_t *addr);
-void idt_fill_entry(u_char offset, size_t addr);
-void ih_keyboard();
-void asm_ih_keyboard();
-void asm_ih_timer(size_t *ret_addr);
-void asm_lock();
-void asm_unlock();
-void asm_hlt();
+extern void idt_init();
+extern void ih_keyboard();
+extern void asm_lock();
+extern void asm_unlock();
+extern void asm_hlt();

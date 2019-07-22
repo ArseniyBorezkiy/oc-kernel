@@ -1,11 +1,11 @@
 #include <utils/kprint.h>
-#include <utils/panic.h>
+#include <utils/kpanic.h>
 #include <arch/idt.h>
 
 /*
- * Stop kernel execution
+ * API - Stop kernel execution
  */
-void panic(char * message) {
+extern void kpanic(char * message) {
     kprint(message);
     asm_lock();
     asm_hlt();
