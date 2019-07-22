@@ -9,9 +9,9 @@
 /*
  * Api - Timer interrupt handler
  */
-extern void ih_timer(size_t *ret_addr) {
+extern void ih_timer(size_t *ret_addr, size_t *reg_addr) {
     write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
-    sched_schedule(ret_addr); /* schedule next process */
+    sched_schedule(ret_addr, reg_addr); /* schedule next process */
 }
 
 /*

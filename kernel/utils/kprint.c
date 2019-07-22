@@ -70,3 +70,15 @@ extern void kprint(const char *str, ...) {
 
     va_end(list);
 }
+
+/*
+ * Api - Stack dump
+ */
+extern void stack_dump(size_t *addr) {
+  u_int base = (size_t)addr;
+
+  kprint("-- stack dump: %X\n", base);
+  kprint("  %X : %X\n", base, *(u_int*)base);
+  kprint("  %X : %X\n", base + 4, *(u_int*)(base + 4));
+  kprint("  %X : %X\n", base + 8, *(u_int*)(base + 8));
+}

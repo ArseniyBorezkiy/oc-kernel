@@ -29,6 +29,22 @@ extern char *strcpy(register char *s1, register char *s2)
 }
 
 /*
+ * Api - Memory copy
+ * Copies second buffer to first buffer
+ */
+extern void *memcpy(register void *buf1, register void *buf2, u_int bytes)
+{
+    u8 *buf_dst = buf1;
+    u8 *buf_src = buf2;
+
+    for (int i = 0; i < bytes; ++i) {
+      *buf_dst++ = *buf_src++;
+    }
+
+    return buf1;
+}
+
+/*
  * Api - Compare strings
  */
 extern int strcmp(register char *s1, register char *s2)

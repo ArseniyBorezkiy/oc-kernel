@@ -55,6 +55,13 @@ extern bool sched_create_task(u_short tid, void *address) {
 }
 
 /*
+ * Api - Get task by index
+ */
+extern struct sched_task *get_task_by_index(int index) {
+  return &tasks[index];
+}
+
+/*
  * Api - Run task by id
  */
 extern bool sched_run_task_by_id(u_short tid) {

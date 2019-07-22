@@ -3,6 +3,7 @@
     "math.h": "c",
     "idt.h": "c",
     "task.h": "c",
-    "messages.h": "c"
+    "messages.h": "c",
+    "kprint.h": "c"
   }
 }

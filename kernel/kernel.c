@@ -7,6 +7,7 @@
 #include <tasks/init.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
+#include <lib/time.h>
 
 static void kernel_create_tasks();
 static void kernel_run_tasks();
@@ -33,7 +34,12 @@ extern void kernel_start(void)
   kprint(MSG_KERNEL_STARTED);
 
   /* should never return */
-	while(1);
+	while(1) {
+    delay(1);
+    asm_lock();
+    kprint(MSG_KERNEL_STARTED);
+    asm_unlock();
+  }
 }
 
 /*

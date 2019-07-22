@@ -19,12 +19,13 @@ build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kpanic.c.o \
-		./bin/math.c.o ./bin/string.c.o \
+		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/init.c.o ./bin/tty.c.o
 
 build-lib: ./lib/string.c ./lib/math.c
+	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
 
@@ -71,6 +72,15 @@ clean:
 #
 debug:
 	gdb -x ./debug.script -s ./bin/kernel.elf
+
+#
+# Dup kernel
+#
+dump:
+	objdump -d ./bin/kernel.elf > ./bin/kernel.elf.dump.txt
+
+headers:
+	objdump -h ./bin/kernel.elf > ./bin/kernel.elf.head.txt
 
 #
 # Listing

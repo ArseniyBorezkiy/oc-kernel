@@ -10,7 +10,7 @@
  * void asm_idt_load(unsigned long *addr)
  */
 asm_idt_load:
-    push %edx
+  push %edx
 	mov 8(%esp), %edx
 	lidt (%edx)
 	pop %edx
@@ -21,12 +21,13 @@ asm_idt_load:
  * void asm_ih_timer(unsigned long *addr)
  */
 asm_ih_timer:
-    cli
-    pushal
-    mov %esp,%ebp
-    mov %ebp,%ebx
-    add %ebx,32 # ebx = &ret_addr
-    push %ebx
+  cli
+  pushal
+  mov %esp,%ebp
+  mov %ebp,%ebx
+  pushl %ebx # &reg
+  add $32,%ebx
+  pushl %ebx # &ret addr
 	call ih_timer
 	mov %ebp,%esp
 	popal
@@ -38,7 +39,7 @@ asm_ih_timer:
  * void asm_ih_keyboard(unsigned int)
  */
 asm_ih_keyboard:
-    pushal
+  pushal
 	call ih_keyboard
 	popal
 	iretl
@@ -47,19 +48,19 @@ asm_ih_keyboard:
  * Lock interrupts
  */
 asm_lock:
-    cli
-    ret
+  cli
+  ret
 
 /*
  * Unlock interrupts
  */
 asm_unlock:
-    sti
-    ret
+  sti
+  ret
 
 /*
  * Halt processor
  */
 asm_hlt:
-    hlt
-    ret
+  hlt
+  ret
