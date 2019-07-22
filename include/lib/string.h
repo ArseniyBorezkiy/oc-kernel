@@ -9,6 +9,7 @@
 extern int strlen(char *s);
 extern char *strcpy(register char *s1, register char *s2);
 extern void *memcpy(register void *buf1, register void *buf2, u_int bytes);
+extern void *memset(register void *buf1, u8 value, u_int bytes);
 extern int strcmp(register char *s1, register char *s2);
 extern char *strcat(register char *s1, register char *s2);
 extern char *strext(register char *buf, register char *str, char sym);

@@ -1,8 +1,10 @@
+#include <arch/reg.h>
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/string.h>
+#include <lib/time.h>
 #include <messages.h>
 
 int current_task_index = -1;
@@ -41,13 +43,28 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
 
     /* save current task state */
     this_task->pc = *ret_addr;
+    this_task->cs = *(u16*)((size_t)ret_addr + 4);
+    this_task->flags = *(u32*)((size_t)ret_addr + 6);
+    this_task->sp = (size_t)ret_addr + 10;
     memcpy(this_task->registers, (void*)reg_addr, sizeof(this_task->registers));
+    this_task->registers[3] = this_task->sp;
   }
 
   kprint("scheduled tid=%u sp=%X pc=%X->%X\n", next_task_index, ret_addr, *ret_addr, next_task->pc);
   current_task_index = next_task_index;
 
+  /* prepare context for the next task */
+  *(u32*)(next_task->sp - 4) = next_task->flags;
+  *(u16*)(next_task->sp - 6) = next_task->cs;
+  *(u32*)(next_task->sp - 10) = next_task->pc;
+  // stack_dump((size_t*)(next_task->sp - 10));
+  next_task->sp = next_task->sp - 10;
+  next_task->registers[3] = this_task->sp;
+  next_task->sp = next_task->sp - sizeof(next_task->registers);
+  memcpy((size_t*)next_task->sp, next_task->registers, sizeof(next_task->registers));
+  
+  // delay(5);
+
   /* switch context */
-  *ret_addr = next_task->pc;
-  //memcpy((void*)reg_addr, next_task->registers, sizeof(this_task->registers));
+  asm_switch_context(next_task->sp);
 }

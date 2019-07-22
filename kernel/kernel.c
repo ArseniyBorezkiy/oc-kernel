@@ -24,6 +24,7 @@ extern void kernel_start(void)
   idt_init();
 
 	/* init scheduler */
+  sched_init();
   kernel_create_tasks();
   kernel_run_tasks();
 
@@ -36,9 +37,7 @@ extern void kernel_start(void)
   /* should never return */
 	while(1) {
     delay(1);
-    asm_lock();
     kprint(MSG_KERNEL_STARTED);
-    asm_unlock();
   }
 }
 

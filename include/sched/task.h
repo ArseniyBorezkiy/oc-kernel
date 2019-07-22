@@ -28,6 +28,7 @@ struct sched_task {
 /*
  * Api
  */
+extern void sched_init();
 extern bool sched_create_task(u_short tid, void *address);
 extern struct sched_task *get_task_by_index(int index);
 extern bool sched_run_task_by_id(u_short tid);

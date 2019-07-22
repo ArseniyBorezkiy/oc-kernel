@@ -4,6 +4,8 @@
     "idt.h": "c",
     "task.h": "c",
     "messages.h": "c",
-    "kprint.h": "c"
+    "kprint.h": "c",
+    "string.h": "c",
+    "reg.h": "c"
   }
 }

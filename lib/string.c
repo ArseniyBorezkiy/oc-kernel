@@ -45,6 +45,21 @@ extern void *memcpy(register void *buf1, register void *buf2, u_int bytes)
 }
 
 /*
+ * Api - Memory set
+ * Fills buffer with value
+ */
+extern void *memset(register void *buf, u8 value, u_int bytes)
+{
+    u8 *buf_dst = buf;
+
+    for (int i = 0; i < bytes; ++i) {
+      *buf_dst++ = (u8)value;
+    }
+
+    return buf;
+}
+
+/*
  * Api - Compare strings
  */
 extern int strcmp(register char *s1, register char *s2)

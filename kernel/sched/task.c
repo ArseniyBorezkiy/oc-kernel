@@ -4,6 +4,7 @@
 #include <arch/reg.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
+#include <lib/string.h>
 #include <messages.h>
 #include <types.h>
 
@@ -13,13 +14,23 @@ static int sched_get_free_task_index();
 /*
  * Tasks
  */
+
 static struct sched_task tasks[MAX_TASKS_COUNT];
-static void *stacks[TASK_STACK_SIZE][MAX_TASKS_COUNT];
+static void *stacks[MAX_TASKS_COUNT][TASK_STACK_SIZE];
+
+/*
+ * Api - Init
+ */
+extern void sched_init() {
+  memset(tasks, 0, sizeof(struct sched_task) * MAX_TASKS_COUNT);
+}
 
 /*
  * Api - Create new task
  */
 extern bool sched_create_task(u_short tid, void *address) {
+    kprint(MSG_SCHED_TID_CREATED, (u_int)address);
+
     struct sched_task *task;
     int index;
 
@@ -49,7 +60,7 @@ extern bool sched_create_task(u_short tid, void *address) {
     task->cs = asm_get_cs();
     task->ds = asm_get_ds();
     task->ss = asm_get_ss();
-    task->sp = (size_t)&stacks[index] + sizeof(struct sched_task);
+    task->sp = (size_t)&stacks[index] + TASK_STACK_SIZE;
 
     return true;
 }

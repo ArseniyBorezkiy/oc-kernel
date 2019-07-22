@@ -1,6 +1,7 @@
 #include <tasks/tty.h>
 #include <utils/kprint.h>
 #include <lib/time.h>
+#include <arch/reg.h>
 #include <arch/idt.h>
 #include <messages.h>
 
@@ -9,9 +10,7 @@
  */
 extern void task_tty() {
     while (1) {
-        asm_lock();
-        kprint(MSG_TASK_TTY_LAUNCHED);
-        asm_unlock();
+        kprint(MSG_TASK_TTY_LAUNCHED, (size_t*)asm_get_sp());
         delay(1);
     }
 }

@@ -1,5 +1,6 @@
 #include <utils/kprint.h>
 #include <arch/memory.h>
+#include <arch/idt.h>
 #include <lib/math.h>
 #include <lib/stdarg.h>
 #include <lib/string.h>
@@ -29,6 +30,8 @@ extern void kclear() {
  * Api - Print kernel message
  */
 extern void kprint(const char *str, ...) {
+  asm_lock();
+
     size_t j = 0;
     u_int number;
     char str_num[16];
@@ -69,6 +72,8 @@ extern void kprint(const char *str, ...) {
     }
 
     va_end(list);
+
+  asm_unlock();
 }
 
 /*
