@@ -6,84 +6,110 @@
 #include <lib/string.h>
 #include <types.h>
 
+const char* video_base_ptr = (char*)VIDEO_MEMORY_ADDR;
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
-size_t video_ptr_offset = 0;
 
 /*
  * Api - Clear kernel screen
  */
 extern void kclear() {
-    /*
-     * this loops clears the screen
-     * there are 25 lines each of 80 columns
-     * each element takes 2 bytes
-     */
-    size_t i = 0;
-    while (i < SCREEN_SIZE) {
-        video_ptr[i++] = ' '; /* blank character */
-        video_ptr[i++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
+    video_ptr = video_base_ptr;
+
+    for (size_t i = 0; i < SCREEN_SIZE; ++i) {
+        *video_ptr++ = ' '; /* blank character */
+        *video_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
     }
-    video_ptr_offset = 0;
+
+    video_ptr = video_base_ptr;
 }
 
 /*
  * Api - Print kernel message
  */
 extern void kprint(const char *str, ...) {
-  asm_lock();
+    char ch;
+    u_int num;
+    char str_num[8];
 
-    size_t j = 0;
-    u_int number;
-    char str_num[16];
+    asm_lock();
 
     va_list list;
     va_start(list, str);
 
-    while (str[j] != '\0' && video_ptr_offset < SCREEN_SIZE) {
-        if (str[j] != '\n' && str[j] != '%') {
-            video_ptr[video_ptr_offset++] = str[j++]; /* the character's ascii */
-            video_ptr[video_ptr_offset++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
-        } else if (str[j] == '%') {
-            switch (str[++j]) {
+    while (*str != '\0') {
+        if (*str != '\n' && *str != '%') {
+            // usual character
+            if (video_ptr - video_base_ptr + 2 >= SCREEN_SIZE) {
+                kscroll(1); /* scroll line up */
+            }
+
+            *video_ptr++ = *str++; /* the character's ascii */
+            *video_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
+        } else if (*str == '%') {
+            // control character
+            switch (*++str) {
                 case 'c':
-                    video_ptr[video_ptr_offset++] = va_arg(list, char);
-                    video_ptr[video_ptr_offset++] = VIDEO_MEMORY_ATTR; /* attribute-byte */
+                    if (video_ptr - video_base_ptr + 2 >= SCREEN_SIZE) {
+                        kscroll(1); /* scroll line up */
+                    }
+
+                    ch = va_arg(list, char);
+                    *video_ptr++ = ch;
+                    *video_ptr++ = VIDEO_MEMORY_ATTR;
                     break;
                 case 'u':
-                    number = va_arg(list, u_int);
-                    itoa(number, str_num, 10);
-                    strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
-                    video_ptr_offset += strlen(str_num) * 2;
+                    num = va_arg(list, u_int);
+                    itoa(num, str_num, 10);
+
+                    if (video_ptr - video_base_ptr + strlen(str_num) >= SCREEN_SIZE) {
+                        kscroll(1); /* scroll line up */
+                    }
+
+                    video_ptr = strext(video_ptr, str_num, VIDEO_MEMORY_ATTR);
                     break;
                 case 'X':
-                    number = va_arg(list, u_int);
-                    itoa(number, str_num, 16);
-                    strext(&video_ptr[video_ptr_offset], str_num, VIDEO_MEMORY_ATTR);
-                    video_ptr_offset += strlen(str_num) * 2;
+                    num = va_arg(list, u_int);
+                    itoa(num, str_num, 16);
+
+                    if (video_ptr - video_base_ptr + strlen(str_num) >= SCREEN_SIZE) {
+                        kscroll(1); /* scroll line up */
+                    }
+
+                    video_ptr = strext(video_ptr, str_num, VIDEO_MEMORY_ATTR);
                     break;
             }
-            j += 1;
-        } else {
-            size_t offset = video_ptr_offset % SCREEN_WIDTH;
-            video_ptr_offset += (SCREEN_WIDTH - offset);
-            video_ptr_offset = min(SCREEN_SIZE, video_ptr_offset);
-            j++;
+        } else if (*str == '\n') {
+            // new line character
+            size_t offset = (video_ptr - video_base_ptr) % SCREEN_WIDTH;
+
+            if (video_ptr - video_base_ptr + offset >= SCREEN_SIZE) {
+                kscroll(1); /* scroll line up */
+            }
+
+            video_ptr += (SCREEN_WIDTH - offset);
         }
     }
 
     va_end(list);
 
-  asm_unlock();
+    asm_unlock();
 }
 
 /*
- * Api - Stack dump
+ * Api - Scroll console up
  */
-extern void stack_dump(size_t *addr) {
-  u_int base = (size_t)addr;
+extern void kscroll(u_int n) {
+    char *ptr = video_base_ptr;
+    for (int i = 1; i < SCREEN_HEIGHT * 2; ++i) {
+        for (int j = 0; j < SCREEN_WIDTH * 2; ++j) {
+            ptr[(i - 1) * SCREEN_WIDTH * 2 + j] = ptr[i * SCREEN_WIDTH * 2 + j];
+        }
+    }
 
-  kprint("-- stack dump: %X\n", base);
-  kprint("  %X : %X\n", base, *(u_int*)base);
-  kprint("  %X : %X\n", base + 4, *(u_int*)(base + 4));
-  kprint("  %X : %X\n", base + 8, *(u_int*)(base + 8));
+    for (int j = 0; j < SCREEN_WIDTH; ++j) {
+        ptr[(SCREEN_HEIGHT * 2 - 1) + j * 2] = ' ';
+        ptr[(SCREEN_HEIGHT * 2 - 1) + j * 2 + 1] = VIDEO_MEMORY_ATTR;
+    }
+
+    video_ptr -= SCREEN_WIDTH * 2;
 }

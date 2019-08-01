@@ -18,7 +18,7 @@ all: build start
 build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
-		./bin/kprint.c.o ./bin/kpanic.c.o \
+		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o \
 		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
@@ -33,8 +33,9 @@ build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kern
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
-build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kpanic.c
+build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/utils/kpanic.c
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/utils/kdump.c -o ./bin/kdump.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kpanic.c -o ./bin/kpanic.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \

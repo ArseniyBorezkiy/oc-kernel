@@ -10,4 +10,3 @@ extern void kpanic(char * message) {
     asm_lock();
     asm_hlt();
 }
-

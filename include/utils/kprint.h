@@ -7,4 +7,4 @@
  */
 extern void kclear(); /* clear kernel screen */
 extern void kprint(const char *str, ...); /* kernel print */
-extern void stack_dump(size_t *addr);
+extern void kscroll(u_int n); /* scroll console up */
