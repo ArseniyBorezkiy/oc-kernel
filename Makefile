@@ -22,6 +22,7 @@ build: build-lib build-kernel
 		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
+		./bin/ipc.c.o \
 		./bin/init.c.o ./bin/tty.c.o
 
 build-lib: ./lib/string.c ./lib/math.c
@@ -30,7 +31,8 @@ build-lib: ./lib/string.c ./lib/math.c
 	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
 
 build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
-              ./kernel/kernel.c
+              build-kernel-ipc \
+			  ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
 build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/utils/kpanic.c
@@ -47,6 +49,9 @@ build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s 
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/pic.c -o ./bin/pic.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/idt.c -o ./bin/idt.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/ih.c -o ./bin/ih.c.o
+
+build-kernel-ipc: ./kernel/ipc/ipc.c
+	$(CC) $(CC_FLAGS) -c ./kernel/ipc/ipc.c -o ./bin/ipc.c.o
 
 build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/task.c -o ./bin/task.c.o

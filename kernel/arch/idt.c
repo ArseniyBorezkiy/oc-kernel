@@ -28,6 +28,12 @@ extern void idt_init()
     pic_init();
 
     /* fill idt */
+    idt_fill_entry(INT_ZERO, (size_t)asm_ih_zero);
+    idt_fill_entry(INT_OPCODE, (size_t)asm_ih_opcode);
+    idt_fill_entry(INT_DOUBLE_FAULT, (size_t)asm_ih_double_fault);
+    idt_fill_entry(INT_GENERAL_PROTECT, (size_t)asm_ih_general_protect);
+    idt_fill_entry(INT_PAGE_FAULT, (size_t)asm_ih_page_fault);
+    idt_fill_entry(INT_ALIGNMENT_CHECK, (size_t)asm_ih_alignment_check);
     idt_fill_entry(INT_TIMER, (size_t)asm_ih_timer);
     idt_fill_entry(INT_KEYBOARD, (size_t)asm_ih_keyboard);
 

@@ -3,22 +3,22 @@
 #
 .code32
 .text
-.globl read_port, write_port
+.globl asm_read_port, asm_write_port
 
 /*
  * Read data from port
- * unsigned char read_port(unsigned char port)
+ * unsigned char asm_read_port(unsigned char port)
  */
-read_port:
+asm_read_port:
     mov 4(%esp), %edx
     in %dx, %al
     ret
 
 /*
  * Send data to port
- * void write_port(unsigned char port, unsigned_char data)
+ * void asm_write_port(unsigned char port, unsigned_char data)
  */
-write_port:
+asm_write_port:
     mov   4(%esp), %edx
     mov   8(%esp), %al
     out   %al, %dx

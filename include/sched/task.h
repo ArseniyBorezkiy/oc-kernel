@@ -8,6 +8,9 @@
 #define TID_INIT 1
 #define TID_TTY 2
 
+#define TASK_STATUS_RUNNING 1
+#define TASK_STATUS_PENDING 2
+
 /*
  * Process descriptor
  */
@@ -23,6 +26,7 @@ struct sched_task {
     u_short ds; /* data selector */
     u_short ss; /* stack selector */
     u_int time; /* time of task execution */
+    u_short status; /* task status */
 };
 
 /*
@@ -33,4 +37,5 @@ extern bool sched_create_task(u_short tid, void *address);
 extern struct sched_task *get_task_by_index(int index);
 extern bool sched_run_task_by_id(u_short tid);
 extern bool sched_stop_task_by_id(u_short tid);
+extern bool sched_set_task_status_by_id(u_short tid, u_short status);
 extern int sched_find_task_to_run_index(int index);

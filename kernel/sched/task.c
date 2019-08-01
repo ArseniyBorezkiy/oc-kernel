@@ -61,6 +61,7 @@ extern bool sched_create_task(u_short tid, void *address) {
     task->ds = asm_get_ds();
     task->ss = asm_get_ss();
     task->sp = (size_t)&stacks[index] + TASK_STACK_SIZE;
+    task->status = TASK_STATUS_RUNNING;
 
     return true;
 }
@@ -110,6 +111,27 @@ extern bool sched_stop_task_by_id(u_short tid) {
 
     task = &tasks[index];
     task->is_running = false;
+
+    return true;
+}
+
+/*
+ * Api - Set task status by id
+ */
+extern bool sched_set_task_status_by_id(u_short tid, u_short status) {
+    struct sched_task *task;
+    int index;
+
+    index = sched_find_task_index(tid);
+
+    /* check task found */
+    if (index == -1) {
+        kprint(MSG_SCHED_TID_UNKNOWN);
+        return false;
+    }
+
+    task = &tasks[index];
+    task->status = status;
 
     return true;
 }

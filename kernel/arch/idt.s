@@ -3,7 +3,10 @@
 #
 .code32
 .text
-.globl asm_idt_load, asm_ih_timer, asm_ih_keyboard, asm_lock, asm_unlock, asm_hlt
+.globl asm_idt_load, asm_lock, asm_unlock, asm_hlt
+.globl asm_ih_zero, asm_ih_opcode, asm_ih_double_fault, asm_ih_general_protect
+.globl asm_ih_page_fault, asm_ih_alignment_check
+.globl asm_ih_timer, asm_ih_keyboard
 
 /*
  * Load interrupt table
@@ -15,6 +18,72 @@ asm_idt_load:
 	lidt (%edx)
 	pop %edx
 	ret
+
+/*
+ * Handle error division by zero
+ */
+ asm_ih_zero:
+  cli
+  pushal
+  call ih_zero
+  popal
+  sti
+  iretl
+
+/*
+ * Handle error invalid opcode
+ */
+ asm_ih_opcode:
+  cli
+  pushal
+  call ih_opcode
+  popal
+  sti
+  iretl
+
+/*
+ * Handle error double fault
+ */
+ asm_ih_double_fault:
+  cli
+  pushal
+  call ih_double_fault
+  popal
+  sti
+  iretl
+
+/*
+ * General protect
+ */
+ asm_ih_general_protect:
+  cli
+  pushal
+  call ih_general_protect
+  popal
+  sti
+  iretl
+
+/*
+ * Page fault
+ */
+ asm_ih_page_fault:
+  cli
+  pushal
+  call ih_page_fault
+  popal
+  sti
+  iretl
+
+/*
+ * Alignment check
+ */
+ asm_ih_alignment_check:
+  cli
+  pushal
+  call ih_alignment_check
+  popal
+  sti
+  iretl
 
 /*
  * Handle IRQ0

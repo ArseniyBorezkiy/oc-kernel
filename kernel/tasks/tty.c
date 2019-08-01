@@ -3,14 +3,19 @@
 #include <lib/time.h>
 #include <arch/reg.h>
 #include <arch/idt.h>
+#include <ipc/ipc.h>
+#include <sched/task.h>
 #include <messages.h>
 
 /*
  * Api - Teletype task
  */
 extern void task_tty() {
+    struct message_t msg;
+    
     while (1) {
         kprint(MSG_TASK_TTY_LAUNCHED, (size_t*)asm_get_sp());
         delay(1);
+        kreceive(TID_TTY, &msg);
     }
 }
