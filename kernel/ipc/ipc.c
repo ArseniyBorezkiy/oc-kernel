@@ -1,11 +1,35 @@
 #include <ipc/ipc.h>
+#include <sched/sched.h>
 #include <sched/task.h>
+#include <lib/string.h>
+#include <messages.h>
 
 /*
  * Api - send message to task
  */
 extern void ksend(u_short tid, struct message_t *msg) {
+    struct sched_task *task;
+    u_short index = sched_find_task_index(tid);
 
+    /* check task found */
+    if (index == -1) {
+        kpanic(MSG_SCHED_TID_UNKNOWN);
+    }
+
+    task = sched_get_task_by_index(index);
+
+    /* check buffer size */
+    if (task->msg_count_in == TASK_MSG_BUFF_SIZE) {
+        kpanic("message buffer exceed for tid %X", tid);
+    }
+
+    /* append message to buffer */
+    memcpy(&task->msg_buff[task->msg_count_in++], msg, sizeof(struct message_t));
+
+    /* change task status */
+    if (task->status == TASK_STATUS_PENDING) {
+        task->status = TASK_STATUS_RUNNING;
+    }
 }
 
 /*

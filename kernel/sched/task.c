@@ -8,7 +8,6 @@
 #include <messages.h>
 #include <types.h>
 
-static int sched_find_task_index(u_short tid);
 static int sched_get_free_task_index();
 
 /*
@@ -53,15 +52,15 @@ extern bool sched_create_task(u_short tid, void *address) {
     /* fill data */
     task->tid = tid;
     task->is_valid = true;
-    task->is_running = false;
+    task->op_registers.eip = (size_t)address;
+    *(u32*)(&task->flags) = asm_get_flags();
+    task->op_registers.cs = asm_get_cs();
+    task->op_registers.ds = asm_get_ds();
+    task->op_registers.ss = asm_get_ss();
+    task->op_registers.esp = (size_t)&stacks[index] + TASK_STACK_SIZE;
+    task->status = TASK_STATUS_UNINTERRUPTABLE;
     task->time = 0;
-    task->pc = (size_t)address;
-    task->flags = asm_get_flags();
-    task->cs = asm_get_cs();
-    task->ds = asm_get_ds();
-    task->ss = asm_get_ss();
-    task->sp = (size_t)&stacks[index] + TASK_STACK_SIZE;
-    task->status = TASK_STATUS_RUNNING;
+    task->msg_count_in = 0;
 
     return true;
 }
@@ -69,7 +68,7 @@ extern bool sched_create_task(u_short tid, void *address) {
 /*
  * Api - Get task by index
  */
-extern struct sched_task *get_task_by_index(int index) {
+extern struct sched_task *sched_get_task_by_index(int index) {
   return &tasks[index];
 }
 
@@ -89,7 +88,7 @@ extern bool sched_run_task_by_id(u_short tid) {
     }
 
     task = &tasks[index];
-    task->is_running = true;
+    task->status = TASK_STATUS_RUNNING;
 
     return true;
 }
@@ -110,7 +109,7 @@ extern bool sched_stop_task_by_id(u_short tid) {
     }
 
     task = &tasks[index];
-    task->is_running = false;
+    task->status = TASK_STATUS_UNINTERRUPTABLE;
 
     return true;
 }
@@ -146,7 +145,7 @@ extern int sched_find_task_to_run_index(int index) {
     /* find after specified index */
     for (i = index + 1; i < MAX_TASKS_COUNT; ++i) {
         task = &tasks[i];
-        if (task->is_valid && task->is_running) {
+        if (task->is_valid && task->status == TASK_STATUS_RUNNING) {
             return i;
         }
     }
@@ -154,7 +153,7 @@ extern int sched_find_task_to_run_index(int index) {
     /* find with first index */
     for (i = 0; i < index + 1; ++i) {
         task = &tasks[i];
-        if (task->is_valid && task->is_running) {
+        if (task->is_valid && task->status == TASK_STATUS_RUNNING) {
             return i;
         }
     }
@@ -163,9 +162,9 @@ extern int sched_find_task_to_run_index(int index) {
 }
 
 /*
- * Find task by id
+ * Api - Find task by id
  */
-static int sched_find_task_index(u_short tid) {
+extern int sched_find_task_index(u_short tid) {
     int i;
 
     for (i = 0; i < MAX_TASKS_COUNT; ++i) {
