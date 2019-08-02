@@ -1,8 +1,9 @@
+#include <arch/reg.h>
+#include <arch/idt.h>
 #include <tasks/init.h>
 #include <utils/kprint.h>
 #include <lib/time.h>
-#include <arch/reg.h>
-#include <arch/idt.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
 
 /*

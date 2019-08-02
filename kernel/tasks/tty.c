@@ -1,10 +1,11 @@
-#include <tasks/tty.h>
-#include <utils/kprint.h>
-#include <lib/time.h>
 #include <arch/reg.h>
 #include <arch/idt.h>
-#include <ipc/ipc.h>
 #include <sched/task.h>
+#include <tasks/tty.h>
+#include <ipc/ipc.h>
+#include <utils/kprint.h>
+#include <lib/time.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
 
 /*

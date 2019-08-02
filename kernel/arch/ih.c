@@ -3,10 +3,10 @@
 #include <arch/port.h>
 #include <sched/sched.h>
 #include <sched/task.h>
-#include <utils/kpanic.h>
 #include <ipc/ipc.h>
+#include <utils/kpanic.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
-#include <types.h>
 
 /*
  * Api - Division by zero

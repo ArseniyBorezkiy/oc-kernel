@@ -1,5 +1,6 @@
 #include <arch/pic.h>
 #include <arch/port.h>
+#include <lib/stdtypes.h>
 
 /*
  * Api - Init programmable interrupt controller

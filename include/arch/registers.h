@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types.h>
+#include <lib/stdtypes.h>
 
 /*
  * i80386 general purpose registers

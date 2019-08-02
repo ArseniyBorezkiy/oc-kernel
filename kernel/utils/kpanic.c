@@ -1,6 +1,7 @@
+#include <arch/idt.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
-#include <arch/idt.h>
+#include <lib/stdtypes.h>
 
 /*
  * API - Stop kernel execution

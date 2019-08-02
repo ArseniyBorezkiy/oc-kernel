@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types.h>
+#include <lib/stdtypes.h>
 
 #define IDT_SIZE 256
 #define INT_ZERO 0x0

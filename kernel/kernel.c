@@ -1,4 +1,4 @@
-#include <messages.h>
+#include <boot/multiboot.h>
 #include <arch/memory.h>
 #include <arch/idt.h>
 #include <arch/pic.h>
@@ -8,6 +8,7 @@
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/time.h>
+#include <messages.h>
 
 static void kernel_create_tasks();
 static void kernel_run_tasks();
@@ -15,10 +16,11 @@ static void kernel_run_tasks();
 /*
  * Api - Kernel entry point
  */
-extern void kernel_start(void)
+extern void kernel_start(struct multiboot_t *multiboot)
 {
   kclear();
-  kprint(MSG_KERNEL_START, (size_t)&kernel_start);
+  kprint(MSG_KERNEL_START, &kernel_start);
+  kprint(MSG_KERNEL_MEM_AVAILABLE, multiboot->mem_upper);
   
   /* init arch */
   idt_init();

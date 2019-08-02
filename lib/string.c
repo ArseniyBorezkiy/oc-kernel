@@ -1,6 +1,5 @@
+#include <lib/stdtypes.h>
 #include <lib/string.h>
-#include <lib/stdarg.h>
-#include <types.h>
 
 /*
  * Api - Calculate string's length
@@ -159,59 +158,38 @@ extern char *strinv(char *str) {
  * Api - Print to string
  */
 extern unsigned int sprintf(char *s1, char *s2, ...) {
-    u_int j = 0;
-    char number[16];
-    char *cur = s1;
-
     va_list list;
     va_start(list, s2);
 
-    while (s2[j] != '\0') {
-        if (s2[j] != '%') {
-            /* text */
-            *cur++ = s2[j++];
-        } else if (s2[j] == '%') {
-            /* control character */
-            switch (s2[++j]) {
-                case 'c':
-                    /* character */
-                    *cur++ = va_arg(list, char);
-                    break;
-                case 'u':
-                    itoa(va_arg(list, u_int), number, 10);
-                    strinv(number);
-                    strcpy(cur, number);
-                    cur += strlen(number);
-                    break;
-                case 'X':
-                    itoa(va_arg(list, u_int), number, 16);
-                    strinv(number);
-                    strcpy(cur, number);
-                    cur += strlen(number);
-                    break;
-            }
-            j += 1;
-        }
-    }
-    *cur++ = '\0';
-
-    va_end(list);
-
-    return ((size_t)cur - (size_t)s1);
+    return vsprintf(s1, s2, list);
 }
 
 /*
  * Api - Print to limited string
  */
 extern unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
+    va_list list;
+    va_start(list, s2);
+
+    return vsnprintf(s1, n, s2, list);
+}
+
+/*
+ * Api - Print to string
+ */
+extern unsigned int vsprintf(char *s1, char *s2, va_list list) {
+    return vsnprintf(s1, -1, s2, list);
+}
+
+/*
+ * Api - Print to limited string
+ */
+extern unsigned int vsnprintf(char *s1, unsigned int n, char *s2, va_list list) {
     u_int j = 0;
     char number[16];
     char *cur = s1;
 
-    va_list list;
-    va_start(list, s2);
-
-    while (s2[j] != '\0' && j < n - 1) {
+    while (s2[j] != '\0' && j < n) {
         if (s2[j] != '%') {
             /* text */
             *cur++ = s2[j++];
@@ -223,12 +201,16 @@ extern unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
                     *cur++ = va_arg(list, char);
                     break;
                 case 'u':
+                    /* unsigned decimal */
                     itoa(va_arg(list, u_int), number, 10);
+                    strinv(number);
                     strcpy(cur, number);
                     cur += strlen(number);
                     break;
                 case 'X':
+                    /* unsigned hexedecimal */
                     itoa(va_arg(list, u_int), number, 16);
+                    strinv(number);
                     strcpy(cur, number);
                     cur += strlen(number);
                     break;

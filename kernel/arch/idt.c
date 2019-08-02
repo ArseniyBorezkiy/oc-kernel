@@ -6,8 +6,8 @@
 #include <sched/sched.h>
 #include <arch/memory.h>
 #include <utils/kprint.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
-#include <types.h>
 
 static void idt_fill_entry(u_char offset, size_t addr);
 extern void asm_idt_load(size_t *addr);

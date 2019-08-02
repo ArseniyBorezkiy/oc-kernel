@@ -6,6 +6,11 @@
     "messages.h": "c",
     "kprint.h": "c",
     "string.h": "c",
-    "reg.h": "c"
+    "reg.h": "c",
+    "init.h": "c",
+    "kdump.h": "c",
+    "multiboot.h": "c",
+    "ipc.h": "c",
+    "kpanic.h": "c"
   }
 }

@@ -5,6 +5,7 @@
 #include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/time.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
 
 int current_task_index = -1;

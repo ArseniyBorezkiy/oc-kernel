@@ -1,10 +1,9 @@
-#include <utils/kprint.h>
 #include <arch/memory.h>
 #include <arch/idt.h>
+#include <utils/kprint.h>
 #include <lib/math.h>
-#include <lib/stdarg.h>
 #include <lib/string.h>
-#include <types.h>
+#include <lib/stdtypes.h>
 
 const char* video_base_ptr = (char*)VIDEO_MEMORY_ADDR;
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;

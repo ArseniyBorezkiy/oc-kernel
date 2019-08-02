@@ -1,12 +1,12 @@
-#include <sched/task.h>
 #include <arch/memory.h>
 #include <arch/idt.h>
 #include <arch/reg.h>
+#include <sched/task.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/string.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
-#include <types.h>
 
 static int sched_get_free_task_index();
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <types.h>
+#include <lib/stdtypes.h>
 
 #define IPC_MSG_DATA_BUFF_SIZE 16
 #define IPC_MSG_TYPE_BYTE 1
