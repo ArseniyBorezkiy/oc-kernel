@@ -115,6 +115,7 @@ asm_ih_keyboard:
 
 /*
  * Lock interrupts
+ * void asm_lock();
  */
 asm_lock:
   cli
@@ -122,6 +123,7 @@ asm_lock:
 
 /*
  * Unlock interrupts
+ * void asm_unlock();
  */
 asm_unlock:
   sti
@@ -129,6 +131,7 @@ asm_unlock:
 
 /*
  * Halt processor
+ * void asm_hlt();
  */
 asm_hlt:
   hlt

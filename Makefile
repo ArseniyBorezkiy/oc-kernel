@@ -20,7 +20,8 @@ build: build-lib build-kernel
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o \
 		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
-		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o \
+		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
+		./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/ipc.c.o \
 		./bin/init.c.o ./bin/tty.c.o
@@ -41,14 +42,17 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kpanic.c -o ./bin/kpanic.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
-                   ./kernel/arch/pic.c ./kernel/arch/idt.c
+                   ./kernel/arch/pic.c ./kernel/arch/idt.c ./kernel/arch/mmu.s \
+				   ./kernel/arch/mmu.c
 	$(AS) $(AS_FLAGS) ./kernel/arch/entry.s -o ./bin/entry.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/reg.s -o ./bin/reg.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/port.s -o ./bin/port.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/idt.s -o ./bin/idt.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/mmu.s -o ./bin/mmu.s.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/pic.c -o ./bin/pic.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/idt.c -o ./bin/idt.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/ih.c -o ./bin/ih.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/mmu.c -o ./bin/mmu.c.o
 
 build-kernel-ipc: ./kernel/ipc/ipc.c
 	$(CC) $(CC_FLAGS) -c ./kernel/ipc/ipc.c -o ./bin/ipc.c.o

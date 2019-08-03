@@ -11,6 +11,8 @@
     "kdump.h": "c",
     "multiboot.h": "c",
     "ipc.h": "c",
-    "kpanic.h": "c"
+    "kpanic.h": "c",
+    "mmu.h": "c",
+    "stdtypes.h": "c"
   }
 }
