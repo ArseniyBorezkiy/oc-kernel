@@ -15,7 +15,7 @@ extern void task_tty() {
     struct message_t msg;
     
     while (1) {
-        kprint(MSG_TASK_TTY_LAUNCHED, (size_t*)asm_get_sp());
+        kprint(MSG_TASK_TTY_LAUNCHED, (size_t*)asm_get_esp());
         delay(1);
         kreceive(TID_TTY, &msg);
     }

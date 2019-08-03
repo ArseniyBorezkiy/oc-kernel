@@ -11,7 +11,7 @@
  */
 extern void task_init() {
     while (1) {
-        kprint(MSG_TASK_INIT_LAUNCHED, (size_t*)asm_get_sp());
+        kprint(MSG_TASK_INIT_LAUNCHED, (size_t*)asm_get_esp());
         delay(1);
     }
 }

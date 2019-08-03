@@ -1,4 +1,5 @@
 #include <boot/multiboot.h>
+#include <arch/reg.h>
 #include <vfs/elf.h>
 #include <utils/kdump.h>
 #include <utils/kprint.h>
@@ -44,4 +45,23 @@ extern void kdump_elf(struct elf_header_t *header) {
     kprint("    segment size in file: %X\n", p_header->p_filesz);
     kprint("    alignment: %X\n", p_header->p_align);
   }
+}
+
+/*
+ * Api - Dump control registers
+ */
+extern void kdump_registers() {
+  kprint("-- dump control registers\n");
+  u16 cs = asm_get_cs();
+  u16 ss = asm_get_ss();
+  u16 ds = asm_get_ds();
+  u32 esp = asm_get_esp();
+  u32 eflags = asm_get_eflags();
+  u32 cr0 = asm_get_cr0();
+  u32 cr3 = asm_get_cr3();
+  kprint("  cs = %X  ds = %X  ss = %X\n", cs, ds, ss);
+  kprint("  esp = %X\n", esp);
+  kprint("  cr0 = %X\n", cr0);
+  kprint("  cr3 = %X\n", cr3);
+  kprint("  eflags = %X\n", eflags);
 }

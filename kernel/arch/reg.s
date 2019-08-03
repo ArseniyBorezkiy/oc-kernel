@@ -3,11 +3,12 @@
 #
 .code32
 .text
-.globl asm_get_cs, asm_get_ds, asm_get_ss, asm_get_sp, asm_get_flags, asm_switch_context
+.globl asm_get_cs, asm_get_ds, asm_get_ss, asm_get_esp, asm_get_eflags, asm_switch_context
+.globl asm_get_cr0, asm_get_cr3
 
 #
 # Get code selector
-# unsinged short asm_get_cs()
+# u16 asm_get_cs()
 #
 asm_get_cs:
     xor %eax,%eax
@@ -16,7 +17,7 @@ asm_get_cs:
 
 #
 # Get data selector
-# unsigned short asm_get_ds()
+# u16 asm_get_ds()
 #
 asm_get_ds:
     xor %eax,%eax
@@ -25,7 +26,7 @@ asm_get_ds:
 
 #
 # Get stack selector
-# unsigned short asm_get_ss()
+# u16 asm_get_ss()
 #
 asm_get_ss:
     xor %eax,%eax
@@ -34,27 +35,43 @@ asm_get_ss:
 
 #
 # Get stack pointer
-# size_t asm_get_sp()
+# u32 asm_get_esp()
 #
-asm_get_sp:
+asm_get_esp:
   mov %esp,%eax
   ret
 
 #
-# Get flags register
-# unsigned int asm_get_flags()
+# Get control register
+# u32 asm_get_cr0()
 #
-asm_get_flags:
+asm_get_cr0:
+  mov %cr0,%eax
+  ret
+
+#
+# Get page directory register
+# u32 asm_get_cr3()
+#
+asm_get_cr3:
+  mov %cr3,%eax
+  ret
+
+#
+# Get flags register
+# u32 asm_get_eflags()
+#
+asm_get_eflags:
     pushf
     popl %eax
     ret
 
 #
 # Switch context
-# void asm_switch_context(u_int sp)
+# void asm_switch_context(u32 esp)
 #
 asm_switch_context:
-  mov 4(%esp),%ebp # ebp = sp
+  mov 4(%esp),%ebp # ebp = esp
   mov %ebp,%esp
   popal
   sti

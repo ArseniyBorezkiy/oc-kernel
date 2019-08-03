@@ -5,9 +5,11 @@
 /*
  * Api
  */
-extern unsigned int asm_get_cs();
-extern unsigned int asm_get_ds();
-extern unsigned int asm_get_ss();
-extern unsigned int asm_get_sp();
-extern unsigned int asm_get_flags();
-extern void asm_switch_context(u_int sp);
+extern u16 asm_get_cs();
+extern u16 asm_get_ds();
+extern u16 asm_get_ss();
+extern u32 asm_get_esp();
+extern u32 asm_get_eflags();
+extern u32 asm_get_cr0();
+extern u32 asm_get_cr3();
+extern void asm_switch_context(u32 esp);
