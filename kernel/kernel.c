@@ -8,7 +8,10 @@
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/time.h>
+#include <lib/stdtypes.h>
 #include <messages.h>
+
+extern void *kernel_stack = null;
 
 static void kernel_create_tasks();
 static void kernel_run_tasks();
@@ -16,11 +19,14 @@ static void kernel_run_tasks();
 /*
  * Api - Kernel entry point
  */
-extern void kernel_start(struct multiboot_t *multiboot)
+extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 {
   kclear();
   kprint(MSG_KERNEL_START, &kernel_start);
   kprint(MSG_KERNEL_MEM_AVAILABLE, multiboot->mem_upper);
+
+  /* remember kernel stack addr */
+  kernel_stack = kstack;
   
   /* init arch */
   idt_init();

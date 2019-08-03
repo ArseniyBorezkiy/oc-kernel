@@ -4,6 +4,7 @@
 #include <utils/kdump.h>
 #include <utils/kprint.h>
 #include <lib/stdtypes.h>
+#include <kernel.h>
 
 /*
  * Api - Stack dump
@@ -64,4 +65,13 @@ extern void kdump_registers() {
   kprint("  cr0 = %X\n", cr0);
   kprint("  cr3 = %X\n", cr3);
   kprint("  eflags = %X\n", eflags);
+}
+
+/*
+ * Api - Dump memory areas
+ */
+extern void kdump_memory_areas() {
+  kprint("-- dump memory areas\n");
+  size_t kernel_stack_addr = (size_t)kernel_stack;
+  kprint("  kernel stack: %X - %X\n", kernel_stack_addr, kernel_stack_addr - KERNEL_STACK_SIZE);
 }

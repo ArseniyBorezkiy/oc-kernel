@@ -16,6 +16,7 @@ multiboot:
 start:
 	cli
 	movl $stack,%esp
+        push %esp
         movl $multiboot,%ebx
         movl 16(%ebx),%eax
         push %eax

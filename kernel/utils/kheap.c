@@ -1,6 +1,7 @@
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
 #include <lib/string.h>
+#include <kernel.h>
 
 struct kernel_heap_table_t kernel_heap_table;
 
