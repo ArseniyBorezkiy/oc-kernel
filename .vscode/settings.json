@@ -13,6 +13,8 @@
     "ipc.h": "c",
     "kpanic.h": "c",
     "mmu.h": "c",
-    "stdtypes.h": "c"
+    "stdtypes.h": "c",
+    "kheap.h": "c",
+    "kassert.h": "c"
   }
 }

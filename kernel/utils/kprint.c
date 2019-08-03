@@ -26,14 +26,21 @@ extern void kclear() {
  * Api - Print kernel message
  */
 extern void kprint(const char *str, ...) {
+    va_list list;
+    va_start(list, str);
+
+    kvprint(str, list);
+}
+
+/*
+ * Api - Print kernel message
+ */
+extern void kvprint(const char *str, va_list list) {
     char ch;
     u_int num;
     char str_num[8];
 
     asm_lock();
-
-    va_list list;
-    va_start(list, str);
 
     while (*str != '\0') {
         if (*str != '\n' && *str != '%') {

@@ -6,8 +6,11 @@
 /*
  * API - Stop kernel execution
  */
-extern void kpanic(char * message) {
-    kprint(message);
+extern void kpanic(char * message, ...) {
+    va_list list;
+    va_start(list, message);
+
+    kvprint(message, list);
     asm_lock();
     asm_hlt();
 }

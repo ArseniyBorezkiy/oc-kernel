@@ -3,4 +3,4 @@
 /*
  * Api
  */
-extern void kpanic(char * message);
+extern void kpanic(char * message, ...);
