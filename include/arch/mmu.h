@@ -38,5 +38,6 @@ struct page_table_entry_t {
  * Api
  */
 extern void asm_enable_paging(void *page_directory);
+extern void init_kernel_page_directory();
 extern void set_page_directory_entry(struct page_directory_entry_t *entry, u_int index);
 extern void set_page_table_entry(struct page_table_entry_t *entry, u_int dir_index, u_int tbl_index);
