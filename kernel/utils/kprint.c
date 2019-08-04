@@ -36,9 +36,10 @@ extern void kprint(const char *str, ...) {
  * Api - Print kernel message
  */
 extern void kvprint(const char *str, va_list list) {
-    char ch;
+    char buf[SCREEN_WIDTH];
+    char *str;
     u_int num;
-    char str_num[8];
+    char ch;
 
     asm_lock();
 
@@ -65,23 +66,33 @@ extern void kvprint(const char *str, va_list list) {
                     break;
                 case 'u':
                     num = va_arg(list, u_int);
-                    itoa(num, str_num, 10);
+                    itoa(num, buf, 10);
 
-                    if (video_ptr - video_base_ptr + strlen(str_num) >= SCREEN_SIZE) {
+                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
-                    video_ptr = strext(video_ptr, str_num, VIDEO_MEMORY_ATTR);
+                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
                 case 'X':
                     num = va_arg(list, u_int);
-                    itoa(num, str_num, 16);
+                    itoa(num, buf, 16);
 
-                    if (video_ptr - video_base_ptr + strlen(str_num) >= SCREEN_SIZE) {
+                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
-                    video_ptr = strext(video_ptr, str_num, VIDEO_MEMORY_ATTR);
+                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
+                    break;
+                case 's':
+                    str = va_arg(list, char*);
+                    strcpy(buf, str);
+
+                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
+                        kscroll(1); /* scroll line up */
+                    }
+
+                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
             }
         } else if (*str == '\n') {

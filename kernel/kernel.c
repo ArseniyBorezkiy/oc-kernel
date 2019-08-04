@@ -7,6 +7,7 @@
 #include <tasks/init.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
+#include <utils/lib.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
@@ -30,6 +31,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   
   /* init arch */
   idt_init();
+  lib_init();
 
 	/* init scheduler */
   sched_init();

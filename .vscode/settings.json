@@ -15,6 +15,9 @@
     "mmu.h": "c",
     "stdtypes.h": "c",
     "kheap.h": "c",
-    "kassert.h": "c"
+    "kassert.h": "c",
+    "lib.h": "c",
+    "stdint.h": "c",
+    "assembly.h": "c"
   }
 }

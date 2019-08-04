@@ -18,7 +18,7 @@ all: build start
 build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
-		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
+		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o ./bin/lib.c.o \
 		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
 		./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
@@ -42,6 +42,7 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kpanic.c -o ./bin/kpanic.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kheap.c -o ./bin/kheap.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kassert.c -o ./bin/kassert.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/utils/lib.c -o ./bin/lib.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
                    ./kernel/arch/pic.c ./kernel/arch/idt.c ./kernel/arch/mmu.s \

@@ -188,6 +188,7 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, char *s2, va_list list) 
     u_int j = 0;
     char number[16];
     char *cur = s1;
+    char *str;
 
     while (s2[j] != '\0' && j < n) {
         if (s2[j] != '%') {
@@ -213,6 +214,12 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, char *s2, va_list list) 
                     strinv(number);
                     strcpy(cur, number);
                     cur += strlen(number);
+                    break;
+                case 's':
+                    /* string */
+                    str = va_arg(list, char*);
+                    strcpy(cur, str);
+                    cur += strlen(str);
                     break;
             }
             j += 1;
