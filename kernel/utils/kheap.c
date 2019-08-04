@@ -73,6 +73,20 @@ extern void *kmalloc(size_t size) {
                         kheap_validate();
                         return current->addr; /* suitable block has found */
                     }
+                } else if (current->next == null) {
+                    /* try to allocate new memory */
+                    size_t heap_end_addr = current->addr + current->size;
+                    size_t lack = size - current->size;
+                    /* check free memory size is enought */
+                    if (heap_end_addr + lack < KHEAP_END_ADDR) {
+                        /* occupy block */
+                        current->size += lack;
+                        current->is_buzy = true;
+                        kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
+                        kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
+                        kheap_validate();
+                        return current->addr; /* suitable block has found */
+                    }
                 }
             } else {
                 /* occupy block */
@@ -345,5 +359,11 @@ static void kheap_test() {
     kfree(addr7);
     kfree(addr8);
     kfree(addr9);
+    /* allocate 1 tiny block */
+    void *addr10 = kmalloc(1);
+    kassert(__FILE__, __LINE__, addr9 == KHEAP_START_ADDR);
+    kfree(addr10);
+    /* clear heap table */
+    memset(&kernel_heap_table, 0, sizeof(kernel_heap_table));
 #endif
 }
