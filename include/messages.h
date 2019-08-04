@@ -9,7 +9,7 @@
 #define MSG_KERNEL_MEM_AVAILABLE (MSG_KERNEL_PREFIX "total memory available %X Kb" MSG_CRLN)
 #define MSG_KERNEL_STARTED (MSG_KERNEL_PREFIX "kernel started successfully" MSG_CRLN)
 #define MSG_KERNEL_PANIC (MSG_KERNEL_PREFIX "kernel panic!" MSG_CRLN)
-#define MSG_KERNEL_LINE (MSG_KERNEL_PREFIX "line: %u" MSG_CRLN)
+#define MSG_KERNEL_FILE_LINE (MSG_KERNEL_PREFIX "file: %s, line: %u" MSG_CRLN)
 #define MSG_IRQ1 (MSG_KERNEL_PREFIX "irq1" MSG_CRLN)
 
 /* scheduler */
