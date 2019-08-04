@@ -5,4 +5,5 @@
 /*
  * Api
  */
-extern void kassert(u_int line, u_int column, bool expr);
+extern void kassert(const char * file, u_int line, bool expr);
+extern void kassert_kernel_stack(const char * file, u_int line);
