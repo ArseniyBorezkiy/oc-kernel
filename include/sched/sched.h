@@ -8,3 +8,4 @@
  * Api
  */
 extern void sched_schedule(size_t *ret_addr, size_t *reg_addr);
+extern void sched_yield();

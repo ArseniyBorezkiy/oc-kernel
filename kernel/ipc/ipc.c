@@ -6,7 +6,7 @@
 #include <messages.h>
 
 /*
- * Api - send message to task
+ * Api - Send message to task
  */
 extern void ksend(u_short tid, struct message_t *msg) {
     struct sched_task *task;
@@ -28,15 +28,16 @@ extern void ksend(u_short tid, struct message_t *msg) {
     memcpy(&task->msg_buff[task->msg_count_in++], msg, sizeof(struct message_t));
 
     /* change task status */
-    if (task->status == TASK_STATUS_PENDING) {
-        task->status = TASK_STATUS_RUNNING;
+    if (task->status == TASK_INTERRUPTABLE) {
+        task->status = TASK_RUNNING;
     }
 }
 
 /*
- * Api - receive message to task
+ * Api - Receive message to task
  *   This function has blocking behaviour
  */
 extern void kreceive(u_short tid, struct message_t *msg) {
-    sched_set_task_status_by_id(tid, TASK_STATUS_PENDING);
+    sched_set_task_status_by_id(tid, TASK_INTERRUPTABLE);
+    sched_yield();
 }

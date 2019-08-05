@@ -8,7 +8,7 @@ struct page_table_entry_t page_table[PAGE_DIRECTORY_ENTRIES_COUNT][PAGE_TABLE_EN
  * Api - init kernel page directory
  * Here assumed each entry addresses 4MB
  */
-extern void init_kernel_page_directory() {
+extern void mmu_init() {
     u_int kpdi = KERNEL_PAGE_DIRECTORY_INDEX;
 
     /* set kernel page directory */

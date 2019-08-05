@@ -1,5 +1,4 @@
 #include <boot/multiboot.h>
-#include <arch/memory.h>
 #include <arch/idt.h>
 #include <arch/pic.h>
 #include <sched/task.h>
@@ -11,6 +10,7 @@
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
+#include <kernel.h>
 
 extern void *kernel_stack = null;
 
@@ -32,6 +32,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   /* init arch */
   idt_init();
   lib_init();
+  mmu_init();
 
 	/* init scheduler */
   sched_init();

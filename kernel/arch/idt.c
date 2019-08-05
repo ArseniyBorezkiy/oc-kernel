@@ -4,10 +4,10 @@
 #include <arch/port.h>
 #include <sched/task.h>
 #include <sched/sched.h>
-#include <arch/memory.h>
 #include <utils/kprint.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
+#include <kernel.h>
 
 static void idt_fill_entry(u_char offset, size_t addr);
 extern void asm_idt_load(size_t *addr);
@@ -49,7 +49,7 @@ extern void idt_init()
  */
 static void idt_fill_entry(u_char offset, size_t handler) {
     IDT[offset].offset_lowerbits = LOW_WORD(handler);
-    IDT[offset].selector = CODE_SEGMENT_SELECTOR;
+    IDT[offset].selector = KERNEL_CODE_SEGMENT_SELECTOR;
     IDT[offset].zero = 0;
     IDT[offset].type_attr = INTERRUPT_GATE;
     IDT[offset].offset_higherbits = HIGH_WORD(handler);

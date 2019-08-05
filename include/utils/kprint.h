@@ -2,6 +2,12 @@
 
 #include <lib/stdtypes.h>
 
+#define SCREEN_WIDTH (80 * 2)
+#define SCREEN_HEIGHT 25
+#define SCREEN_SIZE (SCREEN_WIDTH * SCREEN_HEIGHT)
+#define VIDEO_MEMORY_ADDR 0xb8000
+#define VIDEO_MEMORY_ATTR 0x07
+
 /*
  * Api
  */

@@ -31,3 +31,6 @@ extern void idt_init();
 extern void asm_lock();
 extern void asm_unlock();
 extern void asm_hlt();
+
+#define asm_int_param(number) #number
+#define asm_int(number) __asm__("int "##asm_int_param(number));

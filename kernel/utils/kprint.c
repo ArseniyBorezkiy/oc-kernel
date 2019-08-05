@@ -1,4 +1,3 @@
-#include <arch/memory.h>
 #include <arch/idt.h>
 #include <utils/kprint.h>
 #include <lib/math.h>

@@ -1,19 +1,19 @@
 #pragma once
 
 #include <lib/stdtypes.h>
-#include <arch/registers.h>
+#include <arch/reg.h>
 #include <ipc/ipc.h>
 
-#define MAX_TASKS_COUNT 16
+#define TASK_MAX_COUNT 16
 #define TASK_STACK_SIZE (4 * 1024)
 #define TASK_MSG_BUFF_SIZE 8
 
 #define TID_INIT 1
 #define TID_TTY 2
 
-#define TASK_STATUS_UNINTERRUPTABLE 1
-#define TASK_STATUS_RUNNING 2
-#define TASK_STATUS_PENDING 3
+#define TASK_UNINTERRUPTABLE 1
+#define TASK_INTERRUPTABLE 2
+#define TASK_RUNNING 3
 
 /*
  * Process descriptor
@@ -25,6 +25,7 @@ struct sched_task {
     struct op_registers_t op_registers; /* other purpose registers */
     struct flags_t flags; /* processor flags */
     u_int time; /* time of task execution */
+    bool reschedule; /* whether task need to be rescheduled */
     u_short status; /* task status */
     u_short msg_count_in; /* count of incomming messages */
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
