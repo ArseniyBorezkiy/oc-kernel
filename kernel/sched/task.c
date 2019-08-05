@@ -6,9 +6,11 @@
 #include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
+#include <assembly.h>
 #include <messages.h>
 
 static int task_get_free_index();
+static void task_test();
 
 /*
  * Tasks
@@ -21,8 +23,8 @@ static void *stacks[TASK_MAX_COUNT][TASK_STACK_SIZE];
  * Api - Init
  */
 extern void task_init() {
-    /* clear task array */
     memset(tasks, 0, sizeof(struct sched_task) * TASK_MAX_COUNT);
+    task_test();
 }
 
 /*
@@ -36,21 +38,18 @@ extern bool task_create(u_short tid, void *address) {
 
     /* get free task entry */
     index = task_get_free_index();
-
     /* check task has allocated */
     if (index == -1) {
         kprint(MSG_SCHED_TID_EXCEED);
         return false;
     }
-
     /* deny tid duplicates */
     if (task_find_index(tid) != -1) {
         kprint(MSG_SCHED_TID_EXISTS);
         return false;
     }
-
+    /* get task */
     task = &tasks[index];
-
     /* fill data */
     task->tid = tid;
     task->is_valid = true;
@@ -182,7 +181,7 @@ extern void task_extract_message(u_short tid, struct message_t *msg) {
     task = task_get_by_id(tid);
     kassert(__FILE__, __LINE__, task->msg_count_in > 0);
     /* get first incomed message */
-    cur_msg = &task->msg_buff[task->msg_count_in--];
+    cur_msg = &task->msg_buff[--task->msg_count_in];
     kassert(__FILE__, __LINE__, task->msg_count_in >= 0);
     /* copy message to result buffer */
     memcpy(msg, cur_msg, sizeof(struct message_t));
@@ -201,4 +200,45 @@ static int task_get_free_index() {
     }
 
     return -1;
+}
+
+/*
+ * Smoke test
+ */
+static void task_test() {
+#ifdef TEST
+    struct sched_task *task;
+    struct sched_task task1;
+    struct sched_task task2;
+    struct message_t msg;
+    struct message_t msg1;
+    struct message_t msg2;
+
+    task1.tid = 1;
+    task2.tid = 1;
+
+    msg1.type = 1;
+    msg1.len = 0;
+    msg2.type = 2;
+    msg2.len = 0;
+
+    /* tasks creation */
+    task_create(task1.tid, &task1);
+    task_create(task2.tid, &task2);
+    task = task_get_by_id(task1.tid);
+    kassert(__FILE__, __LINE__, task->tid == task1.tid);
+    task = task_get_by_id(task2.tid);
+    kassert(__FILE__, __LINE__, task->tid == task2.tid);
+
+    /* messages */
+    task_pack_message(task1.tid, &msg1);
+    task_pack_message(task1.tid, &msg2);
+    task_extract_message(task1.tid, &msg);
+    kassert(__FILE__, __LINE__, msg.type == msg1.type);
+    task_extract_message(task1.tid, &msg);
+    kassert(__FILE__, __LINE__, msg.type == msg2.type);
+
+    /* clear task table */
+    memset(tasks, 0, sizeof(struct sched_task) * TASK_MAX_COUNT);
+#endif
 }

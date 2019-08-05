@@ -30,8 +30,8 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   kernel_stack = kstack;
   
   /* init arch */
-  idt_init();
   lib_init();
+  idt_init();
   mmu_init();
 
 	/* init scheduler */
