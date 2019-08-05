@@ -1,13 +1,14 @@
 #include <arch/idt.h>
 #include <arch/reg.h>
 #include <sched/task.h>
+#include <ipc/ipc.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
 
-static int sched_get_free_task_index();
+static int task_get_free_index();
 
 /*
  * Tasks
@@ -19,7 +20,7 @@ static void *stacks[TASK_MAX_COUNT][TASK_STACK_SIZE];
 /*
  * Api - Init
  */
-extern void sched_init() {
+extern void task_init() {
     /* clear task array */
     memset(tasks, 0, sizeof(struct sched_task) * TASK_MAX_COUNT);
 }
@@ -27,14 +28,14 @@ extern void sched_init() {
 /*
  * Api - Create new task
  */
-extern bool sched_create_task(u_short tid, void *address) {
+extern bool task_create(u_short tid, void *address) {
     kprint(MSG_SCHED_TID_CREATE, (u_int)address);
 
     struct sched_task *task;
     int index;
 
     /* get free task entry */
-    index = sched_get_free_task_index();
+    index = task_get_free_index();
 
     /* check task has allocated */
     if (index == -1) {
@@ -43,7 +44,7 @@ extern bool sched_create_task(u_short tid, void *address) {
     }
 
     /* deny tid duplicates */
-    if (sched_find_task_index(tid) != -1) {
+    if (task_find_index(tid) != -1) {
         kprint(MSG_SCHED_TID_EXISTS);
         return false;
     }
@@ -71,70 +72,38 @@ extern bool sched_create_task(u_short tid, void *address) {
 }
 
 /*
+ * Api - Get task by id
+ */
+extern struct sched_task *task_get_by_id(u_short tid) {
+    struct sched_task *task;
+    int index;
+
+    index = task_find_index(tid);
+    task = task_get_by_index(index);
+
+    return task;
+}
+
+/*
  * Api - Get task by index
  */
-extern struct sched_task *sched_get_task_by_index(int index) {
-  return &tasks[index];
-}
-
-/*
- * Api - Run task by id
- */
-extern bool sched_run_task_by_id(u_short tid) {
+extern struct sched_task *task_get_by_index(int index) {
     struct sched_task *task;
-    int index;
 
-    index = sched_find_task_index(tid);
-
-    /* check task found */
-    if (index == -1) {
-        kprint(MSG_SCHED_TID_UNKNOWN);
-        return false;
-    }
-
+    kassert(__FILE__, __LINE__, index < TASK_MAX_COUNT);
     task = &tasks[index];
-    task->status = TASK_RUNNING;
+    kassert(__FILE__, __LINE__, task != null);
 
-    return true;
-}
-
-/*
- * Api - Stop task by id
- */
-extern bool sched_stop_task_by_id(u_short tid) {
-    struct sched_task *task;
-    int index;
-
-    index = sched_find_task_index(tid);
-
-    /* check task found */
-    if (index == -1) {
-        kprint(MSG_SCHED_TID_UNKNOWN);
-        return false;
-    }
-
-    task = &tasks[index];
-    task->status = TASK_UNINTERRUPTABLE;
-
-    return true;
+    return task;
 }
 
 /*
  * Api - Set task status by id
  */
-extern bool sched_set_task_status_by_id(u_short tid, u_short status) {
+extern bool task_set_status_by_id(u_short tid, u_short status) {
     struct sched_task *task;
-    int index;
 
-    index = sched_find_task_index(tid);
-
-    /* check task found */
-    if (index == -1) {
-        kprint(MSG_SCHED_TID_UNKNOWN);
-        return false;
-    }
-
-    task = &tasks[index];
+    task = task_get_by_id(tid);
     task->status = status;
 
     return true;
@@ -143,7 +112,7 @@ extern bool sched_set_task_status_by_id(u_short tid, u_short status) {
 /*
  * Api - Find first task to run from index
  */
-extern int sched_find_task_to_run_index(int index) {
+extern int task_find_to_run_index(int index) {
     struct sched_task *task;
     int i;
 
@@ -169,7 +138,7 @@ extern int sched_find_task_to_run_index(int index) {
 /*
  * Api - Find task by id
  */
-extern int sched_find_task_index(u_short tid) {
+extern int task_find_index(u_short tid) {
     int i;
 
     for (i = 0; i < TASK_MAX_COUNT; ++i) {
@@ -182,9 +151,47 @@ extern int sched_find_task_index(u_short tid) {
 }
 
 /*
+ * Api - Pack message
+ */
+extern void task_pack_message(u_short tid, struct message_t *msg) {
+    struct sched_task *task;
+
+    /* get target task */
+    task = task_get_by_id(tid);
+    /* check buffer size */
+    if (task->msg_count_in == TASK_MSG_BUFF_SIZE) {
+        kpanic("message buffer exceed for tid %X", tid);
+    }
+    /* unshift message to task buffer */
+    task->msg_count_in += 1;
+    for (int i = task->msg_count_in - 1; i > 0; --i) {
+        memcpy(&task->msg_buff[i], &task->msg_buff[i-1], sizeof(struct message_t));
+    }
+    /* unshift message to task buffer */
+    memcpy(&task->msg_buff[0], msg, sizeof(struct message_t));
+}
+
+/*
+ * Api - Extract message
+ */
+extern void task_extract_message(u_short tid, struct message_t *msg) {
+    struct sched_task *task;
+    struct message_t *cur_msg;
+
+    /* get target task */
+    task = task_get_by_id(tid);
+    kassert(__FILE__, __LINE__, task->msg_count_in > 0);
+    /* get first incomed message */
+    cur_msg = &task->msg_buff[task->msg_count_in--];
+    kassert(__FILE__, __LINE__, task->msg_count_in >= 0);
+    /* copy message to result buffer */
+    memcpy(msg, cur_msg, sizeof(struct message_t));
+}
+
+/*
  * Get first free task entry
  */
-static int sched_get_free_task_index() {
+static int task_get_free_index() {
     int i;
 
     for (i = 0; i < TASK_MAX_COUNT; ++i) {

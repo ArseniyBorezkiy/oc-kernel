@@ -13,6 +13,15 @@
 int current_task_index = -1; /* current running process index */
 
 /*
+ * Api - Init
+ */
+extern void sched_init() {
+  task_init();
+  /* no task currently running */
+  current_task_index = -1;
+}
+
+/*
  * Api - Schedule task to run
  */
 extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
@@ -22,7 +31,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
 
   /* get current task */
   if (current_task_index != -1) {
-    this_task = sched_get_task_by_index(current_task_index);
+    this_task = task_get_by_index(current_task_index);
     kassert(__FILE__, __LINE__, this_task != null);
 
     /* update running time */
@@ -47,11 +56,11 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
   }
 
   /* pick next task */
-  next_task_index = sched_find_task_to_run_index(current_task_index);
+  next_task_index = task_find_to_run_index(current_task_index);
   if (next_task_index == -1) {
     kpanic(MSG_SCHED_NO_TASKS);
   }
-  next_task = sched_get_task_by_index(next_task_index);
+  next_task = task_get_by_index(next_task_index);
 
   /* update current task pointer */
   kprint("scheduled tid=%u sp=%X pc=%X->%X\n", next_task_index, ret_addr, *ret_addr, next_task->op_registers.eip);
@@ -74,15 +83,24 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
 }
 
 /*
+ * Api - Get current running task
+ */
+extern struct sched_task *sched_get_current_task() {
+  struct sched_task *task;
+  task = task_get_by_index(current_task_index);
+  kassert(__FILE__, __LINE__, task != null);
+  return task;
+}
+
+/*
  * Api - Yield current process
  */
 extern void sched_yield() {
-  struct sched_task *this_task;
+  struct sched_task *task;
   /* get current task */
-  kassert(__FILE__, __LINE__, current_task_index != -1);
-  this_task = sched_get_task_by_index(current_task_index);
+  task = sched_get_current_task();
   /* mark task to be rescheduled */
-  this_task->reschedule = true;
+  task->reschedule = true;
   /* reschedule */
   asm_int(INT_TIMER);
 }

@@ -57,12 +57,9 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
  */
 static void kernel_create_tasks() {
   bool is_ok = 
-    sched_create_task(TID_INIT, task_init) &&
-    sched_create_task(TID_TTY, task_tty);
-
-  if (!is_ok) {
-    kpanic(MSG_KERNEL_PANIC);
-  }
+    task_create(TID_INIT, task_init) &&
+    task_create(TID_TTY, task_tty);
+  kassert(__FILE__, __LINE__, is_ok);
 }
 
 /*
@@ -70,10 +67,7 @@ static void kernel_create_tasks() {
  */
 static void kernel_run_tasks() {
   bool is_ok = 
-    sched_run_task_by_id(TID_TTY) &&
-    sched_run_task_by_id(TID_INIT);
-
-  if (!is_ok) {
-    kpanic(MSG_KERNEL_PANIC);
-  }
+    task_set_status_by_id(TID_TTY, TASK_RUNNING) &&
+    task_set_status_by_id(TID_INIT, TASK_RUNNING);
+  kassert(__FILE__, __LINE__, is_ok);
 }

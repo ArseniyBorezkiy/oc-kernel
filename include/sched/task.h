@@ -27,18 +27,19 @@ struct sched_task {
     u_int time; /* time of task execution */
     bool reschedule; /* whether task need to be rescheduled */
     u_short status; /* task status */
-    u_short msg_count_in; /* count of incomming messages */
+    int msg_count_in; /* count of incomming messages */
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
 };
 
 /*
  * Api
  */
-extern void sched_init();
-extern bool sched_create_task(u_short tid, void *address);
-extern struct sched_task *sched_get_task_by_index(int index);
-extern bool sched_run_task_by_id(u_short tid);
-extern bool sched_stop_task_by_id(u_short tid);
-extern bool sched_set_task_status_by_id(u_short tid, u_short status);
-extern int sched_find_task_to_run_index(int index);
-extern int sched_find_task_index(u_short tid);
+extern void task_init();
+extern bool task_create(u_short tid, void *address);
+extern struct sched_task *task_get_by_id(u_short tid);
+extern struct sched_task *task_get_by_index(int index);
+extern bool task_set_status_by_id(u_short tid, u_short status);
+extern int task_find_to_run_index(int index);
+extern int task_find_index(u_short tid);
+extern void task_pack_message(u_short tid, struct message_t *msg);
+extern void task_extract_message(u_short tid, struct message_t *msg);

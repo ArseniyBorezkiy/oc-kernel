@@ -19,6 +19,7 @@
     "lib.h": "c",
     "stdint.h": "c",
     "assembly.h": "c",
-    "kernel.h": "c"
+    "kernel.h": "c",
+    "sched.h": "c"
   }
 }
