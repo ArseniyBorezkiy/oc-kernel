@@ -160,7 +160,7 @@ extern void task_pack_message(u_short tid, struct message_t *msg) {
     task = task_get_by_id(tid);
     /* check buffer size */
     if (task->msg_count_in == TASK_MSG_BUFF_SIZE) {
-        kpanic("message buffer exceed for tid %X", tid);
+        kpanic(MSG_KERNEL_TASK_BUFF_EXCEED, tid);
     }
     /* unshift message to task buffer */
     task->msg_count_in += 1;

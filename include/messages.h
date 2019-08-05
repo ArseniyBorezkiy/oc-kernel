@@ -11,6 +11,7 @@
 #define MSG_KERNEL_PANIC (MSG_KERNEL_PREFIX "kernel panic!" MSG_CRLN)
 #define MSG_KERNEL_FILE_LINE (MSG_KERNEL_PREFIX "file: %s, line: %u" MSG_CRLN)
 #define MSG_KERNEL_STACK_EXPECTED (MSG_KERNEL_PREFIX "kernel stack expected, but esp = %X" MSG_CRLN)
+#define MSG_KERNEL_TASK_BUFF_EXCEED (MSG_KERNEL_PREFIX "message buffer exceed for tid = %X" MSG_CRLN)
 #define MSG_IRQ1 (MSG_KERNEL_PREFIX "irq1" MSG_CRLN)
 
 /* scheduler */
