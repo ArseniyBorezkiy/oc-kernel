@@ -18,8 +18,9 @@ all: build start
 build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
-		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o ./bin/lib.c.o \
-		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o \
+		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o
+		./bin/lib.c.o \
+		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
 		./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
@@ -31,6 +32,7 @@ build-lib: ./lib/string.c ./lib/math.c
 	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/stdio.c -o ./bin/stdio.c.o
 
 build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
               build-kernel-ipc build-kernel-sync \

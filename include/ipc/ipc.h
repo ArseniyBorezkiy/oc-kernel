@@ -2,8 +2,7 @@
 
 #include <lib/stdtypes.h>
 
-#define IPC_MSG_DATA_BUFF_SIZE 16
-#define IPC_MSG_TYPE_BYTE 1
+#define IPC_MSG_DATA_BUFF_SIZE 80
 
 struct message_t {
     u_short type; /* message type */

@@ -4,6 +4,7 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
+#include <tasks/tty.h>
 #include <utils/kpanic.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
@@ -70,7 +71,7 @@ extern void ih_keyboard() {
 
         /* send message to tty task */
         struct message_t msg = {
-            .type = IPC_MSG_TYPE_BYTE,
+            .type = TTY_MSG_TYPE_GETC,
             .len = 1,
             .data = { ch }
         };

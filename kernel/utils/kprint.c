@@ -4,16 +4,39 @@
 #include <lib/math.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
+#include <messages.h>
 
-const char* video_base_ptr = (char*)VIDEO_MEMORY_ADDR;
-char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
-struct spin_t video_spin;
+static const char syslog[SCREEN_SIZE]; /* kernel system log */
+static const char* syslog_ptr;
+static char* kprint_buff; /* output buffer address */
+static char* kprint_buff_ptr; /* current buffer position */
+static struct spin_t video_spin;
 
 /*
  * Api - Init video module
  */
 extern void init_video() {
     memset(&video_spin, 0, sizeof(struct spin_t));
+    /* early kprint */
+    kprint_buff = (char*)VIDEO_MEMORY_ADDR;
+    kprint_buff_ptr = kprint_buff;
+}
+
+/*
+ * Api - Turn on system log
+ */
+extern void init_syslog() {
+    spin_lock(&video_spin);
+
+    syslog_ptr = &syslog;
+
+    memset(syslog_ptr, 0, SCREEN_SIZE);
+    kprint(MSG_KERNEL_SYSLOG_INITIALIZED);
+    /* syslog kprint */
+    kprint_buff = syslog_ptr;
+    kprint_buff_ptr = kprint_buff;
+    
+    spin_unlock(&video_spin);
 }
 
 /*
@@ -22,14 +45,14 @@ extern void init_video() {
 extern void kclear() {
     spin_lock(&video_spin);
 
-    video_ptr = video_base_ptr;
+    kprint_buff_ptr = kprint_buff;
 
     for (size_t i = 0; i < SCREEN_SIZE; ++i) {
-        *video_ptr++ = ' '; /* blank character */
-        *video_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
+        *kprint_buff_ptr++ = ' '; /* blank character */
+        *kprint_buff_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
     }
 
-    video_ptr = video_base_ptr;
+    kprint_buff_ptr = kprint_buff;
 
     spin_unlock(&video_spin);
 }
@@ -58,64 +81,64 @@ extern void kvprint(const char *str, va_list list) {
     while (*str != '\0') {
         if (*str != '\n' && *str != '%') {
             // usual character
-            if (video_ptr - video_base_ptr + 2 >= SCREEN_SIZE) {
+            if (kprint_buff_ptr - kprint_buff + 2 >= SCREEN_SIZE) {
                 kscroll(1); /* scroll line up */
             }
 
-            *video_ptr++ = *str++; /* the character's ascii */
-            *video_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
+            *kprint_buff_ptr++ = *str++; /* the character's ascii */
+            *kprint_buff_ptr++ = VIDEO_MEMORY_ATTR; /* attribute-byte */
         } else if (*str == '%') {
             // control character
             switch (*++str) {
                 case 'c':
-                    if (video_ptr - video_base_ptr + 2 >= SCREEN_SIZE) {
+                    if (kprint_buff_ptr - kprint_buff + 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
                     ch = va_arg(list, char);
-                    *video_ptr++ = ch;
-                    *video_ptr++ = VIDEO_MEMORY_ATTR;
+                    *kprint_buff_ptr++ = ch;
+                    *kprint_buff_ptr++ = VIDEO_MEMORY_ATTR;
                     break;
                 case 'u':
                     num = va_arg(list, u_int);
                     itoa(num, buf, 10);
 
-                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
+                    if (kprint_buff_ptr - kprint_buff + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
-                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
+                    kprint_buff_ptr = strext(kprint_buff_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
                 case 'X':
                     num = va_arg(list, u_int);
                     itoa(num, buf, 16);
 
-                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
+                    if (kprint_buff_ptr - kprint_buff + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
-                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
+                    kprint_buff_ptr = strext(kprint_buff_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
                 case 's':
                     str = va_arg(list, char*);
                     strcpy(buf, str);
 
-                    if (video_ptr - video_base_ptr + strlen(buf) * 2 >= SCREEN_SIZE) {
+                    if (kprint_buff_ptr - kprint_buff + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */
                     }
 
-                    video_ptr = strext(video_ptr, buf, VIDEO_MEMORY_ATTR);
+                    kprint_buff_ptr = strext(kprint_buff_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
             }
         } else if (*str == '\n') {
             // new line character
-            size_t offset = (video_ptr - video_base_ptr) % SCREEN_WIDTH;
+            size_t offset = (kprint_buff_ptr - kprint_buff) % SCREEN_WIDTH;
 
-            if (video_ptr - video_base_ptr + offset >= SCREEN_SIZE) {
+            if (kprint_buff_ptr - kprint_buff + offset >= SCREEN_SIZE) {
                 kscroll(1); /* scroll line up */
             }
 
-            video_ptr += (SCREEN_WIDTH - offset);
+            kprint_buff_ptr += (SCREEN_WIDTH - offset);
         }
     }
 
@@ -130,7 +153,7 @@ extern void kvprint(const char *str, va_list list) {
 extern void kscroll(u_int n) {
     spin_lock(&video_spin);
 
-    char *ptr = video_base_ptr;
+    char *ptr = kprint_buff;
     for (int i = 1; i < SCREEN_HEIGHT * 2; ++i) {
         for (int j = 0; j < SCREEN_WIDTH * 2; ++j) {
             ptr[(i - 1) * SCREEN_WIDTH * 2 + j] = ptr[i * SCREEN_WIDTH * 2 + j];
@@ -142,7 +165,7 @@ extern void kscroll(u_int n) {
         ptr[(SCREEN_HEIGHT * 2 - 1) + j * 2 + 1] = VIDEO_MEMORY_ATTR;
     }
 
-    video_ptr -= SCREEN_WIDTH * 2;
+    kprint_buff_ptr -= SCREEN_WIDTH * 2;
 
     spin_unlock(&video_spin);
 }

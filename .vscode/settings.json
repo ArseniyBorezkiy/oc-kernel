@@ -22,6 +22,9 @@
     "kernel.h": "c",
     "sched.h": "c",
     "mutex.h": "c",
-    "spin.h": "c"
+    "spin.h": "c",
+    "tty.h": "c",
+    "sh.h": "c",
+    "stdio.h": "c"
   }
 }

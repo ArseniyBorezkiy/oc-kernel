@@ -8,10 +8,13 @@
 #define VIDEO_MEMORY_ADDR 0xb8000
 #define VIDEO_MEMORY_ATTR 0x07
 
+extern const char* syslog_ptr;
+
 /*
  * Api
  */
 extern void init_video(); /* init module */
+extern void init_syslog(); /* turn on print to system log */
 extern void kclear(); /* clear kernel screen */
 extern void kprint(const char *str, ...); /* kernel print */
 extern void kvprint(const char *str, va_list list); /* kernel print */
