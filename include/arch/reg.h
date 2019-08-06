@@ -10,7 +10,7 @@ struct gp_registers_t {
     u32 edi;
     u32 esi;
     u32 ebp;
-    u32 esp;
+    u32 esp; /* current stack */
     u32 ebx;
     u32 edx;
     u32 ecx;
@@ -22,7 +22,8 @@ struct gp_registers_t {
  */
 struct op_registers_t {
     u32 eip;
-    u32 esp;
+    u32 k_esp; /* kernel stack */
+    u32 u_esp; /* user stack */
     u16 cs;
     u16 ds;
     u16 ss;

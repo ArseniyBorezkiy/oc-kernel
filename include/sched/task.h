@@ -4,13 +4,17 @@
 #include <arch/reg.h>
 #include <ipc/ipc.h>
 
+/* limits */
 #define TASK_MAX_COUNT 16
-#define TASK_STACK_SIZE (4 * 1024)
+#define TASK_KSTACK_SIZE 1024
+#define TASK_USTACK_SIZE (4 * 1024)
 #define TASK_MSG_BUFF_SIZE 8
 
+/* predefined tasks */
 #define TID_INIT 1
 #define TID_TTY 2
 
+/* task status */
 #define TASK_UNINTERRUPTABLE 1
 #define TASK_INTERRUPTABLE 2
 #define TASK_RUNNING 3
@@ -30,6 +34,7 @@ struct sched_task_t {
     int msg_count_in; /* count of incomming messages */
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
     void *kstack; /* kernel stack top */
+    void *ustack; /* user stack top */
     struct sched_task_t *next; /* next entry */
     struct sched_task_t *prev; /* prev entry */
 };

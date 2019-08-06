@@ -43,7 +43,8 @@ extern bool task_create(u_short tid, void *address) {
 
     /* allocate memory */
     task = kmalloc(sizeof(struct sched_task_t));
-    task->kstack = kmalloc(TASK_STACK_SIZE);
+    task->kstack = kmalloc(TASK_KSTACK_SIZE);
+    task->ustack = kmalloc(TASK_USTACK_SIZE);
     task_count += 1;
     /* normalize pointers */
     if (task_list_head) {
@@ -71,7 +72,8 @@ extern bool task_create(u_short tid, void *address) {
     task->op_registers.ds = asm_get_ds();
     task->op_registers.ss = asm_get_ss();
     task->op_registers.eip = (size_t)address;
-    task->op_registers.esp = (u32)task->kstack + TASK_STACK_SIZE;
+    task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
+    task->op_registers.u_esp = (u32)task->ustack + TASK_USTACK_SIZE;
     
     return true;
 }
@@ -93,6 +95,7 @@ extern void task_delete(struct sched_task_t *task) {
     task->prev->next = task->next;
     /* free memory */
     kfree(task->kstack);
+    kfree(task->ustack);
     memset(task, 0, sizeof(struct sched_task_t));
     kfree(task);
 }
