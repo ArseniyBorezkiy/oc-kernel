@@ -14,6 +14,14 @@ extern void kassert(const char * file, u_int line, bool expr) {
 }
 
 /*
+ * Kernel code unreachable
+ */
+extern void kunreachable(const char * file, u_int line) {
+    kprint(MSG_KERNEL_CODE_UNREACHABLE);
+    kpanic(MSG_KERNEL_FILE_LINE, file, line);
+}
+
+/*
  * Kernel boolean assertion
  */
 extern void kassert_kernel_stack(const char * file, u_int line) {

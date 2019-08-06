@@ -1,4 +1,5 @@
 #include <arch/idt.h>
+#include <sync/spin.h>
 #include <utils/kprint.h>
 #include <lib/math.h>
 #include <lib/string.h>
@@ -6,11 +7,21 @@
 
 const char* video_base_ptr = (char*)VIDEO_MEMORY_ADDR;
 char* video_ptr = (char*)VIDEO_MEMORY_ADDR;
+struct spin_t video_spin;
+
+/*
+ * Api - Init video module
+ */
+extern void init_video() {
+    memset(&video_spin, 0, sizeof(struct spin_t));
+}
 
 /*
  * Api - Clear kernel screen
  */
 extern void kclear() {
+    spin_lock(&video_spin);
+
     video_ptr = video_base_ptr;
 
     for (size_t i = 0; i < SCREEN_SIZE; ++i) {
@@ -19,6 +30,8 @@ extern void kclear() {
     }
 
     video_ptr = video_base_ptr;
+
+    spin_unlock(&video_spin);
 }
 
 /*
@@ -40,7 +53,7 @@ extern void kvprint(const char *str, va_list list) {
     u_int num;
     char ch;
 
-    asm_lock();
+    spin_lock(&video_spin);
 
     while (*str != '\0') {
         if (*str != '\n' && *str != '%') {
@@ -108,13 +121,15 @@ extern void kvprint(const char *str, va_list list) {
 
     va_end(list);
 
-    asm_unlock();
+    spin_unlock(&video_spin);
 }
 
 /*
  * Api - Scroll console up
  */
 extern void kscroll(u_int n) {
+    spin_lock(&video_spin);
+
     char *ptr = video_base_ptr;
     for (int i = 1; i < SCREEN_HEIGHT * 2; ++i) {
         for (int j = 0; j < SCREEN_WIDTH * 2; ++j) {
@@ -128,4 +143,6 @@ extern void kscroll(u_int n) {
     }
 
     video_ptr -= SCREEN_WIDTH * 2;
+
+    spin_unlock(&video_spin);
 }

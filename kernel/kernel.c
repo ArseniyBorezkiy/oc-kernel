@@ -22,12 +22,14 @@ static void kernel_run_tasks();
  */
 extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 {
+  /* remember kernel stack addr */
+  kernel_stack = kstack;
+  
+  /* init screen */
+  init_video();
   kclear();
   kprint(MSG_KERNEL_START, &kernel_start);
   kprint(MSG_KERNEL_MEM_AVAILABLE, multiboot->mem_upper);
-
-  /* remember kernel stack addr */
-  kernel_stack = kstack;
   
   /* init arch */
   lib_init();

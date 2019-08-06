@@ -2,6 +2,7 @@
 #include <arch/idt.h>
 #include <sched/task.h>
 #include <sched/sched.h>
+#include <utils/kheap.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <utils/kassert.h>

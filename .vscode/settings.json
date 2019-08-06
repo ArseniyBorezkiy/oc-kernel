@@ -20,6 +20,8 @@
     "stdint.h": "c",
     "assembly.h": "c",
     "kernel.h": "c",
-    "sched.h": "c"
+    "sched.h": "c",
+    "mutex.h": "c",
+    "spin.h": "c"
   }
 }

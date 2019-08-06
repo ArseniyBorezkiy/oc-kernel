@@ -154,7 +154,7 @@ extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task
         task = task->next;
     } while (task != task_list_head);
 
-    kpanic(MSG_KERNEL_CODE_UNREACHABLE);
+    kunreachable(__FILE__, __LINE__);
 }
 
 /*

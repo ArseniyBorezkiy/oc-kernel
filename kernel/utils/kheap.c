@@ -1,3 +1,4 @@
+#include <sync/spin.h>
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
 #include <utils/kassert.h>
@@ -6,6 +7,7 @@
 #include <kernel.h>
 
 struct kernel_heap_table_t kernel_heap_table;
+struct spin_t *kheap_spin;
 
 static struct kernel_heap_entry_t *kheap_find_block(struct kernel_heap_entry_t *entry, bool is_valid, bool is_buzy);
 static struct kernel_heap_entry_t *kheap_find_first_valid_block(struct kernel_heap_entry_t *entry);
@@ -17,7 +19,8 @@ static void kheap_test();
  * Api - Kernel memory init
  */
 extern void kheap_init() {
-    memset(&kernel_heap_table, 0, sizeof(kernel_heap_table));
+    memset(&kernel_heap_table, 0, sizeof(struct kernel_heap_table_t));
+    memset(&kheap_spin, 0, sizeof(struct spin_t));
     kheap_test();
 }
 
@@ -26,6 +29,8 @@ extern void kheap_init() {
  */
 extern void *kmalloc(size_t size) {
     struct kernel_heap_entry_t * current;
+
+    spin_lock(&kheap_spin);
 
     /*
      * try to use existing suitable block
@@ -71,6 +76,7 @@ extern void *kmalloc(size_t size) {
                         kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
                         kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                         kheap_validate();
+                        spin_unlock(&kheap_spin);
                         return current->addr; /* suitable block has found */
                     }
                 } else if (current->next == null) {
@@ -85,6 +91,7 @@ extern void *kmalloc(size_t size) {
                         kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
                         kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                         kheap_validate();
+                        spin_unlock(&kheap_spin);
                         return current->addr; /* suitable block has found */
                     }
                 }
@@ -109,6 +116,7 @@ extern void *kmalloc(size_t size) {
                 kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
                 kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                 kheap_validate();
+                spin_unlock(&kheap_spin);
                 return current->addr; /* suitable block has found */
             }
         }
@@ -149,6 +157,7 @@ extern void *kmalloc(size_t size) {
     kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
     kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
     kheap_validate();
+    spin_unlock(&kheap_spin);
     return current->addr;
 }
 
@@ -157,6 +166,8 @@ extern void *kmalloc(size_t size) {
  */
 extern void kfree(void *addr) {
     struct kernel_heap_entry_t * current;
+
+    spin_lock(&kheap_spin);
 
     for (current = kheap_table_entries_start();
          current != kheap_table_entries_end();
@@ -178,6 +189,7 @@ extern void kfree(void *addr) {
                 memcpy(current->next, 0, sizeof(struct kernel_heap_entry_t));
             }
             kheap_validate();
+            spin_unlock(&kheap_spin);
             return;
         }
     }
