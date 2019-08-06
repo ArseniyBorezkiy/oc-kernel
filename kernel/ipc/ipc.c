@@ -10,7 +10,7 @@
  * Api - Send message to task
  */
 extern void ksend(u_short tid, struct message_t *msg) {
-    struct sched_task *task;
+    struct sched_task_t *task;
 
     /* get target task */
     task = task_get_by_id(tid);
@@ -28,8 +28,8 @@ extern void ksend(u_short tid, struct message_t *msg) {
  *   This function has blocking behaviour
  */
 extern void kreceive(u_short tid, struct message_t *msg) {
-    struct sched_task *task_before; /* before yield */
-    struct sched_task *task_after; /* after yield */
+    struct sched_task_t *task_before; /* before yield */
+    struct sched_task_t *task_after; /* after yield */
 
     /* get current task */
     task_before = sched_get_current_task();

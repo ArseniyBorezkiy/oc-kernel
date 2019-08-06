@@ -10,5 +10,5 @@
  */
 extern void sched_init();
 extern void sched_schedule(size_t *ret_addr, size_t *reg_addr);
-extern struct sched_task *sched_get_current_task();
+extern struct sched_task_t *sched_get_current_task();
 extern void sched_yield();

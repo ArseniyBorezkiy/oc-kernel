@@ -10,93 +10,82 @@
 #include <lib/stdtypes.h>
 #include <messages.h>
 
-int current_task_index = -1; /* current running process index */
+static struct sched_task_t *current_task; /* current running process */
 
 /*
  * Api - Init
  */
 extern void sched_init() {
-  task_init();
   /* no task currently running */
-  current_task_index = -1;
+  current_task = null;
+  /* init task module */
+  task_init();
 }
 
 /*
  * Api - Schedule task to run
  */
 extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
-  struct sched_task *this_task = null;
-  struct sched_task *next_task = null;
-  int next_task_index;
+  struct sched_task_t *next_task = null;
 
-  /* get current task */
-  if (current_task_index != -1) {
-    this_task = task_get_by_index(current_task_index);
-    kassert(__FILE__, __LINE__, this_task != null);
-
+  /* finish current task */
+  if (current_task != null) {
     /* update running time */
-    this_task->time += 1;
+    current_task->time += 1;
 
     /* check quota exceed */
-    if (this_task->time < TASK_QUOTA && !this_task->reschedule) {
+    if (current_task->time < TASK_QUOTA && !current_task->reschedule) {
       return; /* continue task execution */
     }
 
     /* reset quota */
-    this_task->time = 0;
-    this_task->reschedule = false;
+    current_task->time = 0;
+    current_task->reschedule = false;
 
     /* save task state */
-    this_task->op_registers.eip = *ret_addr;
-    this_task->op_registers.cs = *(u16*)((size_t)ret_addr + 4);
-    *(u32*)(&this_task->flags) = *(u32*)((size_t)ret_addr + 6);
-    this_task->op_registers.esp = (size_t)ret_addr + 10;
-    this_task->gp_registers.esp = this_task->op_registers.esp;
-    memcpy(&this_task->gp_registers, (void*)reg_addr, sizeof(this_task->gp_registers));
+    current_task->op_registers.eip = *ret_addr;
+    current_task->op_registers.cs = *(u16*)((size_t)ret_addr + 4);
+    *(u32*)(&current_task->flags) = *(u32*)((size_t)ret_addr + 6);
+    current_task->op_registers.esp = (size_t)ret_addr + 10;
+    current_task->gp_registers.esp = current_task->op_registers.esp;
+    memcpy(&current_task->gp_registers, (void*)reg_addr, sizeof(current_task->gp_registers));
   }
 
   /* pick next task */
-  next_task_index = task_find_to_run_index(current_task_index);
-  if (next_task_index == -1) {
-    kpanic(MSG_SCHED_NO_TASKS);
-  }
-  next_task = task_get_by_index(next_task_index);
-
-  /* update current task pointer */
-  kprint("scheduled tid=%u sp=%X pc=%X->%X\n", next_task_index, ret_addr, *ret_addr, next_task->op_registers.eip);
-  current_task_index = next_task_index;
+  next_task = task_find_to_run(current_task);
+  kassert(__FILE__, __LINE__, next_task != null);
 
   /* prepare context for the next task */
   *(u32*)(next_task->op_registers.esp - 4) = *(u32*)(&next_task->flags);
   *(u16*)(next_task->op_registers.esp - 6) = next_task->op_registers.cs;
   *(u32*)(next_task->op_registers.esp - 10) = next_task->op_registers.eip;
-  // stack_dump((size_t*)(next_task->sp - 10));
   next_task->op_registers.esp = next_task->op_registers.esp - 10;
-  next_task->gp_registers.esp = this_task->op_registers.esp;
+  next_task->gp_registers.esp = next_task->op_registers.esp;
   next_task->op_registers.esp = next_task->op_registers.esp - sizeof(next_task->gp_registers);
   memcpy((void*)next_task->op_registers.esp, &next_task->gp_registers, sizeof(next_task->gp_registers));
   
+  /* update current task pointer */
+  kprint("scheduled tid=%u sp=%X pc=%X->%X\n", next_task->tid, ret_addr, *ret_addr, next_task->op_registers.eip);
   // delay(5);
+  current_task = next_task;
 
-  /* switch context */
+  /* run next task */
   asm_switch_context(next_task->op_registers.esp);
 }
 
 /*
  * Api - Get current running task
  */
-extern struct sched_task *sched_get_current_task() {
-  struct sched_task *task;
-  task = task_get_by_index(current_task_index);
-  kassert(__FILE__, __LINE__, task != null);
-  return task;
+extern struct sched_task_t *sched_get_current_task() {
+  kassert(__FILE__, __LINE__, current_task != null);
+  return current_task;
 }
 
 /*
  * Api - Yield current process
  */
 extern void sched_yield() {
-  struct sched_task *task;
+  struct sched_task_t *task;
   /* get current task */
   task = sched_get_current_task();
   /* mark task to be rescheduled */

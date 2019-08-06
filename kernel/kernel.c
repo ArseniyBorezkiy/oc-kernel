@@ -66,8 +66,12 @@ static void kernel_create_tasks() {
  * Run kernel tasks
  */
 static void kernel_run_tasks() {
-  bool is_ok = 
-    task_set_status_by_id(TID_TTY, TASK_RUNNING) &&
-    task_set_status_by_id(TID_INIT, TASK_RUNNING);
-  kassert(__FILE__, __LINE__, is_ok);
+  struct sched_task_t *init_task;
+  struct sched_task_t *tty_task;
+
+  init_task = task_get_by_id(TID_INIT);
+  tty_task = task_get_by_id(TID_TTY);
+
+  init_task->status = TASK_RUNNING;
+  tty_task->status = TASK_RUNNING;
 }
