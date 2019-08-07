@@ -4,9 +4,9 @@
 /*
  * Api - Calculate string's length
  */
-extern int strlen(char *s)
+extern int strlen(const char *s)
 {
-    char *original = s;
+    const char *original = s;
 
     while (*s != '\0') s++;
 
@@ -17,7 +17,7 @@ extern int strlen(char *s)
  * Api - Strings' copy
  * Copies second string to first
  */
-extern char *strcpy(register char *s1, register char *s2)
+extern char *strcpy(char *s1, const char *s2)
 {
     char *original = s1;
 
@@ -31,10 +31,10 @@ extern char *strcpy(register char *s1, register char *s2)
  * Api - Memory copy
  * Copies second buffer to first buffer
  */
-extern void *memcpy(register void *buf1, register void *buf2, u_int bytes)
+extern void *memcpy(void *buf1, const void *buf2, u_int bytes)
 {
     u8 *buf_dst = buf1;
-    u8 *buf_src = buf2;
+    const u8 *buf_src = buf2;
 
     for (int i = 0; i < bytes; ++i) {
       *buf_dst++ = *buf_src++;
@@ -47,7 +47,7 @@ extern void *memcpy(register void *buf1, register void *buf2, u_int bytes)
  * Api - Memory set
  * Fills buffer with value
  */
-extern void *memset(register void *buf, u8 value, u_int bytes)
+extern void *memset(void *buf, u8 value, u_int bytes)
 {
     u8 *buf_dst = buf;
 
@@ -61,7 +61,7 @@ extern void *memset(register void *buf, u8 value, u_int bytes)
 /*
  * Api - Compare strings
  */
-extern int strcmp(register char *s1, register char *s2)
+extern int strcmp(const char *s1, const char *s2)
 {
     while (1) {
         if (*s1 != *s2) return(*s1 - *s2);
@@ -75,7 +75,7 @@ extern int strcmp(register char *s1, register char *s2)
  * Api - Strings' concatenation
  * Append second to the end of the first
  */
-extern char *strcat(register char *s1, register char *s2)
+extern char *strcat(char *s1, const char *s2)
 {
     char *original = s1;
 
@@ -89,7 +89,7 @@ extern char *strcat(register char *s1, register char *s2)
 /*
  * Api - Extend string with attribute symbol
  */
-extern char *strext(register char *buf, register char *str, char sym) {
+extern char *strext(char *buf, const char *str, char sym) {
     while (*str != '\0') {
         *buf++ = *str++;
         *buf++ = sym;
@@ -157,7 +157,7 @@ extern char *strinv(char *str) {
 /*
  * Api - Print to string
  */
-extern unsigned int sprintf(char *s1, char *s2, ...) {
+extern unsigned int sprintf(char *s1, const char *s2, ...) {
     va_list list;
     va_start(list, s2);
 
@@ -167,7 +167,7 @@ extern unsigned int sprintf(char *s1, char *s2, ...) {
 /*
  * Api - Print to limited string
  */
-extern unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
+extern unsigned int snprintf(char *s1, unsigned int n, const char *s2, ...) {
     va_list list;
     va_start(list, s2);
 
@@ -177,14 +177,14 @@ extern unsigned int snprintf(char *s1, unsigned int n, char *s2, ...) {
 /*
  * Api - Print to string
  */
-extern unsigned int vsprintf(char *s1, char *s2, va_list list) {
-    return vsnprintf(s1, -1, s2, list);
+extern unsigned int vsprintf(char *s1, const char *s2, va_list list) {
+    return vsnprintf(s1, 4 * 1024, s2, list);
 }
 
 /*
  * Api - Print to limited string
  */
-extern unsigned int vsnprintf(char *s1, unsigned int n, char *s2, va_list list) {
+extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list list) {
     u_int j = 0;
     char number[16];
     char *cur = s1;

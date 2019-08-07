@@ -2,7 +2,7 @@
 
 #include <lib/stddef.h>
 
-typedef size_t * va_list;
+typedef size_t* va_list;
 
 #define va_start(l, a) (l = (void *)((size_t)&a) + sizeof(a))
 #define va_end(l) (l = (void *) 0)

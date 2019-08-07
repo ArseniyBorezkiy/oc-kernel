@@ -4,10 +4,11 @@
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
+#include <utils/kassert.h>
 #include <utils/kheap.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
-#include <assembly.h>
+#include <lib/assembly.h>
 #include <messages.h>
 
 static void task_test();
@@ -64,7 +65,7 @@ extern bool task_create(u_short tid, void *address) {
     task->msg_count_in = 0;
     task->time = 0;
     /* set flags */
-    *(u32*)(&task->flags) = asm_get_flags();
+    *(u32*)(&task->flags) = asm_get_eflags();
     /* set general purpose registers */
     memset(&task->gp_registers, 0, sizeof(struct gp_registers_t));
     /* set other purpose registers */
@@ -155,6 +156,8 @@ extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task
     } while (task != task_list_head);
 
     kunreachable(__FILE__, __LINE__);
+    
+    return null;
 }
 
 /*

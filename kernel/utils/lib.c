@@ -1,7 +1,7 @@
 #include <utils/lib.h>
 #include <utils/kassert.h>
 #include <lib/string.h>
-#include <assembly.h>
+#include <lib/assembly.h>
 
 static void test_lib();
 static void test_sprintf();
@@ -32,11 +32,11 @@ static void test_sprintf() {
     sprintf(buf, "%X", 0x20);
     kassert(__FILE__, __LINE__, !strcmp(buf, "0x20"));
     /* strings */
-    const char str = "str";
+    const char *str = "str";
     sprintf(buf, "%s", str);
     kassert(__FILE__, __LINE__, !strcmp(buf, str));
     /* mixed */
-    const char str_mixed = "a str a 0xFF0";
+    const char *str_mixed = "a str a 0xFF0";
     sprintf(buf, "a %s a %X", str, 0xF00);
     kassert(__FILE__, __LINE__, !strcmp(buf, str_mixed));
 #endif

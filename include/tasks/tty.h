@@ -10,4 +10,4 @@
 /*
  * Api
  */
-extern void task_tty();
+extern void task_tty_main();

@@ -4,13 +4,13 @@
 #include <tasks/tty.h>
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
+#include <utils/kassert.h>
 #include <lib/time.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
 
 static u_short tid_stdin = TID_TTY; /* target tid to send incomming chars */
-static u_short tid_stdout = TID_TTY; /* target tid to send outcomming chars */
 static char *video_ptr; /* current position in video memory */
 
 static void handle_getc(char ch);
@@ -22,7 +22,7 @@ static void scroll(u_int n);
 /*
  * Api - Teletype task
  */
-extern void task_tty() {
+extern void task_tty_main() {
     struct message_t msg;
 
     kprint(MSG_TASK_TTY_LAUNCHED, (size_t*)asm_get_esp());
@@ -49,7 +49,7 @@ extern void task_tty() {
             case TTY_MSG_TYPE_PUTS: {
                 /* put string to screen */
                 kassert(__FILE__, __LINE__, msg.data[msg.len - 1] == 0);
-                handle_puts(&msg.data);
+                handle_puts((char*)msg.data);
                 break;
             }
             case TTY_MSG_TYPE_CLEAR: {

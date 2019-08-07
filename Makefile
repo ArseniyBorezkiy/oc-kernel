@@ -18,7 +18,7 @@ all: build start
 build: build-lib build-kernel
 	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
-		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o
+		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
 		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
@@ -26,7 +26,7 @@ build: build-lib build-kernel
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
-		./bin/init.c.o ./bin/tty.c.o
+		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
 build-lib: ./lib/string.c ./lib/math.c
 	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
@@ -73,6 +73,7 @@ build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/tty.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/init.c -o ./bin/init.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/tty.c -o ./bin/tty.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
 #
 # Run kernel in emulator

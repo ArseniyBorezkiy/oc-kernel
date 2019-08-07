@@ -1,5 +1,5 @@
 #pragma once
 
 /* assembly params */
-#define DEBUG
-#define TEST
+#define DEBUG 1
+#define TEST 1

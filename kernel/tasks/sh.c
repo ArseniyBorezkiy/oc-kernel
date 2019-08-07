@@ -2,6 +2,7 @@
 #include <tasks/tty.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
+#include <utils/kassert.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
 
@@ -21,7 +22,7 @@ static const char *prompt = "# ";
 /*
  * Api - Shell task
  */
-extern void task_sh() {
+extern void task_sh_main() {
     struct message_t msg;
 
     /* occupy stdin */
@@ -31,7 +32,7 @@ extern void task_sh() {
     ksend(TID_TTY, &msg);
 
     /* init */
-    cmd_ptr = &command;
+    cmd_ptr = command;
 
     while(1) {
         kreceive(TID_SH, &msg);
@@ -52,19 +53,17 @@ extern void task_sh() {
  * Handle incomming character
  */
 static void handle_getc(char ch) {
-    struct message_t msg;
-
     putc(ch);
 
     if (ch == SH_CMD_END_CH) {
         /* finish command */
         *cmd_ptr++ = 0; /* terminator */
-        cmd_ptr = &command;
+        cmd_ptr = command;
         execute_command(cmd_ptr);
         print_prompt();
     } else {
         /* append character to command */
-        if (cmd_ptr - &command < SH_CMD_BUFF_SIZE - 1) {
+        if (cmd_ptr - command < SH_CMD_BUFF_SIZE - 1) {
             *cmd_ptr++ = ch;
         }
     }
@@ -87,8 +86,6 @@ static void execute_command(char *cmd) {
  * Prompt
  */
 static void print_prompt() {
-    struct message_t msg;
-
     puts(prompt);
 }
 
@@ -104,8 +101,8 @@ static void show_tasks_list() {
     
     task = task_get_by_id(TID_SH);
     do {
-        snprintf(&buf, IPC_MSG_DATA_BUFF_SIZE, "  tid = %u  status = %u  esp = %X\n", task->tid, task->status, task->gp_registers.esp);
-        puts(&buf);
+        snprintf(buf, IPC_MSG_DATA_BUFF_SIZE, "  tid = %u  status = %u  esp = %X\n", task->tid, task->status, task->gp_registers.esp);
+        puts(buf);
         
         task = task->next;
     } while (task->tid != TID_SH);

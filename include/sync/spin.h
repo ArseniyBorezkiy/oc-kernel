@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdtypes.h>
+#include <lib/stdtypes.h>
 
 struct spin_t {
     u_short tid;

@@ -15,7 +15,7 @@ extern void ksend(u_short tid, struct message_t *msg) {
     /* get target task */
     task = task_get_by_id(tid);
     /* put message to task buffer */
-    task_pack_message(tid, msg);
+    task_pack_message(task, msg);
     /* whether task has frozen */
     if (task->status == TASK_INTERRUPTABLE) {
         /* defrost task */
@@ -38,7 +38,7 @@ extern void kreceive(u_short tid, struct message_t *msg) {
     /* whether task has not incomming messages */
     if (task_before->msg_count_in == 0) {
         /* freeze task */
-        task_set_status_by_id(tid, TASK_INTERRUPTABLE);
+        task_before->status = TASK_INTERRUPTABLE;
     }
     /* wait fot message */
     sched_yield();
@@ -48,6 +48,6 @@ extern void kreceive(u_short tid, struct message_t *msg) {
     kassert(__FILE__, __LINE__, tid == task_after->tid);
     kassert(__FILE__, __LINE__, task_after->status == TASK_RUNNING);
     /* fetch message from buffer */
-    task_extract_message(tid, msg);
+    task_extract_message(task_after, msg);
     kassert(__FILE__, __LINE__, msg != null);
 }

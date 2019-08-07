@@ -1,5 +1,6 @@
 #include <arch/mmu.h>
 #include <lib/string.h>
+#include <kernel.h>
 
 struct page_directory_entry_t page_directory[PAGE_DIRECTORY_ENTRIES_COUNT];
 struct page_table_entry_t page_table[PAGE_DIRECTORY_ENTRIES_COUNT][PAGE_TABLE_ENTRIES_COUNT];
@@ -22,7 +23,7 @@ extern void mmu_init() {
     page_directory[kpdi].read_write = 1;
     page_directory[kpdi].user_supervisor = 1;
     page_directory[kpdi].write_through = 1;
-    page_directory[kpdi].page_table_addr = &page_table[kpdi];
+    page_directory[kpdi].page_table_addr = (size_t)&page_table[kpdi];
 
     /* set kernel table */
     for (int i = 0; i < PAGE_TABLE_ENTRIES_COUNT; ++i) {

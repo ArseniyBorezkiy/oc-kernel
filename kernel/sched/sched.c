@@ -53,7 +53,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr) {
   }
 
   /* pick next task */
-  next_task = task_find_to_run(current_task);
+  next_task = task_get_by_status(TASK_RUNNING, current_task);
   kassert(__FILE__, __LINE__, next_task != null);
 
   /* prepare context for the next task */
@@ -92,5 +92,5 @@ extern void sched_yield() {
   /* mark task to be rescheduled */
   task->reschedule = true;
   /* reschedule */
-  asm_int(INT_TIMER);
+  __asm__("int $0x20");
 }

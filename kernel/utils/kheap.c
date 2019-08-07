@@ -7,7 +7,7 @@
 #include <kernel.h>
 
 struct kernel_heap_table_t kernel_heap_table;
-struct spin_t *kheap_spin;
+struct spin_t kheap_spin;
 
 static struct kernel_heap_entry_t *kheap_find_block(struct kernel_heap_entry_t *entry, bool is_valid, bool is_buzy);
 static struct kernel_heap_entry_t *kheap_find_first_valid_block(struct kernel_heap_entry_t *entry);
@@ -61,7 +61,7 @@ extern void *kmalloc(size_t size) {
                             if (sibling->prev != null) {
                                 /* set new left sibling */
                                 struct kernel_heap_entry_t * sibling2 = sibling->prev;
-                                kassert(__FILE__, __LINE__, sibling2);
+                                kassert(__FILE__, __LINE__, sibling2 != null);
                                 sibling2->next = current;
                                 current->prev = sibling2;
                             } else {
@@ -69,7 +69,7 @@ extern void *kmalloc(size_t size) {
                                 current->prev = null;
                             }
                             /* delete collapsed sibling */
-                            memcpy(sibling, 0, sizeof(struct kernel_heap_entry_t));
+                            memset(sibling, 0, sizeof(struct kernel_heap_entry_t));
                         }
                         /* occupy block */
                         current->is_buzy = true;
@@ -77,7 +77,7 @@ extern void *kmalloc(size_t size) {
                         kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                         kheap_validate();
                         spin_unlock(&kheap_spin);
-                        return current->addr; /* suitable block has found */
+                        return (void*)current->addr; /* suitable block has found */
                     }
                 } else if (current->next == null) {
                     /* try to allocate new memory */
@@ -92,7 +92,7 @@ extern void *kmalloc(size_t size) {
                         kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                         kheap_validate();
                         spin_unlock(&kheap_spin);
-                        return current->addr; /* suitable block has found */
+                        return (void*)current->addr; /* suitable block has found */
                     }
                 }
             } else {
@@ -117,7 +117,7 @@ extern void *kmalloc(size_t size) {
                 kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
                 kheap_validate();
                 spin_unlock(&kheap_spin);
-                return current->addr; /* suitable block has found */
+                return (void*)current->addr; /* suitable block has found */
             }
         }
     } while(current != null);
@@ -158,7 +158,7 @@ extern void *kmalloc(size_t size) {
     kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
     kheap_validate();
     spin_unlock(&kheap_spin);
-    return current->addr;
+    return (void*)current->addr;
 }
 
 /*
@@ -173,20 +173,20 @@ extern void kfree(void *addr) {
          current != kheap_table_entries_end();
          current = kheap_table_entries_next(current)
     ) {
-        if (current->is_valid && current->addr == addr && current->is_buzy) {
+        if (current->is_valid && (void*)current->addr == addr && current->is_buzy) {
             /* free block */
             current->is_buzy = false;
             /* try to merge with free left sibling */
             if (current->prev != null && !current->prev->is_buzy) {
                 current->prev->size += current->size;
                 /* delete collapsed block */
-                memcpy(current, 0, sizeof(struct kernel_heap_entry_t));
+                memset(current, 0, sizeof(struct kernel_heap_entry_t));
             }
             /* try to merge with free right sibling */
             if (current->next != null && !current->next->is_buzy) {
                 current->size += current->next->size;
                 /* delete collapsed sibling */
-                memcpy(current->next, 0, sizeof(struct kernel_heap_entry_t));
+                memset(current->next, 0, sizeof(struct kernel_heap_entry_t));
             }
             kheap_validate();
             spin_unlock(&kheap_spin);
@@ -338,32 +338,32 @@ static void kheap_test() {
 #ifdef TEST
     /* allocate 3 small blocks */
     void *addr1 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr1 == KHEAP_START_ADDR);
+    kassert(__FILE__, __LINE__, addr1 == (void*)KHEAP_START_ADDR);
     void *addr2 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr2 == KHEAP_START_ADDR + 16);
+    kassert(__FILE__, __LINE__, addr2 == (void*)(KHEAP_START_ADDR + 16));
     void *addr3 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr3 == KHEAP_START_ADDR + 16 + 16);
+    kassert(__FILE__, __LINE__, addr3 == (void*)(KHEAP_START_ADDR + 16 + 16));
     /* free middle block */
     kfree(addr2);
     /* allocate 2 tiny block */
     void *addr4 = kmalloc(8);
-    kassert(__FILE__, __LINE__, addr4 == KHEAP_START_ADDR + 16);
+    kassert(__FILE__, __LINE__, addr4 == (void*)(KHEAP_START_ADDR + 16));
     void *addr5 = kmalloc(6);
-    kassert(__FILE__, __LINE__, addr5 == KHEAP_START_ADDR + 16 + 6);
+    kassert(__FILE__, __LINE__, addr5 == (void*)(KHEAP_START_ADDR + 16 + 6));
     /* allocate small block */
     void *addr6 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr6 == KHEAP_START_ADDR + 16 + 16 + 16);
+    kassert(__FILE__, __LINE__, addr6 == (void*)(KHEAP_START_ADDR + 16 + 16 + 16));
     /* free first and last block */
     kfree(addr1);
     kfree(addr6);
     /* allocte 2 tiny block */
     void *addr7 = kmalloc(4);
-    kassert(__FILE__, __LINE__, addr7 == KHEAP_START_ADDR);
+    kassert(__FILE__, __LINE__, addr7 == (void*)(KHEAP_START_ADDR));
     void *addr8 = kmalloc(4);
-    kassert(__FILE__, __LINE__, addr8 == KHEAP_START_ADDR + 4);
+    kassert(__FILE__, __LINE__, addr8 == (void*)(KHEAP_START_ADDR + 4));
     /* allocate big block */
     void *addr9 = kmalloc(64);
-    kassert(__FILE__, __LINE__, addr9 == KHEAP_START_ADDR + 16 + 16);
+    kassert(__FILE__, __LINE__, addr9 == (void*)(KHEAP_START_ADDR + 16 + 16));
     /* free all blocks */
     kfree(addr3);
     kfree(addr4);
@@ -373,7 +373,7 @@ static void kheap_test() {
     kfree(addr9);
     /* allocate 1 tiny block */
     void *addr10 = kmalloc(1);
-    kassert(__FILE__, __LINE__, addr9 == KHEAP_START_ADDR);
+    kassert(__FILE__, __LINE__, addr9 == (void*)KHEAP_START_ADDR);
     kfree(addr10);
     /* clear heap table */
     memset(&kernel_heap_table, 0, sizeof(kernel_heap_table));

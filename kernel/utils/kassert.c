@@ -1,5 +1,6 @@
 #include <arch/reg.h>
 #include <utils/kpanic.h>
+#include <utils/kprint.h>
 #include <utils/kassert.h>
 #include <kernel.h>
 #include <messages.h>

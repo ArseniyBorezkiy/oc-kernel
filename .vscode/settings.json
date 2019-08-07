@@ -25,6 +25,8 @@
     "spin.h": "c",
     "tty.h": "c",
     "sh.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "stdarg.h": "c",
+    "stddef.h": "c"
   }
 }

@@ -7,7 +7,7 @@
 #include <messages.h>
 
 static const char syslog[SCREEN_SIZE]; /* kernel system log */
-static const char* syslog_ptr;
+char* syslog_ptr;
 static char* kprint_buff; /* output buffer address */
 static char* kprint_buff_ptr; /* current buffer position */
 static struct spin_t video_spin;
@@ -28,7 +28,7 @@ extern void init_video() {
 extern void init_syslog() {
     spin_lock(&video_spin);
 
-    syslog_ptr = &syslog;
+    syslog_ptr = (char *)&syslog;
 
     memset(syslog_ptr, 0, SCREEN_SIZE);
     kprint(MSG_KERNEL_SYSLOG_INITIALIZED);
@@ -72,7 +72,7 @@ extern void kprint(const char *str, ...) {
  */
 extern void kvprint(const char *str, va_list list) {
     char buf[SCREEN_WIDTH];
-    char *str;
+    char *ptr;
     u_int num;
     char ch;
 
@@ -120,8 +120,8 @@ extern void kvprint(const char *str, va_list list) {
                     kprint_buff_ptr = strext(kprint_buff_ptr, buf, VIDEO_MEMORY_ATTR);
                     break;
                 case 's':
-                    str = va_arg(list, char*);
-                    strcpy(buf, str);
+                    ptr = va_arg(list, char*);
+                    strcpy(buf, ptr);
 
                     if (kprint_buff_ptr - kprint_buff + strlen(buf) * 2 >= SCREEN_SIZE) {
                         kscroll(1); /* scroll line up */

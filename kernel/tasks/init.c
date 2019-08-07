@@ -9,7 +9,7 @@
 /*
  * Api - Init task
  */
-extern void task_init() {
+extern void task_init_main() {
     while (1) {
         kprint(MSG_TASK_INIT_LAUNCHED, (size_t*)asm_get_esp());
         delay(1);

@@ -37,7 +37,7 @@ extern void kdump_elf(struct elf_header_t *header) {
   kprint("  headers begin: %X\n", header->e_shoff);
 
   for (int i = 0; i < header->e_phnum; ++i) {
-    struct elf_program_header_t *p_header = header->e_shoff + i * header->e_ehsize;
+    struct elf_program_header_t *p_header = (void*)(header->e_shoff + i * header->e_ehsize);
     kprint("  + program header dump: %X\n", p_header);
     kprint("    segment type: %X\n", p_header->p_type);
     kprint("    target virtual address: %X\n", p_header->p_vaddr);

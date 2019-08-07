@@ -1,19 +1,22 @@
 #include <boot/multiboot.h>
 #include <arch/idt.h>
 #include <arch/pic.h>
+#include <arch/mmu.h>
 #include <sched/task.h>
+#include <sched/sched.h>
 #include <tasks/tty.h>
 #include <tasks/init.h>
 #include <tasks/sh.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
+#include <utils/kassert.h>
 #include <utils/lib.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
 #include <kernel.h>
 
-extern void *kernel_stack = null;
+void *kernel_stack = null;
 
 static void kernel_create_tasks();
 static void kernel_run_tasks();
@@ -60,9 +63,9 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
  */
 static void kernel_create_tasks() {
   bool is_ok = 
-    task_create(TID_INIT, task_init) &&
-    task_create(TID_TTY, task_tty) &&
-    task_create(TID_TTY, task_sh);
+    task_create(TID_INIT, task_init_main) &&
+    task_create(TID_TTY, task_tty_main) &&
+    task_create(TID_TTY, task_sh_main);
   kassert(__FILE__, __LINE__, is_ok);
 }
 

@@ -8,7 +8,7 @@
 #define VIDEO_MEMORY_ADDR 0xb8000
 #define VIDEO_MEMORY_ATTR 0x07
 
-extern const char* syslog_ptr;
+extern char* syslog_ptr;
 
 /*
  * Api

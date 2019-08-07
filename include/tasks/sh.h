@@ -6,4 +6,4 @@
 /*
  * Api
  */
-extern void task_sh();
+extern void task_sh_main();

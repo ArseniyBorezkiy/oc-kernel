@@ -1,17 +1,18 @@
 #include <ipc/ipc.h>
 #include <sched/task.h>
 #include <tasks/tty.h>
+#include <lib/string.h>
 #include <lib/stdio.h>
 
 /*
  * Api - Print string to screen
  */
-extern void puts(char *str) {
+extern void puts(const char *str) {
     struct message_t msg;
     
     msg.type = TTY_MSG_TYPE_PUTS;
     msg.len = strlen(str) + 1;
-    strcpy(msg.data, str);
+    strcpy((char*)&msg.data, str);
     ksend(TID_TTY, &msg);
 }
 

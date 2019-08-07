@@ -3,4 +3,4 @@
 /*
  * Api
  */
-extern void lib_init()
+extern void lib_init();
