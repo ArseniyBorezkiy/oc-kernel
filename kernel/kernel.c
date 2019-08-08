@@ -50,7 +50,6 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   
   /* init scheduler */
   sched_init();
-  asm_hlt();
   kernel_create_tasks();
   kernel_run_tasks();
 
