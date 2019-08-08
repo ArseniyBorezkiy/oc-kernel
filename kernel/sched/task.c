@@ -216,15 +216,14 @@ extern void task_extract_message(struct sched_task_t *task, struct message_t *ms
 static void task_test()
 {
 #ifdef TEST
-    struct sched_task_t *task;
-    struct sched_task_t task1;
-    struct sched_task_t task2;
+    struct sched_task_t *task1;
+    struct sched_task_t *task2;
     struct message_t msg;
     struct message_t msg1;
     struct message_t msg2;
 
-    task1.tid = 1;
-    task2.tid = 1;
+    u_short tid1 = 1;
+    u_short tid2 = 2;
 
     msg1.type = 1;
     msg1.len = 0;
@@ -234,29 +233,29 @@ static void task_test()
     /* tasks creation */
     kassert(__FILE__, __LINE__, task_count == 0);
     kassert(__FILE__, __LINE__, task_list_head == null);
-    task_create(task1.tid, &task1);
-    task_create(task2.tid, &task2);
-    task = task_get_by_id(task1.tid);
-    kassert(__FILE__, __LINE__, task->tid == task1.tid);
-    task = task_get_by_id(task2.tid);
-    kassert(__FILE__, __LINE__, task->tid == task2.tid);
+    task_create(tid1, 0);
+    task_create(tid2, 0);
+    task1 = task_get_by_id(tid1);
+    kassert(__FILE__, __LINE__, task1->tid == tid1);
+    task2 = task_get_by_id(tid2);
+    kassert(__FILE__, __LINE__, task2->tid == tid2);
     kassert(__FILE__, __LINE__, task_count == 2);
 
     /* messages */
-    kassert(__FILE__, __LINE__, task1.msg_count_in == 0);
-    task_pack_message(&task1, &msg1);
-    task_pack_message(&task1, &msg2);
-    kassert(__FILE__, __LINE__, task1.msg_count_in == 2);
-    task_extract_message(&task1, &msg);
-    kassert(__FILE__, __LINE__, task1.msg_count_in == 1);
+    kassert(__FILE__, __LINE__, task1->msg_count_in == 0);
+    task_pack_message(task1, &msg1);
+    task_pack_message(task1, &msg2);
+    kassert(__FILE__, __LINE__, task1->msg_count_in == 2);
+    task_extract_message(task1, &msg);
+    kassert(__FILE__, __LINE__, task1->msg_count_in == 1);
     kassert(__FILE__, __LINE__, msg.type == msg1.type);
-    task_extract_message(&task1, &msg);
-    kassert(__FILE__, __LINE__, task1.msg_count_in == 0);
+    task_extract_message(task1, &msg);
+    kassert(__FILE__, __LINE__, task1->msg_count_in == 0);
     kassert(__FILE__, __LINE__, msg.type == msg2.type);
 
     /* task deletion */
-    task_delete(&task1);
-    task_delete(&task2);
+    task_delete(task1);
+    task_delete(task2);
     kassert(__FILE__, __LINE__, task_count == 0);
     kassert(__FILE__, __LINE__, task_list_head == null);
 #endif

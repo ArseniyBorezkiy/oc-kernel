@@ -39,8 +39,8 @@ static void test_sprintf()
     sprintf(buf, "%s", str);
     kassert(__FILE__, __LINE__, !strcmp(buf, str));
     /* mixed */
-    const char *str_mixed = "a str a 0xFF0";
-    sprintf(buf, "a %s a %X", str, 0xF00);
+    const char *str_mixed = "a str a 0xFA0";
+    sprintf(buf, "a %s a %X", str, 0xFA0);
     kassert(__FILE__, __LINE__, !strcmp(buf, str_mixed));
 #endif
 }

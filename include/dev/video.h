@@ -15,6 +15,6 @@
  * Api
  */
 extern void video_init();
-extern void *video_scroll(char *video_buff, char *pos);
-extern char *video_clear(char *video_buff);
-extern void video_flush(char *video_buff);
+extern void *video_scroll(char const *video_buff, char *pos);
+extern char *video_clear(char const *video_buff);
+extern void video_flush(char const *video_buff);

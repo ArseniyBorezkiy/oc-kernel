@@ -4,7 +4,7 @@
 #include <messages.h>
 
 static char const syslog[SYSLOG_SIZE]; /* system log */
-char *syslog_pos = syslog;             /* system log position */
+char *syslog_pos = (char*)syslog;      /* system log position */
 bool is_early_mode = true;             /* whether syslog attached to video memory */
 
 static void kflush();       /* copy sylog to video memory */
@@ -37,6 +37,7 @@ extern void kvprint(const char *format, va_list list)
 {
     char buff[VIDEO_SCREEN_WIDTH];
     int len = vsprintf(buff, format, list);
+
     for (int i = 0; i < len; ++i)
     {
         if (buff[i] != '\n')
@@ -46,7 +47,7 @@ extern void kvprint(const char *format, va_list list)
         else
         {
             int line_pos = (syslog_pos - syslog) % VIDEO_SCREEN_WIDTH;
-            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos; ++j)
+            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos - 1; ++j)
             {
                 kputc(' ');
             }
@@ -80,7 +81,7 @@ static void kflush()
  */
 static void kputc(char ch)
 {
-    if (syslog_pos + 1 < SYSLOG_SIZE)
+    if ((size_t)syslog_pos - (size_t)syslog + 1 < SYSLOG_SIZE)
     {
         *syslog_pos++ = ch;
     }

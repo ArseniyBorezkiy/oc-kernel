@@ -11,8 +11,8 @@
 #include <lib/stdtypes.h>
 #include <messages.h>
 
-static char const tty_output_buff[SYSLOG_SIZE]; /* tty output buffer */
-char *tty_output_buff_pos = tty_output_buff;    /* tty output position */
+static char const tty_output_buff[SYSLOG_SIZE];      /* tty output buffer */
+char *tty_output_buff_pos = (char *)tty_output_buff; /* tty output position */
 
 static u_short tid_stdin = TID_TTY; /* target tid to send incomming chars */
 
@@ -29,7 +29,7 @@ extern void task_tty_main()
 
     kprint(MSG_TASK_TTY_LAUNCHED, (size_t *)asm_get_esp());
     kmode(false); /* detach syslog from screen */
-    video_clear(tty_output_buff);
+    tty_output_buff_pos = video_clear(tty_output_buff);
     video_flush(tty_output_buff);
 
     while (1)
@@ -65,7 +65,7 @@ extern void task_tty_main()
         case TTY_MSG_TYPE_CLEAR:
         {
             /* clear screen */
-            video_clear(tty_output_buff);
+            tty_output_buff_pos = video_clear(tty_output_buff);
             video_flush(tty_output_buff);
             break;
         }
@@ -92,7 +92,7 @@ static void handle_getc(char ch)
  */
 static void handle_putc(char ch)
 {
-    if (tty_output_buff_pos + 1 < SYSLOG_SIZE)
+    if ((size_t)tty_output_buff_pos - (size_t)tty_output_buff + 1 < SYSLOG_SIZE)
     {
         *tty_output_buff_pos++ = ch;
     }

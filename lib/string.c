@@ -114,10 +114,13 @@ extern char *strext(char *buf, const char *str, char sym)
  */
 extern char *memext(void *buff_dst, u_int n, const void *buff_src, char sym)
 {
+    u8 *buff_dst_ptr = buff_dst;
+    u8 *buff_src_ptr = (u8 *)buff_src;
+
     for (int i = 0; i < n; ++i)
     {
-        *((u8 *)buff_dst)++ = *((u8 *)buff_src)++;
-        *((u8 *)buff_dst)++ = sym;
+        *buff_dst_ptr++ = *buff_src_ptr++;
+        *buff_dst_ptr++ = sym;
     }
 
     return buff_dst;
@@ -141,7 +144,7 @@ extern char *itoa(int value, char *str, int base)
         }
         else
         {
-            *str++ = (16 - digit) | 0x41; /* alpha */
+            *str++ = ((digit - 10) | 0x40) + 1; /* alpha */
         }
     } while (value > 0);
 
@@ -250,14 +253,12 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list 
             case 'u':
                 /* unsigned decimal */
                 itoa(va_arg(list, u_int), number, 10);
-                strinv(number);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;
             case 'X':
                 /* unsigned hexedecimal */
                 itoa(va_arg(list, u_int), number, 16);
-                strinv(number);
                 strcpy(cur, number);
                 cur += strlen(number);
                 break;

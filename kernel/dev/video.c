@@ -1,7 +1,7 @@
 #include <dev/video.h>
 #include <lib/string.h>
 
-u8 const *video_memory = VIDEO_MEMORY_ADDR;
+u8 const *video_memory = (void *)VIDEO_MEMORY_ADDR;
 u8 const video_memory_buff[VIDEO_SCREEN_SIZE * 2];
 
 /*
@@ -9,16 +9,16 @@ u8 const video_memory_buff[VIDEO_SCREEN_SIZE * 2];
  */
 extern void video_init()
 {
-  memset(video_memory_buff, VIDEO_MEMORY_ATTR_BLACK, VIDEO_SCREEN_SIZE);
+  memset((void *)video_memory_buff, VIDEO_MEMORY_ATTR_BLACK, VIDEO_SCREEN_SIZE);
 }
 
 /*
  * Api - Scroll video buffer up
  *   Returns new position
  */
-extern void *video_scroll(char *video_buff, char *pos)
+extern void *video_scroll(char const *video_buff, char *pos)
 {
-  char *ptr = video_buff;
+  char *ptr = (void *)video_buff;
 
   /* scroll up */
   for (int i = 1; i < VIDEO_SCREEN_HEIGHT; ++i)
@@ -37,28 +37,30 @@ extern void *video_scroll(char *video_buff, char *pos)
 
   /* move position up */
   pos -= VIDEO_SCREEN_WIDTH;
+
+  return pos;
 }
 
 /*
  * Api - Clear video buff
  */
-extern char *video_clear(char *video_buff)
+extern char *video_clear(char const *video_buff)
 {
-  char *ptr = video_buff;
+  char *ptr = (void *)video_buff;
 
   for (int i = 0; i < VIDEO_SCREEN_SIZE; ++i)
   {
     *ptr++ = ' '; /* blank character */
   }
 
-  return video_buff;
+  return (void *)video_buff;
 }
 
 /*
  * Api - Copy video buffer to video memory
  */
-extern void video_flush(char *video_buff)
+extern void video_flush(char const *video_buff)
 {
-  memext(video_memory_buff, VIDEO_SCREEN_SIZE, video_buff, VIDEO_MEMORY_ATTR_BLACK);
-  memcpy(video_memory, video_memory_buff, VIDEO_SCREEN_SIZE * 2);
+  memext((void *)video_memory_buff, VIDEO_SCREEN_SIZE, video_buff, VIDEO_MEMORY_ATTR_BLACK);
+  memcpy((void *)video_memory, video_memory_buff, VIDEO_SCREEN_SIZE * 2);
 }

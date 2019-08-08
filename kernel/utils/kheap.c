@@ -138,7 +138,7 @@ extern void *kmalloc(size_t size)
      * try to alloc new block
      */
     struct kernel_heap_entry_t *highest;
-    size_t heap_end_addr;
+    size_t heap_end_addr = KHEAP_START_ADDR;
     /* find heap end address */
     highest = kheap_get_highest_entry();
     if (highest)

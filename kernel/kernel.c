@@ -2,6 +2,7 @@
 #include <arch/idt.h>
 #include <arch/pic.h>
 #include <arch/mmu.h>
+#include <dev/video.h>
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <tasks/tty.h>
@@ -10,6 +11,8 @@
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <utils/kassert.h>
+#include <utils/kdump.h>
+#include <utils/kheap.h>
 #include <utils/lib.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
@@ -30,7 +33,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   kernel_stack = kstack;
 
   /* init screen */
-  init_video();
+  video_init();
   kclear();
 
   /* hello */
@@ -42,8 +45,12 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   idt_init();
   mmu_init();
 
+  /* init dynamic memory */
+  kheap_init();
+  
   /* init scheduler */
   sched_init();
+  asm_hlt();
   kernel_create_tasks();
   kernel_run_tasks();
 
