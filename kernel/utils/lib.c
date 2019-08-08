@@ -9,14 +9,16 @@ static void test_sprintf();
 /*
  * Api
  */
-extern void lib_init() {
+extern void lib_init()
+{
     test_lib();
 }
 
 /*
  * Test c library
  */
-static void test_lib() {
+static void test_lib()
+{
 #ifdef TEST
     test_sprintf();
 #endif
@@ -25,7 +27,8 @@ static void test_lib() {
 /*
  * Test sprintf
  */
-static void test_sprintf() {
+static void test_sprintf()
+{
 #ifdef TEST
     char buf[256];
     /* numbers */

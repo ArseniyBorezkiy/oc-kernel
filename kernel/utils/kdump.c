@@ -9,19 +9,21 @@
 /*
  * Api - Stack dump
  */
-extern void kdump_stack(size_t *addr) {
+extern void kdump_stack(size_t *addr)
+{
   size_t base = (size_t)addr;
 
   kprint("-- stack dump: %X\n", base);
-  kprint("  %X : %X\n", base, *(u_int*)base);
-  kprint("  %X : %X\n", base + 4, *(u_int*)(base + 4));
-  kprint("  %X : %X\n", base + 8, *(u_int*)(base + 8));
+  kprint("  %X : %X\n", base, *(u_int *)base);
+  kprint("  %X : %X\n", base + 4, *(u_int *)(base + 4));
+  kprint("  %X : %X\n", base + 8, *(u_int *)(base + 8));
 }
 
 /*
  * Api - Multiboot header dump
  */
-extern void kdump_multiboot(struct multiboot_t *header) {
+extern void kdump_multiboot(struct multiboot_t *header)
+{
   kprint("-- multiboot header dump: %X\n", (size_t)header);
   kprint("  mem_lower : %X Kb\n", header->mem_lower);
   kprint("  mem_upper : %X Kb\n", header->mem_upper);
@@ -30,14 +32,16 @@ extern void kdump_multiboot(struct multiboot_t *header) {
 /*
  * Api - Elf header dump
  */
-extern void kdump_elf(struct elf_header_t *header) {
+extern void kdump_elf(struct elf_header_t *header)
+{
   kprint("-- elf header dump: %X\n", (size_t)header);
   kprint("  entry point: %X\n", header->e_entry);
   kprint("  headers count: %X\n", header->e_phnum);
   kprint("  headers begin: %X\n", header->e_shoff);
 
-  for (int i = 0; i < header->e_phnum; ++i) {
-    struct elf_program_header_t *p_header = (void*)(header->e_shoff + i * header->e_ehsize);
+  for (int i = 0; i < header->e_phnum; ++i)
+  {
+    struct elf_program_header_t *p_header = (void *)(header->e_shoff + i * header->e_ehsize);
     kprint("  + program header dump: %X\n", p_header);
     kprint("    segment type: %X\n", p_header->p_type);
     kprint("    target virtual address: %X\n", p_header->p_vaddr);
@@ -51,7 +55,8 @@ extern void kdump_elf(struct elf_header_t *header) {
 /*
  * Api - Dump control registers
  */
-extern void kdump_registers() {
+extern void kdump_registers()
+{
   kprint("-- dump control registers\n");
   u16 cs = asm_get_cs();
   u16 ss = asm_get_ss();
@@ -70,7 +75,8 @@ extern void kdump_registers() {
 /*
  * Api - Dump memory areas
  */
-extern void kdump_memory_areas() {
+extern void kdump_memory_areas()
+{
   kprint("-- dump memory areas\n");
   size_t kernel_stack_addr = (size_t)kernel_stack;
   kprint("  kernel stack: %X - %X\n", kernel_stack_addr, kernel_stack_addr - KERNEL_STACK_SIZE);

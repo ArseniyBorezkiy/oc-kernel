@@ -9,7 +9,8 @@
 /*
  * Api - Send message to task
  */
-extern void ksend(u_short tid, struct message_t *msg) {
+extern void ksend(u_short tid, struct message_t *msg)
+{
     struct sched_task_t *task;
 
     /* get target task */
@@ -17,7 +18,8 @@ extern void ksend(u_short tid, struct message_t *msg) {
     /* put message to task buffer */
     task_pack_message(task, msg);
     /* whether task has frozen */
-    if (task->status == TASK_INTERRUPTABLE) {
+    if (task->status == TASK_INTERRUPTABLE)
+    {
         /* defrost task */
         task->status = TASK_RUNNING;
     }
@@ -27,16 +29,18 @@ extern void ksend(u_short tid, struct message_t *msg) {
  * Api - Receive message to task
  *   This function has blocking behaviour
  */
-extern void kreceive(u_short tid, struct message_t *msg) {
+extern void kreceive(u_short tid, struct message_t *msg)
+{
     struct sched_task_t *task_before; /* before yield */
-    struct sched_task_t *task_after; /* after yield */
+    struct sched_task_t *task_after;  /* after yield */
 
     /* get current task */
     task_before = sched_get_current_task();
     kassert(__FILE__, __LINE__, tid == task_before->tid);
     kassert(__FILE__, __LINE__, task_before->status == TASK_RUNNING);
     /* whether task has not incomming messages */
-    if (task_before->msg_count_in == 0) {
+    if (task_before->msg_count_in == 0)
+    {
         /* freeze task */
         task_before->status = TASK_INTERRUPTABLE;
     }

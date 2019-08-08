@@ -2,7 +2,8 @@
 
 #include <lib/stdtypes.h>
 
-struct multiboot_t {
+struct multiboot_t
+{
    u32 flags;
    u32 mem_lower;
    u32 mem_upper;
@@ -27,4 +28,4 @@ struct multiboot_t {
    u32 vbe_interface_seg;
    u32 vbe_interface_off;
    u32 vbe_interface_len;
-}; /* __attribute__((packed)) */
+} attribute(packed);

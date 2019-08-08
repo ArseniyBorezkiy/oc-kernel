@@ -2,32 +2,34 @@
 
 #include <lib/stdtypes.h>
 
-struct page_directory_entry_t {
-    u8 present: 1;
-    u8 read_write: 1;
-    u8 user_supervisor: 1;
-    u8 write_through: 1;
-    u8 cache_disabled: 1;
-    u8 accessed: 1;
-    u8 zero: 1;
-    u8 page_size: 1;
-    u8 ignored: 1;
-    u8 available: 3;
-    u32 page_table_addr: 20; /* 4Kb */
+struct page_directory_entry_t
+{
+    u8 present : 1;
+    u8 read_write : 1;
+    u8 user_supervisor : 1;
+    u8 write_through : 1;
+    u8 cache_disabled : 1;
+    u8 accessed : 1;
+    u8 zero : 1;
+    u8 page_size : 1;
+    u8 ignored : 1;
+    u8 available : 3;
+    u32 page_table_addr : 20; /* 4Kb */
 } attribute(packed);
 
-struct page_table_entry_t {
-    u8 present: 1;
-    u8 read_write: 1;
-    u8 user_supervisor: 1;
-    u8 write_through: 1;
-    u8 cache_disabled: 1;
-    u8 accessed: 1;
-    u8 dirty: 1;
-    u8 zero: 1;
-    u8 global: 1;
-    u8 available: 3;
-    u32 page_phys_addr: 20; /* 4Kb | 4MB */
+struct page_table_entry_t
+{
+    u8 present : 1;
+    u8 read_write : 1;
+    u8 user_supervisor : 1;
+    u8 write_through : 1;
+    u8 cache_disabled : 1;
+    u8 accessed : 1;
+    u8 dirty : 1;
+    u8 zero : 1;
+    u8 global : 1;
+    u8 available : 3;
+    u32 page_phys_addr : 20; /* 4Kb | 4MB */
 } attribute(packed);
 
 #define PAGE_DIRECTORY_ENTRIES_COUNT 4

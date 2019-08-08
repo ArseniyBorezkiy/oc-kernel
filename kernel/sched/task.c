@@ -18,12 +18,13 @@ static void task_test();
  */
 
 static struct sched_task_t *task_list_head; /* cyclic list */
-static int task_count; /* list entries count */
+static int task_count;                      /* list entries count */
 
 /*
  * Api - Init
  */
-extern void task_init() {
+extern void task_init()
+{
     task_list_head = null;
     task_count = 0;
     task_test();
@@ -32,13 +33,15 @@ extern void task_init() {
 /*
  * Api - Create new task
  */
-extern bool task_create(u_short tid, void *address) {
+extern bool task_create(u_short tid, void *address)
+{
     struct sched_task_t *task;
 
     kprint(MSG_SCHED_TID_CREATE, (u_int)address);
 
     /* check tasks limit */
-    if (task_count >= TASK_MAX_COUNT) {
+    if (task_count >= TASK_MAX_COUNT)
+    {
         return false; /* limit exceed */
     }
 
@@ -48,12 +51,15 @@ extern bool task_create(u_short tid, void *address) {
     task->ustack = kmalloc(TASK_USTACK_SIZE);
     task_count += 1;
     /* normalize pointers */
-    if (task_list_head) {
+    if (task_list_head)
+    {
         task->next = task_list_head->next;
         task_list_head->next->prev = task;
         task->prev = task_list_head;
         task_list_head->next = task;
-    } else {
+    }
+    else
+    {
         task->prev = task;
         task->next = task;
     }
@@ -65,7 +71,7 @@ extern bool task_create(u_short tid, void *address) {
     task->msg_count_in = 0;
     task->time = 0;
     /* set flags */
-    *(u32*)(&task->flags) = asm_get_eflags();
+    *(u32 *)(&task->flags) = asm_get_eflags();
     /* set general purpose registers */
     memset(&task->gp_registers, 0, sizeof(struct gp_registers_t));
     /* set other purpose registers */
@@ -75,19 +81,22 @@ extern bool task_create(u_short tid, void *address) {
     task->op_registers.eip = (size_t)address;
     task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
     task->op_registers.u_esp = (u32)task->ustack + TASK_USTACK_SIZE;
-    
+
     return true;
 }
 
 /*
  * Api - Delete task by id
  */
-extern void task_delete(struct sched_task_t *task) {
+extern void task_delete(struct sched_task_t *task)
+{
     /* normalize list head */
     task_count -= 1;
-    if (task_list_head == task) {
+    if (task_list_head == task)
+    {
         task_list_head = task_list_head->next;
-        if (task_list_head == task) {
+        if (task_list_head == task)
+        {
             task_list_head = null;
         }
     }
@@ -104,9 +113,10 @@ extern void task_delete(struct sched_task_t *task) {
 /*
  * Api - Get task by id
  */
-extern struct sched_task_t *task_get_by_id(u_short tid) {
+extern struct sched_task_t *task_get_by_id(u_short tid)
+{
     struct sched_task_t *task;
-    
+
     task = task_find_by_id(tid);
     kassert(__FILE__, __LINE__, task != null);
 
@@ -116,10 +126,12 @@ extern struct sched_task_t *task_get_by_id(u_short tid) {
 /*
  * Api - Find task by id
  */
-extern struct sched_task_t *task_find_by_id(u_short tid) {
+extern struct sched_task_t *task_find_by_id(u_short tid)
+{
     struct sched_task_t *task;
-    
-    if (task_list_head == null) {
+
+    if (task_list_head == null)
+    {
         return null;
     }
 
@@ -127,7 +139,8 @@ extern struct sched_task_t *task_find_by_id(u_short tid) {
 
     do
     {
-        if (task->tid == tid) {
+        if (task->tid == tid)
+        {
             return task;
         }
 
@@ -140,15 +153,17 @@ extern struct sched_task_t *task_find_by_id(u_short tid) {
 /*
  * Api - Get task by status
  */
-extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task_t *list_head) {
+extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task_t *list_head)
+{
     struct sched_task_t *task;
-    
+
     task = list_head;
     kassert(__FILE__, __LINE__, task != null);
-    
+
     do
     {
-        if (task->status == status) {
+        if (task->status == status)
+        {
             return task;
         }
 
@@ -156,22 +171,25 @@ extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task
     } while (task != task_list_head);
 
     kunreachable(__FILE__, __LINE__);
-    
+
     return null;
 }
 
 /*
  * Api - Pack message
  */
-extern void task_pack_message(struct sched_task_t *task, struct message_t *msg) {
+extern void task_pack_message(struct sched_task_t *task, struct message_t *msg)
+{
     /* check buffer size */
-    if (task->msg_count_in == TASK_MSG_BUFF_SIZE) {
+    if (task->msg_count_in == TASK_MSG_BUFF_SIZE)
+    {
         kpanic(MSG_KERNEL_TASK_BUFF_EXCEED, task->tid);
     }
     /* unshift message to task buffer */
     task->msg_count_in += 1;
-    for (int i = task->msg_count_in - 1; i > 0; --i) {
-        memcpy(&task->msg_buff[i], &task->msg_buff[i-1], sizeof(struct message_t));
+    for (int i = task->msg_count_in - 1; i > 0; --i)
+    {
+        memcpy(&task->msg_buff[i], &task->msg_buff[i - 1], sizeof(struct message_t));
     }
     /* unshift message to task buffer */
     memcpy(&task->msg_buff[0], msg, sizeof(struct message_t));
@@ -180,7 +198,8 @@ extern void task_pack_message(struct sched_task_t *task, struct message_t *msg) 
 /*
  * Api - Extract message
  */
-extern void task_extract_message(struct sched_task_t *task, struct message_t *msg) {
+extern void task_extract_message(struct sched_task_t *task, struct message_t *msg)
+{
     struct message_t *cur_msg;
 
     /* get first incomed message */
@@ -194,7 +213,8 @@ extern void task_extract_message(struct sched_task_t *task, struct message_t *ms
 /*
  * Smoke test
  */
-static void task_test() {
+static void task_test()
+{
 #ifdef TEST
     struct sched_task_t *task;
     struct sched_task_t task1;

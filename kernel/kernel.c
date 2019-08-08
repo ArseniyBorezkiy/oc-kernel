@@ -28,19 +28,21 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 {
   /* remember kernel stack addr */
   kernel_stack = kstack;
-  
+
   /* init screen */
   init_video();
   kclear();
+
+  /* hello */
   kprint(MSG_KERNEL_START, &kernel_start);
   kprint(MSG_KERNEL_MEM_AVAILABLE, multiboot->mem_upper);
-  
+
   /* init arch */
   lib_init();
   idt_init();
   mmu_init();
 
-	/* init scheduler */
+  /* init scheduler */
   sched_init();
   kernel_create_tasks();
   kernel_run_tasks();
@@ -49,30 +51,29 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   pic_enable();
   asm_unlock();
 
+  /* start scheduler */
   kprint(MSG_KERNEL_STARTED);
-
-  /* should never return */
-	while(1) {
-    delay(1);
-    kprint(MSG_KERNEL_STARTED);
-  }
+  sched_yield();
+  kunreachable(__FILE__, __LINE__);
 }
 
 /*
  * Create kernel tasks
  */
-static void kernel_create_tasks() {
-  bool is_ok = 
-    task_create(TID_INIT, task_init_main) &&
-    task_create(TID_TTY, task_tty_main) &&
-    task_create(TID_TTY, task_sh_main);
+static void kernel_create_tasks()
+{
+  bool is_ok =
+      task_create(TID_INIT, task_init_main) &&
+      task_create(TID_TTY, task_tty_main) &&
+      task_create(TID_TTY, task_sh_main);
   kassert(__FILE__, __LINE__, is_ok);
 }
 
 /*
  * Run kernel tasks
  */
-static void kernel_run_tasks() {
+static void kernel_run_tasks()
+{
   struct sched_task_t *init_task;
   struct sched_task_t *tty_task;
   struct sched_task_t *sh_task;

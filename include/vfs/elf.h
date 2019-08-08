@@ -2,28 +2,31 @@
 
 #include <lib/stdtypes.h>
 
-struct elf_header_ident_t {
+struct elf_header_ident_t
+{
     u32 ei_magic; /* elf signature */
-    u8 ei_class; /* whether 32 or 64 bit */
-    u8 ei_data; /* whether little-endian or big-endian encoding */
+    u8 ei_class;  /* whether 32 or 64 bit */
+    u8 ei_data;   /* whether little-endian or big-endian encoding */
     u8 ei_version;
     u8 ei_osabi;
     u8 ei_abiversion;
     u8 ei_pad[7];
 };
 
-struct elf_program_header_t {
-    u32 p_type; /* segment type */
+struct elf_program_header_t
+{
+    u32 p_type;   /* segment type */
     u32 p_offset; /* segment offset from file begin */
-    u32 p_vaddr; /* target virtual address */
-    u32 p_paddr; /* target physical address */
+    u32 p_vaddr;  /* target virtual address */
+    u32 p_paddr;  /* target physical address */
     u32 p_filesz; /* segment size in file */
-    u32 p_memsz; /* segment size in memory */
-    u32 p_flags; /* permissions and etc */
-    u32 p_align; /* alignment */
+    u32 p_memsz;  /* segment size in memory */
+    u32 p_flags;  /* permissions and etc */
+    u32 p_align;  /* alignment */
 };
 
-struct elf_header_t {
+struct elf_header_t
+{
     struct elf_header_ident_t e_ident;
     u16 e_type;
     u16 e_machine;
@@ -32,11 +35,11 @@ struct elf_header_t {
     u32 e_phoff; /* program headers table offset */
     u32 e_shoff; /* program headers sections table offset */
     u32 e_flags;
-    u16 e_ehsize; /* file header size */
+    u16 e_ehsize;    /* file header size */
     u16 e_phentsize; /* single header size */
-    u16 e_phnum; /* headers count */
+    u16 e_phnum;     /* headers count */
     u16 e_shentsize; /* section header size */
-    u16 e_shnum; /* sections headers count */
+    u16 e_shnum;     /* sections headers count */
     u16 e_shstrndx;
 };
 

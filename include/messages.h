@@ -14,6 +14,8 @@
 #define MSG_KERNEL_TASK_BUFF_EXCEED (MSG_KERNEL_PREFIX "message buffer exceed for tid = %X" MSG_CRLN)
 #define MSG_KERNEL_CODE_UNREACHABLE (MSG_KERNEL_PREFIX "code unreachable" MSG_CRLN)
 #define MSG_KERNEL_SYSLOG_INITIALIZED (MSG_KERNEL_PREFIX "syslog initialized" MSG_CRLN)
+#define MSG_KERNEL_HEAP_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory limit exceed" MSG_CRLN)
+#define MSG_KERNEL_HEAP_TABLE_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory table limit exceed" MSG_CRLN)
 #define MSG_IRQ1 (MSG_KERNEL_PREFIX "irq1" MSG_CRLN)
 
 /* scheduler */

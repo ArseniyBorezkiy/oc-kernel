@@ -47,7 +47,8 @@ extern void idt_init()
 /*
  * Fill interrupt descriptor table entry
  */
-static void idt_fill_entry(u_char offset, size_t handler) {
+static void idt_fill_entry(u_char offset, size_t handler)
+{
     IDT[offset].offset_lowerbits = LOW_WORD(handler);
     IDT[offset].selector = KERNEL_CODE_SEGMENT_SELECTOR;
     IDT[offset].zero = 0;

@@ -2,7 +2,8 @@
 
 #include <lib/stdtypes.h>
 
-struct spin_t {
+struct spin_t
+{
     u_short tid;
     int semaphore;
 };

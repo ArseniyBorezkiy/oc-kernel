@@ -14,6 +14,7 @@ extern void *memset(void *buf1, u8 value, u_int bytes);
 extern int strcmp(const char *s1, const char *s2);
 extern char *strcat(char *s1, const char *s2);
 extern char *strext(char *buf, const char *str, char sym);
+extern char *memext(void *buff_dst, u_int n, const void *buff_src, char sym);
 extern char *itoa(int value, char *str, int base);
 extern char *strinv(char *str);
 extern unsigned int sprintf(char *s1, const char *s2, ...);

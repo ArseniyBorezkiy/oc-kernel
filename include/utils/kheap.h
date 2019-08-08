@@ -7,16 +7,18 @@
 #define KHEAP_SIZE (KHEAP_END_ADDR - KHEAP_START_ADDR)
 #define KHEAP_MAX_ENTRIES 16
 
-struct kernel_heap_entry_t {
-    size_t addr; /* physical address */
-    size_t size; /* memory block size */
-    bool is_buzy; /* whether block used */
-    bool is_valid; /* whether table entry is valid */
+struct kernel_heap_entry_t
+{
+    size_t addr;                      /* physical address */
+    size_t size;                      /* memory block size */
+    bool is_buzy;                     /* whether block used */
+    bool is_valid;                    /* whether table entry is valid */
     struct kernel_heap_entry_t *next; /* next block */
     struct kernel_heap_entry_t *prev; /* prev block */
 };
 
-struct kernel_heap_table_t {
+struct kernel_heap_table_t
+{
     struct kernel_heap_entry_t block[KHEAP_MAX_ENTRIES];
 };
 

@@ -23,21 +23,22 @@
 /*
  * Process descriptor
  */
-struct sched_task_t {
-    u_short tid; /* task id */
-    bool is_valid; /* whether entry is valid task */
-    struct gp_registers_t gp_registers; /* general purpose registers */
-    struct op_registers_t op_registers; /* other purpose registers */
-    struct flags_t flags; /* processor flags */
-    u_int time; /* time of task execution */
-    bool reschedule; /* whether task need to be rescheduled */
-    u_short status; /* task status */
-    int msg_count_in; /* count of incomming messages */
+struct sched_task_t
+{
+    u_short tid;                                   /* task id */
+    bool is_valid;                                 /* whether entry is valid task */
+    struct gp_registers_t gp_registers;            /* general purpose registers */
+    struct op_registers_t op_registers;            /* other purpose registers */
+    struct flags_t flags;                          /* processor flags */
+    u_int time;                                    /* time of task execution */
+    bool reschedule;                               /* whether task need to be rescheduled */
+    u_short status;                                /* task status */
+    int msg_count_in;                              /* count of incomming messages */
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
-    void *kstack; /* kernel stack top */
-    void *ustack; /* user stack top */
-    struct sched_task_t *next; /* next entry */
-    struct sched_task_t *prev; /* prev entry */
+    void *kstack;                                  /* kernel stack top */
+    void *ustack;                                  /* user stack top */
+    struct sched_task_t *next;                     /* next entry */
+    struct sched_task_t *prev;                     /* prev entry */
 };
 
 /*

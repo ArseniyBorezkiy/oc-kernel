@@ -7,7 +7,8 @@
 /*
  * API - Stop kernel execution
  */
-extern void kpanic(char * message, ...) {
+extern void kpanic(char *message, ...)
+{
     va_list list;
     va_start(list, message);
 

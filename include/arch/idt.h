@@ -16,7 +16,8 @@
 /*
  * Interrupt table entry
  */
-struct IDT_entry {
+struct IDT_entry
+{
     u16 offset_lowerbits;
     u16 selector;
     u8 zero;

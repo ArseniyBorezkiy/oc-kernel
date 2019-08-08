@@ -9,7 +9,8 @@ struct page_table_entry_t page_table[PAGE_DIRECTORY_ENTRIES_COUNT][PAGE_TABLE_EN
  * Api - init kernel page directory
  * Here assumed each entry addresses 4MB
  */
-extern void mmu_init() {
+extern void mmu_init()
+{
     u_int kpdi = KERNEL_PAGE_DIRECTORY_INDEX;
 
     /* set kernel page directory */
@@ -26,7 +27,8 @@ extern void mmu_init() {
     page_directory[kpdi].page_table_addr = (size_t)&page_table[kpdi];
 
     /* set kernel table */
-    for (int i = 0; i < PAGE_TABLE_ENTRIES_COUNT; ++i) {
+    for (int i = 0; i < PAGE_TABLE_ENTRIES_COUNT; ++i)
+    {
         page_table[kpdi][i].zero = 0;
         page_table[kpdi][i].accessed = 0;
         page_table[kpdi][i].available = 0;
@@ -44,13 +46,15 @@ extern void mmu_init() {
 /*
  * Api - Set page directory entry
  */
-extern void set_page_directory_entry(struct page_directory_entry_t *entry, u_int index) {
+extern void set_page_directory_entry(struct page_directory_entry_t *entry, u_int index)
+{
     memcpy(&page_directory[index], entry, sizeof(struct page_directory_entry_t));
 }
 
 /*
  * Api - Set page table entry
  */
-extern void set_page_table_entry(struct page_table_entry_t *entry, u_int dir_index, u_int tbl_index) {
+extern void set_page_table_entry(struct page_table_entry_t *entry, u_int dir_index, u_int tbl_index)
+{
     memcpy(&page_table[dir_index][tbl_index], entry, sizeof(struct page_table_entry_t));
 }
