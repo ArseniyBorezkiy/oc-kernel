@@ -2,6 +2,8 @@
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
 #include <utils/kassert.h>
+#include <utils/kprint.h>
+#include <utils/kdump.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <kernel.h>
@@ -34,7 +36,7 @@ extern void *kmalloc(size_t size)
     /*
      * try to use existing suitable block
      */
-    current = kheap_table_entries_start();
+    current = null;
     do
     {
         /* get free valid block */
@@ -151,7 +153,7 @@ extern void *kmalloc(size_t size)
         kpanic(MSG_KERNEL_HEAP_EXCEED);
     }
     /* get invalid block to occupy */
-    current = kheap_table_entries_start();
+    current = null;
     current = kheap_find_block(current, false, false);
     if (current == null)
     {
@@ -230,6 +232,10 @@ extern struct kernel_heap_entry_t *kheap_table_entries_start()
  */
 extern struct kernel_heap_entry_t *kheap_table_entries_next(struct kernel_heap_entry_t *entry)
 {
+    if (entry == null) {
+      return kheap_table_entries_start();
+    }
+
     for (int i = 0; i < KHEAP_MAX_ENTRIES; ++i)
     {
         if (&kernel_heap_table.block[i] == entry)
@@ -369,6 +375,7 @@ static void kheap_test()
 #ifdef TEST
     /* allocate 3 small blocks */
     void *addr1 = kmalloc(16);
+    kdump_heap();
     kassert(__FILE__, __LINE__, addr1 == (void *)KHEAP_START_ADDR);
     void *addr2 = kmalloc(16);
     kassert(__FILE__, __LINE__, addr2 == (void *)(KHEAP_START_ADDR + 16));
@@ -380,6 +387,7 @@ static void kheap_test()
     void *addr4 = kmalloc(8);
     kassert(__FILE__, __LINE__, addr4 == (void *)(KHEAP_START_ADDR + 16));
     void *addr5 = kmalloc(6);
+    kdump_heap();
     kassert(__FILE__, __LINE__, addr5 == (void *)(KHEAP_START_ADDR + 16 + 6));
     /* allocate small block */
     void *addr6 = kmalloc(16);
