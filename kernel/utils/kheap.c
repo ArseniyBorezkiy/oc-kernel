@@ -9,12 +9,14 @@
 #include <kernel.h>
 #include <messages.h>
 
-struct kernel_heap_table_t kernel_heap_table;
+struct kheap_entry_t kheap_blocks[KHEAP_MAX_ENTRIES];
+struct slist_definition_t kheap_list = {
+    .head = null,
+    .tail = null,
+    .slot_size = sizeof(struct slist_head_t),
+    .slots = KHEAP_MAX_ENTRIES,
+    .base = (size_t)kheap_blocks};
 
-static struct kernel_heap_entry_t *kheap_find_block(struct kernel_heap_entry_t *entry, bool is_valid, bool is_buzy);
-static struct kernel_heap_entry_t *kheap_find_first_valid_block(struct kernel_heap_entry_t *entry);
-static struct kernel_heap_entry_t *kheap_get_highest_entry();
-static void kheap_validate();
 static void kheap_test();
 
 /*
@@ -22,7 +24,9 @@ static void kheap_test();
  */
 extern void kheap_init()
 {
-    memset(&kernel_heap_table, 0, sizeof(struct kernel_heap_table_t));
+    /* init data structures */
+    memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);
+    /* run tests */
     kheap_test();
 }
 
@@ -31,168 +35,120 @@ extern void kheap_init()
  */
 extern void *kmalloc(size_t size)
 {
-    struct kernel_heap_entry_t *current;
+    struct kheap_entry_t *current = null;
+    struct kheap_entry_t *head = (struct kheap_entry_t *)kheap_list.head;
 
-    /*
-     * try to use existing suitable block
-     */
-    current = null;
-    do
+    /* try to use free block */
+    for (current = head; current != null; current = current->list_head->next)
     {
-        /* get free valid block */
-        current = kheap_find_block(current, true, false);
-        if (current != null)
+        /* check size is enough */
+        if (current->size < size)
         {
-            /* check size is enough */
-            if (current->size < size)
+            /* try to ask contribution from free left sibling */
+            if (current->list_head->prev != null)
             {
-                /* try to ask contribution from free left sibling */
-                if (current->prev != null)
+                /* left sibling has found */
+                struct kheap_entry_t *sibling;
+                sibling = (struct kheap_entry_t *)current->list_head->prev;
+                /* check whether left sibling is free */
+                if (!sibling->is_buzy)
                 {
-                    /* sibling has found */
-                    struct kernel_heap_entry_t *sibling = current->prev;
-                    kassert(__FILE__, __LINE__, sibling->is_valid);
-                    /* check whether sibling is free */
-                    if (!sibling->is_buzy)
-                    {
-                        /* ask lack from left sibling */
-                        size_t lack = size - current->size;
-                        sibling->size -= lack;
-                        current->addr -= lack;
-                        current->size += lack;
-                        kassert(__FILE__, __LINE__, current->size == size);
-                        /* whether sibling is collapsed */
-                        if (sibling->size == 0)
-                        {
-                            /* normalize pointers */
-                            if (sibling->prev != null)
-                            {
-                                /* set new left sibling */
-                                struct kernel_heap_entry_t *sibling2 = sibling->prev;
-                                kassert(__FILE__, __LINE__, sibling2 != null);
-                                sibling2->next = current;
-                                current->prev = sibling2;
-                            }
-                            else
-                            {
-                                /* no left sibling anymore */
-                                current->prev = null;
-                            }
-                            /* delete collapsed sibling */
-                            memset(sibling, 0, sizeof(struct kernel_heap_entry_t));
-                        }
-                        /* occupy block */
-                        current->is_buzy = true;
-                        kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
-                        kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
-                        kheap_validate();
-                        return (void *)current->addr; /* suitable block has found */
-                    }
-                }
-                else if (current->next == null)
-                {
-                    /* try to allocate new memory */
-                    size_t heap_end_addr = current->addr + current->size;
+                    /* ask lack from left sibling */
                     size_t lack = size - current->size;
-                    /* check free memory size is enought */
-                    if (heap_end_addr + lack < KHEAP_END_ADDR)
+                    sibling->size -= lack;
+                    current->addr -= lack;
+                    current->size += lack;
+                    kassert(__FILE__, __LINE__, current->size == size);
+                    /* whether left sibling is collapsed */
+                    if (sibling->size == 0)
                     {
-                        /* occupy block */
-                        current->size += lack;
-                        current->is_buzy = true;
-                        kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
-                        kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
-                        kheap_validate();
-                        return (void *)current->addr; /* suitable block has found */
+                        slist_delete_entry(&kheap_list, (struct slist_head_t *)sibling);
                     }
+                    /* occupy block */
+                    current->is_buzy = true;
+                    kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
+                    kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
+                    return (void *)current->addr; /* suitable block has found */
                 }
             }
-            else
+            else if (current->list_head->next == null)
             {
-                /* occupy block */
-                current->is_buzy = true;
-                /* try to contribute free right sibling */
-                if (current->next != null)
+                /* try to allocate new memory */
+                size_t heap_end_addr = current->addr + current->size;
+                size_t lack = size - current->size;
+                /* check free memory size is enought */
+                if (heap_end_addr + lack < KHEAP_END_ADDR)
                 {
-                    /* sibling has found */
-                    struct kernel_heap_entry_t *sibling = current->next;
-                    kassert(__FILE__, __LINE__, sibling->is_valid);
-                    size_t surplus = current->size - size;
-                    /* check whether sibling is free */
-                    if (!sibling->is_buzy)
-                    {
-                        /* give surplus to right sibling */
-                        current->size -= surplus;
-                        sibling->addr -= surplus;
-                        sibling->size += surplus;
-                        kassert(__FILE__, __LINE__, current->size == size);
-                    } else {
-                        /* give surplus to new right sibling */
-                        struct kernel_heap_entry_t *new_sibling;
-                        new_sibling = kheap_find_block(null, false, false);
-                        if (new_sibling != null) {
-                          current->size -= surplus;
-                          new_sibling->is_valid = true;
-                          new_sibling->is_buzy = false;
-                          new_sibling->addr = current->addr + current->size;
-                          new_sibling->size = surplus;
-                          new_sibling->prev = current;
-                          new_sibling->next = current->next;
-                          if (current->next) {
-                            kassert(__FILE__, __LINE__, current->next->prev == current);
-                            current->next->prev = new_sibling;
-                          }
-                          current->next = new_sibling;
-                        }
-                    }
+                    /* occupy block */
+                    current->size += lack;
+                    current->is_buzy = true;
+                    kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
+                    kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
+                    return (void *)current->addr; /* suitable block has found */
                 }
-                kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
-                kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
-                kheap_validate();
-                return (void *)current->addr; /* suitable block has found */
             }
         }
-    } while (current != null);
+        else
+        {
+            /* occupy block */
+            current->is_buzy = true;
+            /* try to contribute free right sibling */
+            if (current->list_head->next != null)
+            {
+                /* sibling has found */
+                struct kheap_entry_t *sibling;
+                sibling = (struct kheap_entry_t *)current->list_head->next;
+                size_t surplus = current->size - size;
+                /* check whether sibling is free */
+                if (!sibling->is_buzy)
+                {
+                    /* give surplus to right sibling */
+                    current->size -= surplus;
+                    sibling->addr -= surplus;
+                    sibling->size += surplus;
+                    kassert(__FILE__, __LINE__, current->size == size);
+                }
+                else
+                {
+                    /* give surplus to new right sibling */
+                    struct kheap_entry_t *new_sibling;
+                    new_sibling = (struct kheap_entry_t *)slist_insert_entry_after(&kheap_list, current);
+                    if (new_sibling != null)
+                    {
+                        current->size -= surplus;
+                        new_sibling->is_buzy = false;
+                        new_sibling->addr = current->addr + current->size;
+                        new_sibling->size = surplus;
+                    }
+                }
+            }
+            kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
+            kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
+            return (void *)current->addr; /* suitable block has found */
+        }
+    }
 
-    /*
-     * try to alloc new block
-     */
-    struct kernel_heap_entry_t *highest;
+    /* try to alloc new block */
     size_t heap_end_addr = KHEAP_START_ADDR;
-    /* find heap end address */
-    highest = kheap_get_highest_entry();
-    if (highest)
+    /* calculate heap end address */
+    if (kheap_list.tail)
     {
-        heap_end_addr = highest->addr + highest->size;
+        struct kheap_entry_t *tail;
+        tail = (struct kheap_entry_t *)kheap_list.tail;
+        heap_end_addr = tail->addr + tail->size;
     }
     /* check free memory size is enought */
     if (heap_end_addr + size >= KHEAP_END_ADDR)
     {
         kpanic(MSG_KERNEL_HEAP_EXCEED);
     }
-    /* get invalid block to occupy */
-    current = null;
-    current = kheap_find_block(current, false, false);
-    if (current == null)
-    {
-        kpanic(MSG_KERNEL_HEAP_TABLE_EXCEED);
-    }
-    /* occupy block */
+    /* allocate new heap memory block */
+    current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
     current->addr = heap_end_addr;
     current->size = size;
-    current->is_valid = true;
     current->is_buzy = true;
-    /* normalize pointers */
-    current->prev = highest;
-    current->next = null;
-    if (highest)
-    {
-        highest->next = current;
-    }
-
     kassert(__FILE__, __LINE__, current->addr >= KHEAP_START_ADDR);
     kassert(__FILE__, __LINE__, current->addr < KHEAP_END_ADDR);
-    kheap_validate();
     return (void *)current->addr;
 }
 
@@ -201,187 +157,38 @@ extern void *kmalloc(size_t size)
  */
 extern void kfree(void *addr)
 {
-    struct kernel_heap_entry_t *current;
+    struct kheap_entry_t *current = null;
+    struct kheap_entry_t *head = (struct kheap_entry_t *)kheap_list.head;
 
-    for (current = kheap_table_entries_start();
-         current != kheap_table_entries_end();
-         current = kheap_table_entries_next(current))
+    for (current = head; current != null; current = current->list_head->next)
     {
-        if (current->is_valid && (void *)current->addr == addr && current->is_buzy)
+        if (current->addr == (size_t)addr && current->is_buzy)
         {
+            struct kheap_entry_t *prev;
+            struct kheap_entry_t *next;
+            prev = (struct kheap_entry_t *)current->list_head->prev;
+            next = (struct kheap_entry_t *)current->list_head->next;
+
             /* free block */
             current->is_buzy = false;
             /* try to merge with free left sibling */
-            if (current->prev != null && !current->prev->is_buzy)
+            if (prev != null && !prev->is_buzy)
             {
-                current->prev->size += current->size;
-                /* delete collapsed block */
-                memset(current, 0, sizeof(struct kernel_heap_entry_t));
+                prev->size += current->size;
+                slist_delete_entry(&kheap_list, current);
             }
             /* try to merge with free right sibling */
-            if (current->next != null && !current->next->is_buzy)
+            if (next != null && !next->is_buzy)
             {
-                current->size += current->next->size;
-                /* delete collapsed sibling */
-                memset(current->next, 0, sizeof(struct kernel_heap_entry_t));
+                current->size += next->size;
+                slist_delete_entry(&kheap_list, next);
             }
-            kheap_validate();
+
             return;
         }
     }
 
     kpanic("invalid kernel heap address to free %X", addr);
-}
-
-//
-// List iteration support
-//
-
-/*
- * Api - Get first kernel heap table entry
- */
-extern struct kernel_heap_entry_t *kheap_table_entries_start()
-{
-    return &kernel_heap_table.block[0];
-}
-
-/*
- * Api - Get next kernel heap table entry
- */
-extern struct kernel_heap_entry_t *kheap_table_entries_next(struct kernel_heap_entry_t *entry)
-{
-    if (entry == null) {
-      return kheap_table_entries_start();
-    }
-
-    for (int i = 0; i < KHEAP_MAX_ENTRIES; ++i)
-    {
-        if (&kernel_heap_table.block[i] == entry)
-        {
-            if (i + 1 < KHEAP_MAX_ENTRIES)
-            {
-                return &kernel_heap_table.block[i + 1];
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
-    return null;
-}
-
-/*
- * Api - Get last kernel heap table entry
- */
-extern struct kernel_heap_entry_t *kheap_table_entries_end()
-{
-    return &kernel_heap_table.block[KHEAP_MAX_ENTRIES - 1];
-}
-
-//
-// Table entries searching
-//
-
-/*
- * Find suitable block
- */
-static struct kernel_heap_entry_t *kheap_find_block(struct kernel_heap_entry_t *entry, bool is_valid, bool is_buzy)
-{
-    /* lookup all entries */
-    for (entry = kheap_table_entries_next(entry);
-         entry != kheap_table_entries_end();
-         entry = kheap_table_entries_next(entry))
-    {
-        /* whether block is suitable */
-        if (entry->is_valid == is_valid && entry->is_buzy == is_buzy)
-        {
-            return entry;
-        }
-    }
-
-    return null;
-}
-
-/*
- * Find first valid block
- */
-static struct kernel_heap_entry_t *kheap_find_first_valid_block(struct kernel_heap_entry_t *entry)
-{
-    /* lookup all entries */
-    for (entry = kheap_table_entries_next(entry);
-         entry != kheap_table_entries_end();
-         entry = kheap_table_entries_next(entry))
-    {
-        /* whether block is suitable */
-        if (entry->is_valid == true)
-        {
-            return entry;
-        }
-    }
-
-    return null;
-}
-
-/*
- * Find entry with highest memory address
- */
-static struct kernel_heap_entry_t *kheap_get_highest_entry()
-{
-    struct kernel_heap_entry_t *entry;
-    struct kernel_heap_entry_t *highest_entry = null;
-    size_t max_right_border = 0;
-
-    /* lookup all entries */
-    for (entry = kheap_table_entries_start();
-         entry != kheap_table_entries_end();
-         entry = kheap_table_entries_next(entry))
-    {
-        /* whether block is valid */
-        if (entry->is_valid == true)
-        {
-            size_t right_border = entry->addr + entry->size;
-            if (right_border >= max_right_border)
-            {
-                /* update highest entry */
-                max_right_border = right_border;
-                highest_entry = entry;
-            }
-        }
-    }
-
-    return highest_entry;
-}
-
-/*
- * Check heap is valid
- */
-static void kheap_validate()
-{
-#ifdef DEBUG
-    struct kernel_heap_entry_t *entry;
-    struct kernel_heap_entry_t *current;
-    struct kernel_heap_entry_t *next;
-    size_t addr;
-
-    /* get first valid block */
-    entry = kheap_find_first_valid_block(null);
-    kassert(__FILE__, __LINE__, entry->prev == null);
-    /* check no holes */
-    current = entry;
-    while (current)
-    {
-        addr = current->addr + current->size;
-        next = current->next;
-        current = current->next;
-        if (next && next->addr != addr)
-        {
-            /* hole detected */
-            kpanic("kernel heap corrupted");
-        }
-    }
-#endif
 }
 
 /*
@@ -431,8 +238,8 @@ static void kheap_test()
     void *addr10 = kmalloc(1);
     kassert(__FILE__, __LINE__, addr9 == (void *)KHEAP_START_ADDR);
     kfree(addr10);
-    kprint("sss");
     /* clear heap table */
-    memset(&kernel_heap_table, 0, sizeof(kernel_heap_table));
+    memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);
+    kprint("heap test ok!");
 #endif
 }

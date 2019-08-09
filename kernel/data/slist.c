@@ -1,0 +1,237 @@
+#include <data/slist.h>
+#include <utils/kassert.h>
+#include <lib/string.h>
+#include <lib/assembly.h>
+
+static void slist_test();
+
+/*
+ * Api - Init static list
+ */
+extern void slist_init()
+{
+  slist_test();
+}
+
+/*
+ * Api - Create static list entry after position
+ */
+extern struct slist_head_t *slist_insert_entry_after(struct slist_definition_t *list, struct slist_head_t *pos)
+{
+  struct slist_head_t *entry;
+
+  kassert(__FILE__, __LINE__, list != null);
+  kassert(__FILE__, __LINE__, list->slot_size >= sizeof(struct slist_head_t));
+
+  for (int i = 0; i < list->slots; ++i)
+  {
+    size_t offset = list->base + i * list->slot_size;
+    entry = (struct slist_head_t *)offset;
+
+    if (!entry->is_valid)
+    {
+      /* occupy block */
+      entry->is_valid = true;
+
+      /* insert to list */
+      entry->prev = pos;
+      entry->next = pos != null ? pos->next : null;
+      if (pos->next)
+      {
+        pos->next = entry;
+      }
+      if (entry->next != null)
+      {
+        entry->next->prev = entry;
+      }
+
+      /* normalize list tail */
+      if (pos == list->tail)
+      {
+        list->tail = entry;
+      }
+
+      return entry;
+    }
+  }
+
+  return null;
+}
+
+/*
+ * Api - Create static list entry before position
+ */
+extern struct slist_head_t *slist_insert_entry_before(struct slist_definition_t *list, struct slist_head_t *pos)
+{
+  struct slist_head_t *entry;
+
+  kassert(__FILE__, __LINE__, list != null);
+  kassert(__FILE__, __LINE__, list->slot_size >= sizeof(struct slist_head_t));
+
+  for (int i = 0; i < list->slots; ++i)
+  {
+    size_t offset = list->base + i * list->slot_size;
+    entry = (struct slist_head_t *)offset;
+
+    if (!entry->is_valid)
+    {
+      /* occupy block */
+      entry->is_valid = true;
+
+      /* insert to list */
+      entry->next = pos;
+      entry->prev = pos != null ? pos->prev : null;
+      if (pos != null)
+      {
+        pos->prev = entry;
+      }
+      if (entry->prev != null)
+      {
+        entry->prev->next = entry;
+      }
+
+      /* normalize list head */
+      if (pos == list->head)
+      {
+        list->head = entry;
+      }
+
+      return entry;
+    }
+  }
+
+  return null;
+}
+
+/*
+ * Api - Delete static list element
+ */
+extern void slist_delete_entry(struct slist_definition_t *list, struct slist_head_t *entry)
+{
+  kassert(__FILE__, __LINE__, list != null);
+  kassert(__FILE__, __LINE__, entry != null);
+
+  struct slist_head_t *prev = entry->prev;
+  struct slist_head_t *next = entry->next;
+
+  /* delete from list */
+  if (prev != null)
+  {
+    prev->next = next;
+  }
+  if (next != null)
+  {
+    next->prev = prev;
+  }
+
+  /* normalize list head and tail */
+  if (entry == list->head)
+  {
+    list->head = prev;
+  }
+  if (entry == list->tail)
+  {
+    list->tail = next;
+  }
+
+  /* delete entry */
+  memset(entry, 0, list->slot_size);
+}
+
+/*
+ * Api - Reduce static list to single entry
+ */
+extern struct slist_head_t *slist_reduce(struct slist_definition_t *list, slist_reduce_callback_t reducer)
+{
+  struct slist_head_t *current = null;
+  struct slist_head_t *result = null;
+
+  for (current = list->head; current != null; current = current->next)
+  {
+    result = reducer(current, result);
+  }
+
+  return result;
+}
+
+/*
+ * Api - Find first suitable entry in static list
+ */
+extern struct slist_head_t *slist_find(struct slist_definition_t *list, slist_find_callback_t detector)
+{
+  struct slist_head_t *current = null;
+
+  for (current = list->head; current != null; current = current->next)
+  {
+    if (detector(current))
+    {
+      return current;
+    }
+  }
+
+  return null;
+}
+
+/*
+ * Smoke test
+ */
+static void slist_test()
+{
+#ifdef TEST
+  int size = 8;
+  struct slist_head_t entries[size];
+  struct slist_definition_t list = {
+      .head = null,
+      .tail = null,
+      .slot_size = sizeof(struct slist_head_t),
+      .slots = size,
+      .base = (size_t)entries};
+
+  struct slist_head_t *entry;
+  struct slist_head_t *entry1;
+  struct slist_head_t *entry2;
+  struct slist_head_t *entry3;
+  struct slist_head_t *entry4;
+
+  /* init list */
+  memset(entries, 0, sizeof(struct slist_head_t) * size);
+
+  /* create first entry (1) */
+  entry1 = slist_insert_entry_after(&list, null);
+  kassert(__FILE__, __LINE__, entry1 != null);
+  kassert(__FILE__, __LINE__, list.head == entry1);
+  kassert(__FILE__, __LINE__, list.tail == entry1);
+  /* create second entry (2, 1) */
+  entry2 = slist_insert_entry_before(&list, entry1);
+  kassert(__FILE__, __LINE__, entry2 != null);
+  kassert(__FILE__, __LINE__, list.head == entry2);
+  kassert(__FILE__, __LINE__, list.tail == entry1);
+  /* create third entry (2, 1, 3) */
+  entry3 = slist_insert_entry_after(&list, entry1);
+  kassert(__FILE__, __LINE__, entry3 != null);
+  kassert(__FILE__, __LINE__, list.head == entry2);
+  kassert(__FILE__, __LINE__, list.tail == entry3);
+  /* create fourth entry (4, 2, 1, 3) */
+  entry4 = slist_insert_entry_after(&list, null);
+  kassert(__FILE__, __LINE__, entry4 != null);
+  kassert(__FILE__, __LINE__, list.head == entry4);
+  kassert(__FILE__, __LINE__, list.tail == entry3);
+
+  /* delete first entry (4, 2, 3) */
+  slist_delete_entry(&list, entry1);
+  kassert(__FILE__, __LINE__, list.head == entry4);
+  kassert(__FILE__, __LINE__, list.tail == entry3);
+  /* delete fourth entry (2, 3) */
+  slist_delete_entry(&list, entry1);
+  kassert(__FILE__, __LINE__, list.head == entry2);
+  kassert(__FILE__, __LINE__, list.tail == entry3);
+  /* delete third entry (2) */
+  slist_delete_entry(&list, entry1);
+  kassert(__FILE__, __LINE__, list.head == entry2);
+  kassert(__FILE__, __LINE__, list.tail == entry2);
+  /* delete second entry () */
+  slist_delete_entry(&list, entry1);
+  kassert(__FILE__, __LINE__, list.head == null);
+  kassert(__FILE__, __LINE__, list.tail == null);
+#endif
+}

@@ -27,6 +27,7 @@ build: build-lib build-kernel
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
 		./bin/video.c.o \
+		./bin/slist.c.o \
 		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
 build-lib: ./lib/string.c ./lib/math.c
@@ -36,7 +37,7 @@ build-lib: ./lib/string.c ./lib/math.c
 	$(CC) $(CC_FLAGS) -c ./lib/stdio.c -o ./bin/stdio.c.o
 
 build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
-              build-kernel-ipc build-kernel-sync build-kernel-dev \
+              build-kernel-ipc build-kernel-sync build-kernel-dev build-kernel-data \
 			  ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
@@ -50,6 +51,9 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 
 build-kernel-dev: ./kernel/dev/video.c
 	$(CC) $(CC_FLAGS) -c ./kernel/dev/video.c -o ./bin/video.c.o
+
+build-kernel-data: ./kernel/data/slist.c
+	$(CC) $(CC_FLAGS) -c ./kernel/data/slist.c -o ./bin/slist.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
                    ./kernel/arch/pic.c ./kernel/arch/idt.c ./kernel/arch/mmu.s \

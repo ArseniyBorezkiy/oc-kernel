@@ -29,6 +29,7 @@
     "stdio.h": "c",
     "stdarg.h": "c",
     "stddef.h": "c",
-    "video.h": "c"
+    "video.h": "c",
+    "slist.h": "c"
   }
 }
