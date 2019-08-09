@@ -39,7 +39,7 @@ extern void *kmalloc(size_t size)
     struct kheap_entry_t *head = (struct kheap_entry_t *)kheap_list.head;
 
     /* try to use free block */
-    for (current = head; current != null; current = current->list_head->next)
+    for (current = head; current != null; current = (struct kheap_entry_t *)current->list_head->next)
     {
         /* check size is enough */
         if (current->size < size)
@@ -112,7 +112,7 @@ extern void *kmalloc(size_t size)
                 {
                     /* give surplus to new right sibling */
                     struct kheap_entry_t *new_sibling;
-                    new_sibling = (struct kheap_entry_t *)slist_insert_entry_after(&kheap_list, current);
+                    new_sibling = (struct kheap_entry_t *)slist_insert_entry_after(&kheap_list, (struct slist_head_t *)current);
                     if (new_sibling != null)
                     {
                         current->size -= surplus;
@@ -143,7 +143,7 @@ extern void *kmalloc(size_t size)
         kpanic(MSG_KERNEL_HEAP_EXCEED);
     }
     /* allocate new heap memory block */
-    current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
+    current = (struct kheap_entry_t *)slist_insert_entry_after(&kheap_list, kheap_list.tail);
     current->addr = heap_end_addr;
     current->size = size;
     current->is_buzy = true;
@@ -160,7 +160,7 @@ extern void kfree(void *addr)
     struct kheap_entry_t *current = null;
     struct kheap_entry_t *head = (struct kheap_entry_t *)kheap_list.head;
 
-    for (current = head; current != null; current = current->list_head->next)
+    for (current = head; current != null; current = (struct kheap_entry_t *)current->list_head->next)
     {
         if (current->addr == (size_t)addr && current->is_buzy)
         {
@@ -175,13 +175,13 @@ extern void kfree(void *addr)
             if (prev != null && !prev->is_buzy)
             {
                 prev->size += current->size;
-                slist_delete_entry(&kheap_list, current);
+                slist_delete_entry(&kheap_list, (struct slist_head_t *)current);
             }
             /* try to merge with free right sibling */
             if (next != null && !next->is_buzy)
             {
                 current->size += next->size;
-                slist_delete_entry(&kheap_list, next);
+                slist_delete_entry(&kheap_list, (struct slist_head_t *)next);
             }
 
             return;
@@ -189,6 +189,20 @@ extern void kfree(void *addr)
     }
 
     kpanic("invalid kernel heap address to free %X", addr);
+}
+
+/*
+ * Api - Kernel heap dump
+ */
+extern void kheap_dump() {
+  kprint("-- dump kernel heap\n");
+  
+  struct kheap_entry_t *current;
+  struct kheap_entry_t *head = (struct kheap_entry_t *)kheap_list.head;
+
+  for (current = head; current != null; current = (struct kheap_entry_t *)current->list_head->next) {
+    kprint("  %X - %X bizy=%u prev=%X next=%X\n", current->addr, current->addr + current->size, current->is_buzy, current->list_head->prev, current->list_head->next);
+  }
 }
 
 /*
@@ -219,10 +233,8 @@ static void kheap_test()
     kfree(addr6);
     /* allocte 2 tiny block */
     void *addr7 = kmalloc(4);
-    kdump_heap();
     kassert(__FILE__, __LINE__, addr7 == (void *)(addr1));
     void *addr8 = kmalloc(4);
-    kdump_heap();
     kassert(__FILE__, __LINE__, addr8 == (void *)(addr1 + 4));
     /* allocate big block */
     void *addr9 = kmalloc(64);

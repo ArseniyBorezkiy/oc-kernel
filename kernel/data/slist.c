@@ -1,5 +1,6 @@
 #include <data/slist.h>
 #include <utils/kassert.h>
+#include <utils/kprint.h>
 #include <lib/string.h>
 #include <lib/assembly.h>
 
@@ -33,22 +34,37 @@ extern struct slist_head_t *slist_insert_entry_after(struct slist_definition_t *
       /* occupy block */
       entry->is_valid = true;
 
-      /* insert to list */
-      entry->prev = pos;
-      entry->next = pos != null ? pos->next : null;
-      if (pos->next)
-      {
-        pos->next = entry;
+      struct slist_head_t *prev = null;
+      struct slist_head_t *next = null;
+      if (pos == null) {
+        prev = null;
+        next = list->head;
+      } else {
+        prev = pos;
+        next = pos->next;
       }
-      if (entry->next != null)
+
+      /* insert to list */
+      entry->prev = prev;
+      entry->next = next;
+      if (prev != null)
       {
-        entry->next->prev = entry;
+        prev->next = entry;
+      }
+      if (next != null)
+      {
+        next->prev = entry;
       }
 
       /* normalize list tail */
       if (pos == list->tail)
       {
         list->tail = entry;
+      }
+      /* normalize list head */
+      if (list->head == null || pos == null)
+      {
+        list->head = entry;
       }
 
       return entry;
@@ -78,22 +94,37 @@ extern struct slist_head_t *slist_insert_entry_before(struct slist_definition_t 
       /* occupy block */
       entry->is_valid = true;
 
-      /* insert to list */
-      entry->next = pos;
-      entry->prev = pos != null ? pos->prev : null;
-      if (pos != null)
-      {
-        pos->prev = entry;
+      struct slist_head_t *prev = null;
+      struct slist_head_t *next = null;
+      if (pos == null) {
+        prev = null;
+        next = list->head;
+      } else {
+        next = pos;
+        prev = pos->prev;
       }
-      if (entry->prev != null)
+
+      /* insert to list */
+      entry->prev = prev;
+      entry->next = next;
+      if (prev != null)
       {
-        entry->prev->next = entry;
+        prev->next = entry;
+      }
+      if (next != null)
+      {
+        next->prev = entry;
       }
 
       /* normalize list head */
-      if (pos == list->head)
+      if (pos == list->head || pos == null)
       {
         list->head = entry;
+      }
+      /* normalize list tail */
+      if (list->tail == null)
+      {
+        list->tail = entry;
       }
 
       return entry;
@@ -127,11 +158,11 @@ extern void slist_delete_entry(struct slist_definition_t *list, struct slist_hea
   /* normalize list head and tail */
   if (entry == list->head)
   {
-    list->head = prev;
+    list->head = next;
   }
   if (entry == list->tail)
   {
-    list->tail = next;
+    list->tail = prev;
   }
 
   /* delete entry */
@@ -173,6 +204,19 @@ extern struct slist_head_t *slist_find(struct slist_definition_t *list, slist_fi
 }
 
 /*
+ * Api - Static list dump
+ */
+extern void slist_dump(struct slist_head_t *head) {
+  kprint("-- static list dump\n");
+  
+  struct slist_head_t *current;
+
+  for (current = head; current != null; current = current->next) {
+    kprint("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+  }
+}
+
+/*
  * Smoke test
  */
 static void slist_test()
@@ -187,7 +231,6 @@ static void slist_test()
       .slots = size,
       .base = (size_t)entries};
 
-  struct slist_head_t *entry;
   struct slist_head_t *entry1;
   struct slist_head_t *entry2;
   struct slist_head_t *entry3;
@@ -222,15 +265,15 @@ static void slist_test()
   kassert(__FILE__, __LINE__, list.head == entry4);
   kassert(__FILE__, __LINE__, list.tail == entry3);
   /* delete fourth entry (2, 3) */
-  slist_delete_entry(&list, entry1);
+  slist_delete_entry(&list, entry4);
   kassert(__FILE__, __LINE__, list.head == entry2);
   kassert(__FILE__, __LINE__, list.tail == entry3);
   /* delete third entry (2) */
-  slist_delete_entry(&list, entry1);
+  slist_delete_entry(&list, entry3);
   kassert(__FILE__, __LINE__, list.head == entry2);
   kassert(__FILE__, __LINE__, list.tail == entry2);
   /* delete second entry () */
-  slist_delete_entry(&list, entry1);
+  slist_delete_entry(&list, entry2);
   kassert(__FILE__, __LINE__, list.head == null);
   kassert(__FILE__, __LINE__, list.tail == null);
 #endif

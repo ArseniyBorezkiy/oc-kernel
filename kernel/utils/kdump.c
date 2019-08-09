@@ -83,16 +83,3 @@ extern void kdump_memory_areas()
   size_t kernel_stack_addr = (size_t)kernel_stack;
   kprint("  kernel stack: %X - %X\n", kernel_stack_addr, kernel_stack_addr - KERNEL_STACK_SIZE);
 }
-
-/*
- * Api - Kernel heap dump
- */
-extern void kdump_heap() {
-  kprint("-- dump kernel heap\n");
-  struct kernel_heap_entry_t *entry = kheap_table_entries_start();
-  do {
-    kassert(__FILE__, __LINE__, entry->is_valid);
-    kprint("  %X - %X bizy=%u prev=%X next=%X\n", entry->addr, entry->addr + entry->size, entry->is_buzy, entry->prev, entry->next);
-    entry = entry->next;
-  } while (entry != null);
-}

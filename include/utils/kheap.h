@@ -22,6 +22,4 @@ struct kheap_entry_t
 extern void kheap_init();
 extern void *kmalloc(size_t size);
 extern void kfree(void *addr);
-extern struct kheap_entry_t *kheap_table_entries_start();
-extern struct kheap_entry_t *kheap_table_entries_next(struct kheap_entry_t *entry);
-extern struct kheap_entry_t *kheap_table_entries_end();
+extern void kheap_dump();

@@ -2,6 +2,7 @@
 #include <arch/idt.h>
 #include <arch/pic.h>
 #include <arch/mmu.h>
+#include <data/slist.h>
 #include <dev/video.h>
 #include <sched/task.h>
 #include <sched/sched.h>
@@ -44,6 +45,9 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   lib_init();
   idt_init();
   mmu_init();
+
+  /* init data structures */
+  slist_init();
 
   /* init dynamic memory */
   kheap_init();
