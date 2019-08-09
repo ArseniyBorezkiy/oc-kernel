@@ -10,11 +10,11 @@
 
 struct kheap_entry_t
 {
-    struct slist_head_t *list_head; /* should be at first */
-    size_t addr;                    /* physical address */
-    size_t size;                    /* memory block size */
-    bool is_buzy;                   /* whether block used */
-};
+    struct slist_head_t list_head; /* should be at first */
+    size_t addr;                   /* physical address */
+    size_t size;                   /* memory block size */
+    bool is_buzy;                  /* whether block used */
+} attribute(packed);
 
 /*
  * Api

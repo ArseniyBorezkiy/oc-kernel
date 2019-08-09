@@ -7,7 +7,8 @@ struct slist_head_t
   struct slist_head_t *prev;
   struct slist_head_t *next;
   bool is_valid;
-};
+  void *data;
+} attribute(packed);
 
 struct slist_definition_t
 {

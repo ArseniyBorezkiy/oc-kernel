@@ -33,6 +33,7 @@ extern struct slist_head_t *slist_insert_entry_after(struct slist_definition_t *
     {
       /* occupy block */
       entry->is_valid = true;
+      entry->data = (void *)offset;
 
       struct slist_head_t *prev = null;
       struct slist_head_t *next = null;
@@ -93,6 +94,7 @@ extern struct slist_head_t *slist_insert_entry_before(struct slist_definition_t 
     {
       /* occupy block */
       entry->is_valid = true;
+      entry->data = (void *)offset;
 
       struct slist_head_t *prev = null;
       struct slist_head_t *next = null;
