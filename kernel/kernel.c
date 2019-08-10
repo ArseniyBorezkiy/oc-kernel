@@ -2,8 +2,8 @@
 #include <arch/idt.h>
 #include <arch/pic.h>
 #include <arch/mmu.h>
-#include <data/slist.h>
-#include <data/clist.h>
+#include <lib/data/slist.h>
+#include <lib/data/clist.h>
 #include <dev/video.h>
 #include <sched/task.h>
 #include <sched/sched.h>

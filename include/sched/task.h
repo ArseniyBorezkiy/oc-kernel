@@ -3,7 +3,7 @@
 #include <lib/stdtypes.h>
 #include <arch/reg.h>
 #include <ipc/ipc.h>
-#include <data/clist.h>
+#include <lib/data/clist.h>
 
 /* limits */
 #define TASK_MAX_COUNT 16

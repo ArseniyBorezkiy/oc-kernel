@@ -1,7 +1,7 @@
 #pragma once
 
 #include <lib/stdtypes.h>
-#include <data/slist.h>
+#include <lib/data/slist.h>
 
 #define KHEAP_START_ADDR 0x200000
 #define KHEAP_END_ADDR 0x300000
