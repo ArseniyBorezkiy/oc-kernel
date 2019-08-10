@@ -2,8 +2,8 @@
 #include <sync/spin.h>
 #include <sched/sched.h>
 #include <utils/kpanic.h>
-#include <utils/kassert.h>
 #include <lib/time.h>
+#include <lib/assert.h>
 #include <messages.h>
 
 /*

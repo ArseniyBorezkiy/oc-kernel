@@ -4,11 +4,11 @@
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
-#include <utils/kassert.h>
 #include <utils/kheap.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assembly.h>
+#include <lib/assert.h>
 #include <messages.h>
 
 static bool task_by_id_detector(struct clist_head_t *current, va_list args);
@@ -74,7 +74,7 @@ extern bool task_create(u_short tid, void *address)
 extern void task_delete(struct task_t *task)
 {
     kprint(MSG_SCHED_TID_DELETE, (u_int)task->tid);
-    kassert(__FILE__, __LINE__, task != null);
+    assert(task != null);
     kfree(task->kstack);
     kfree(task->ustack);
     clist_delete_entry(&task_list, (struct clist_head_t *)task);
@@ -88,7 +88,7 @@ extern struct task_t *task_get_by_id(u_short tid)
     struct task_t *task;
 
     task = task_find_by_id(tid);
-    kassert(__FILE__, __LINE__, task != null);
+    assert(task != null);
 
     return task;
 }
@@ -110,7 +110,7 @@ extern struct task_t *task_get_by_status(u_short status)
 {
     struct clist_head_t *current;
     current = clist_find(&task_list, task_by_status_detector, status);
-    kassert(__FILE__, __LINE__, current != null);
+    assert(current != null);
     return (struct task_t *)current->data;
 }
 
@@ -121,7 +121,7 @@ extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos
 {
     struct clist_head_t *current;
     current = clist_find_next(&task_list, (struct clist_head_t *)pos, task_by_status_detector, status);
-    kassert(__FILE__, __LINE__, current != null);
+    assert(current != null);
     return (struct task_t *)current->data;
 }
 
@@ -153,9 +153,9 @@ extern void task_extract_message(struct task_t *task, struct message_t *msg)
     struct message_t *cur_msg;
 
     /* get first incomed message */
-    kassert(__FILE__, __LINE__, task->msg_count_in > 0);
+    assert(task->msg_count_in > 0);
     cur_msg = &task->msg_buff[--task->msg_count_in];
-    kassert(__FILE__, __LINE__, task->msg_count_in >= 0);
+    assert(task->msg_count_in >= 0);
     /* copy message to result buffer */
     memcpy(msg, cur_msg, sizeof(struct message_t));
 }
@@ -218,29 +218,29 @@ static void task_test()
     msg2.len = 0;
 
     /* tasks creation */
-    kassert(__FILE__, __LINE__, task_list.head == null);
+    assert(task_list.head == null);
     task_create(tid1, 0);
     task_create(tid2, 0);
     task1 = task_get_by_id(tid1);
-    kassert(__FILE__, __LINE__, task1->tid == tid1);
+    assert(task1->tid == tid1);
     task2 = task_get_by_id(tid2);
-    kassert(__FILE__, __LINE__, task2->tid == tid2);
+    assert(task2->tid == tid2);
 
     /* messages */
-    kassert(__FILE__, __LINE__, task1->msg_count_in == 0);
+    assert(task1->msg_count_in == 0);
     task_pack_message(task1, &msg1);
     task_pack_message(task1, &msg2);
-    kassert(__FILE__, __LINE__, task1->msg_count_in == 2);
+    assert(task1->msg_count_in == 2);
     task_extract_message(task1, &msg);
-    kassert(__FILE__, __LINE__, task1->msg_count_in == 1);
-    kassert(__FILE__, __LINE__, msg.type == msg1.type);
+    assert(task1->msg_count_in == 1);
+    assert(msg.type == msg1.type);
     task_extract_message(task1, &msg);
-    kassert(__FILE__, __LINE__, task1->msg_count_in == 0);
-    kassert(__FILE__, __LINE__, msg.type == msg2.type);
+    assert(task1->msg_count_in == 0);
+    assert(msg.type == msg2.type);
 
     /* task deletion */
     task_delete(task1);
     task_delete(task2);
-    kassert(__FILE__, __LINE__, task_list.head == null);
+    assert(task_list.head == null);
 #endif
 }

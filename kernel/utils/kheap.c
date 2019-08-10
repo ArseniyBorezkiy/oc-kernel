@@ -1,11 +1,11 @@
 #include <sync/spin.h>
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
-#include <utils/kassert.h>
 #include <utils/kprint.h>
 #include <utils/kdump.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <kernel.h>
 #include <messages.h>
 
@@ -41,7 +41,7 @@ extern void *kmalloc(size_t size)
     struct slist_head_t *current = null;
     struct slist_head_t *head = kheap_list.head;
 
-    kassert(__FILE__, __LINE__, size > 0);
+    assert(size > 0);
 
     /* try to use free block */
     for (current = head; current != null; current = current->next)
@@ -69,7 +69,7 @@ extern void *kmalloc(size_t size)
                     sibling_data->size -= lack;
                     current_data->addr -= lack;
                     current_data->size += lack;
-                    kassert(__FILE__, __LINE__, current_data->size == size);
+                    assert(current_data->size == size);
                     /* whether left sibling is collapsed */
                     if (sibling_data->size == 0)
                     {
@@ -77,8 +77,8 @@ extern void *kmalloc(size_t size)
                     }
                     /* occupy block */
                     current_data->is_buzy = true;
-                    kassert(__FILE__, __LINE__, current_data->addr >= KHEAP_START_ADDR);
-                    kassert(__FILE__, __LINE__, current_data->addr < KHEAP_END_ADDR);
+                    assert(current_data->addr >= KHEAP_START_ADDR);
+                    assert(current_data->addr < KHEAP_END_ADDR);
                     return (void *)current_data->addr; /* suitable block has found */
                 }
             }
@@ -93,8 +93,8 @@ extern void *kmalloc(size_t size)
                     /* occupy block */
                     current_data->size += lack;
                     current_data->is_buzy = true;
-                    kassert(__FILE__, __LINE__, current_data->addr >= KHEAP_START_ADDR);
-                    kassert(__FILE__, __LINE__, current_data->addr < KHEAP_END_ADDR);
+                    assert(current_data->addr >= KHEAP_START_ADDR);
+                    assert(current_data->addr < KHEAP_END_ADDR);
                     return (void *)current_data->addr; /* suitable block has found */
                 }
             }
@@ -120,7 +120,7 @@ extern void *kmalloc(size_t size)
                     current_data->size -= surplus;
                     sibling_data->addr -= surplus;
                     sibling_data->size += surplus;
-                    kassert(__FILE__, __LINE__, current_data->size == size);
+                    assert(current_data->size == size);
                 }
             }
             /* try to give surplus to new right sibling */
@@ -133,17 +133,17 @@ extern void *kmalloc(size_t size)
                     if (new_sibling != null)
                     {
                         /* give surplus to new right sibling */
-                        kassert(__FILE__, __LINE__, (size_t)new_sibling == (size_t)sibling_data);
+                        assert((size_t)new_sibling == (size_t)sibling_data);
                         current_data->size -= surplus;
-                        kassert(__FILE__, __LINE__, current_data->size > 0);
+                        assert(current_data->size > 0);
                         sibling_data->is_buzy = false;
                         sibling_data->addr = current_data->addr + current_data->size;
                         sibling_data->size = surplus;
                     }
                 }
             }
-            kassert(__FILE__, __LINE__, current_data->addr >= KHEAP_START_ADDR);
-            kassert(__FILE__, __LINE__, current_data->addr < KHEAP_END_ADDR);
+            assert(current_data->addr >= KHEAP_START_ADDR);
+            assert(current_data->addr < KHEAP_END_ADDR);
             return (void *)current_data->addr; /* suitable block has found */
         }
     }
@@ -166,14 +166,14 @@ extern void *kmalloc(size_t size)
     struct slist_head_t *tail = kheap_list.tail;
     current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
     current_data = (struct kheap_entry_t *)current->data;
-    kassert(__FILE__, __LINE__, (size_t)current == (size_t)current_data);
+    assert((size_t)current == (size_t)current_data);
     current_data->addr = heap_end_addr;
     current_data->size = size;
     current_data->is_buzy = true;
-    kassert(__FILE__, __LINE__, current->next == null);
-    kassert(__FILE__, __LINE__, current->prev == tail);
-    kassert(__FILE__, __LINE__, current_data->addr >= KHEAP_START_ADDR);
-    kassert(__FILE__, __LINE__, current_data->addr < KHEAP_END_ADDR);
+    assert(current->next == null);
+    assert(current->prev == tail);
+    assert(current_data->addr >= KHEAP_START_ADDR);
+    assert(current_data->addr < KHEAP_END_ADDR);
     return (void *)current_data->addr;
 }
 
@@ -241,34 +241,34 @@ static void kheap_test()
 #ifdef TEST
     /* 1[16] 2[16] 3[16] */
     void *addr1 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr1 == (void *)KHEAP_START_ADDR);
+    assert(addr1 == (void *)KHEAP_START_ADDR);
     void *addr2 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr2 == (void *)addr1 + 16);
+    assert(addr2 == (void *)addr1 + 16);
     void *addr3 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr3 == (void *)addr2 + 16);
+    assert(addr3 == (void *)addr2 + 16);
     /* 1[16] ![16] 3[16] */
     kfree(addr2);
     /* 1[16] 4[8] ![8] 3[16] */
     void *addr4 = kmalloc(8);
-    kassert(__FILE__, __LINE__, addr4 == (void *)addr1 + 16);
+    assert(addr4 == (void *)addr1 + 16);
     /* 1[16] 4[8] 5[8] 3[16] */
     void *addr5 = kmalloc(6);
-    kassert(__FILE__, __LINE__, addr5 == (void *)(addr4 + 8));
+    assert(addr5 == (void *)(addr4 + 8));
     /* 1[16] 4[8] 5[8] ![2] 3[16] 6[16] */
     void *addr6 = kmalloc(16);
-    kassert(__FILE__, __LINE__, addr6 == (void *)(addr3 + 16));
+    assert(addr6 == (void *)(addr3 + 16));
     /* ![16] 4[8] 5[8] ![2] 3[16] ![16] */
     kfree(addr1);
     kfree(addr6);
     /* 7[4] ![12] 4[8] 5[8] ![2] 3[16] ![16] */
     void *addr7 = kmalloc(4);
-    kassert(__FILE__, __LINE__, addr7 == (void *)(addr1));
+    assert(addr7 == (void *)(addr1));
     /* 7[4] 8[4] ![8] 4[8] 5[8] ![2] 3[16] ![16] */
     void *addr8 = kmalloc(4);
-    kassert(__FILE__, __LINE__, addr8 == (void *)(addr1 + 4));
+    assert(addr8 == (void *)(addr1 + 4));
     /* 7[4] 8[4] ![8] 4[8] 5[8] ![2] 3[16] 9[64] */
     void *addr9 = kmalloc(64);
-    kassert(__FILE__, __LINE__, addr9 == (void *)(addr3 + 16));
+    assert(addr9 == (void *)(addr3 + 16));
 
     /* ![64+16+2+8+8+8+4+4] */
     kfree(addr3);
@@ -280,7 +280,7 @@ static void kheap_test()
 
     /* 10[1] ![64+16+2+8+8+8+4+4-1] */
     void *addr10 = kmalloc(1);
-    kassert(__FILE__, __LINE__, addr10 == (void *)KHEAP_START_ADDR);
+    assert(addr10 == (void *)KHEAP_START_ADDR);
     kfree(addr10);
     
     /* clear heap table */

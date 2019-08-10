@@ -1,9 +1,9 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
-#include <utils/kassert.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <messages.h>
 
 /*
@@ -36,8 +36,8 @@ extern void kreceive(u_short tid, struct message_t *msg)
 
     /* get current task */
     task_before = sched_get_current_task();
-    kassert(__FILE__, __LINE__, tid == task_before->tid);
-    kassert(__FILE__, __LINE__, task_before->status == TASK_RUNNING);
+    assert(tid == task_before->tid);
+    assert(task_before->status == TASK_RUNNING);
     /* whether task has not incomming messages */
     if (task_before->msg_count_in == 0)
     {
@@ -48,10 +48,10 @@ extern void kreceive(u_short tid, struct message_t *msg)
     sched_yield();
     /* get current task */
     task_after = sched_get_current_task();
-    kassert(__FILE__, __LINE__, task_after == task_before);
-    kassert(__FILE__, __LINE__, tid == task_after->tid);
-    kassert(__FILE__, __LINE__, task_after->status == TASK_RUNNING);
+    assert(task_after == task_before);
+    assert(tid == task_after->tid);
+    assert(task_after->status == TASK_RUNNING);
     /* fetch message from buffer */
     task_extract_message(task_after, msg);
-    kassert(__FILE__, __LINE__, msg != null);
+    assert(msg != null);
 }

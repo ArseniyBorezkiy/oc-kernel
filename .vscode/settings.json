@@ -31,6 +31,7 @@
     "stddef.h": "c",
     "video.h": "c",
     "slist.h": "c",
-    "clist.h": "c"
+    "clist.h": "c",
+    "assert.h": "c"
   }
 }

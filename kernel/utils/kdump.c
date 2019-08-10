@@ -4,8 +4,8 @@
 #include <utils/kdump.h>
 #include <utils/kprint.h>
 #include <utils/kheap.h>
-#include <utils/kassert.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <kernel.h>
 
 /*

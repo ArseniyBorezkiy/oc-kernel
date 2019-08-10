@@ -5,10 +5,10 @@
 #include <tasks/tty.h>
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
-#include <utils/kassert.h>
 #include <lib/time.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <messages.h>
 
 static char const tty_output_buff[SYSLOG_SIZE];      /* tty output buffer */
@@ -44,14 +44,14 @@ extern void task_tty_main()
         case TTY_MSG_TYPE_GETC:
         {
             /* key pressed */
-            kassert(__FILE__, __LINE__, msg.len == 1);
+            assert(msg.len == 1);
             handle_getc(msg.data[0]);
             break;
         }
         case TTY_MSG_TYPE_PUTC:
         {
             /* put character to screen */
-            kassert(__FILE__, __LINE__, msg.len == 1);
+            assert(msg.len == 1);
             handle_putc(msg.data[0]);
             video_flush(tty_output_buff);
             break;
@@ -59,7 +59,7 @@ extern void task_tty_main()
         case TTY_MSG_TYPE_PUTS:
         {
             /* put string to screen */
-            kassert(__FILE__, __LINE__, msg.data[msg.len - 1] == 0);
+            assert(msg.data[msg.len - 1] == 0);
             handle_puts((char *)msg.data);
             video_flush(tty_output_buff);
             break;

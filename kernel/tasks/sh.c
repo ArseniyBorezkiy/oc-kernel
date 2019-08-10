@@ -2,9 +2,9 @@
 #include <tasks/tty.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
-#include <utils/kassert.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
+#include <lib/assert.h>
 
 static char command[SH_CMD_BUFF_SIZE];
 static char *cmd_ptr;
@@ -46,7 +46,7 @@ extern void task_sh_main()
         case TTY_MSG_TYPE_GETC:
         {
             /* incomming character */
-            kassert(__FILE__, __LINE__, msg.len == 1);
+            assert(msg.len == 1);
             handle_getc(msg.data[0]);
             break;
         }

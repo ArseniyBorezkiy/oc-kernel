@@ -5,10 +5,10 @@
 #include <utils/kheap.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
-#include <utils/kassert.h>
 #include <lib/string.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <messages.h>
 
 static struct task_t *current_task; /* current running process */
@@ -62,7 +62,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   } else {
     next_task = task_get_by_status(TASK_RUNNING);
   }
-  kassert(__FILE__, __LINE__, next_task != null);
+  assert(next_task != null);
 
   /* prepare context for the next task */
   next_task->op_registers.u_esp -= 4;
@@ -88,7 +88,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
  */
 extern struct task_t *sched_get_current_task()
 {
-  kassert(__FILE__, __LINE__, current_task != null);
+  assert(current_task != null);
   return current_task;
 }
 

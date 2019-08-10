@@ -1,8 +1,8 @@
 #include <data/slist.h>
-#include <utils/kassert.h>
 #include <utils/kprint.h>
 #include <lib/string.h>
 #include <lib/assembly.h>
+#include <lib/assert.h>
 
 static void slist_test();
 
@@ -21,8 +21,8 @@ extern struct slist_head_t *slist_insert_entry_after(struct slist_definition_t *
 {
   struct slist_head_t *entry;
 
-  kassert(__FILE__, __LINE__, list != null);
-  kassert(__FILE__, __LINE__, list->slot_size >= sizeof(struct slist_head_t));
+  assert(list != null);
+  assert(list->slot_size >= sizeof(struct slist_head_t));
 
   for (int i = 0; i < list->slots; ++i)
   {
@@ -82,8 +82,8 @@ extern struct slist_head_t *slist_insert_entry_before(struct slist_definition_t 
 {
   struct slist_head_t *entry;
 
-  kassert(__FILE__, __LINE__, list != null);
-  kassert(__FILE__, __LINE__, list->slot_size >= sizeof(struct slist_head_t));
+  assert(list != null);
+  assert(list->slot_size >= sizeof(struct slist_head_t));
 
   for (int i = 0; i < list->slots; ++i)
   {
@@ -141,8 +141,8 @@ extern struct slist_head_t *slist_insert_entry_before(struct slist_definition_t 
  */
 extern void slist_delete_entry(struct slist_definition_t *list, struct slist_head_t *entry)
 {
-  kassert(__FILE__, __LINE__, list != null);
-  kassert(__FILE__, __LINE__, entry != null);
+  assert(list != null);
+  assert(entry != null);
 
   struct slist_head_t *prev = entry->prev;
   struct slist_head_t *next = entry->next;
@@ -243,40 +243,40 @@ static void slist_test()
 
   /* create first entry (1) */
   entry1 = slist_insert_entry_after(&list, null);
-  kassert(__FILE__, __LINE__, entry1 != null);
-  kassert(__FILE__, __LINE__, list.head == entry1);
-  kassert(__FILE__, __LINE__, list.tail == entry1);
+  assert(entry1 != null);
+  assert(list.head == entry1);
+  assert(list.tail == entry1);
   /* create second entry (2, 1) */
   entry2 = slist_insert_entry_before(&list, entry1);
-  kassert(__FILE__, __LINE__, entry2 != null);
-  kassert(__FILE__, __LINE__, list.head == entry2);
-  kassert(__FILE__, __LINE__, list.tail == entry1);
+  assert(entry2 != null);
+  assert(list.head == entry2);
+  assert(list.tail == entry1);
   /* create third entry (2, 1, 3) */
   entry3 = slist_insert_entry_after(&list, entry1);
-  kassert(__FILE__, __LINE__, entry3 != null);
-  kassert(__FILE__, __LINE__, list.head == entry2);
-  kassert(__FILE__, __LINE__, list.tail == entry3);
+  assert(entry3 != null);
+  assert(list.head == entry2);
+  assert(list.tail == entry3);
   /* create fourth entry (4, 2, 1, 3) */
   entry4 = slist_insert_entry_after(&list, null);
-  kassert(__FILE__, __LINE__, entry4 != null);
-  kassert(__FILE__, __LINE__, list.head == entry4);
-  kassert(__FILE__, __LINE__, list.tail == entry3);
+  assert(entry4 != null);
+  assert(list.head == entry4);
+  assert(list.tail == entry3);
 
   /* delete first entry (4, 2, 3) */
   slist_delete_entry(&list, entry1);
-  kassert(__FILE__, __LINE__, list.head == entry4);
-  kassert(__FILE__, __LINE__, list.tail == entry3);
+  assert(list.head == entry4);
+  assert(list.tail == entry3);
   /* delete fourth entry (2, 3) */
   slist_delete_entry(&list, entry4);
-  kassert(__FILE__, __LINE__, list.head == entry2);
-  kassert(__FILE__, __LINE__, list.tail == entry3);
+  assert(list.head == entry2);
+  assert(list.tail == entry3);
   /* delete third entry (2) */
   slist_delete_entry(&list, entry3);
-  kassert(__FILE__, __LINE__, list.head == entry2);
-  kassert(__FILE__, __LINE__, list.tail == entry2);
+  assert(list.head == entry2);
+  assert(list.tail == entry2);
   /* delete second entry () */
   slist_delete_entry(&list, entry2);
-  kassert(__FILE__, __LINE__, list.head == null);
-  kassert(__FILE__, __LINE__, list.tail == null);
+  assert(list.head == null);
+  assert(list.tail == null);
 #endif
 }

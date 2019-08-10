@@ -12,12 +12,12 @@
 #include <tasks/sh.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
-#include <utils/kassert.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
 #include <utils/lib.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
+#include <lib/assert.h>
 #include <messages.h>
 #include <kernel.h>
 
@@ -79,7 +79,7 @@ static void kernel_create_tasks()
       task_create(TID_INIT, task_init_main) &&
       task_create(TID_TTY, task_tty_main) &&
       task_create(TID_SH, task_sh_main);
-  kassert(__FILE__, __LINE__, is_ok);
+  assert(is_ok);
 }
 
 /*
