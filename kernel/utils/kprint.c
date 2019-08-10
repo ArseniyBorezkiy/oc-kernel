@@ -22,18 +22,18 @@ extern void kclear()
 /*
  * Api - Print kernel message
  */
-extern void kprint(const char *format, ...)
+extern void kprintf(const char *format, ...)
 {
     va_list list;
     va_start(list, format);
 
-    kvprint(format, list);
+    kvprintf(format, list);
 }
 
 /*
  * Api - Print kernel message
  */
-extern void kvprint(const char *format, va_list list)
+extern void kvprintf(const char *format, va_list list)
 {
     char buff[VIDEO_SCREEN_WIDTH];
     int len = vsprintf(buff, format, list);

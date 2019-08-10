@@ -154,12 +154,12 @@ extern struct clist_head_t *clist_find_next(struct clist_definition_t *list, str
  * Api - Cyclic list dump
  */
 extern void clist_dump(struct clist_definition_t *list) {
-  print("-- cyclic list dump\n");
+  printf("-- cyclic list dump\n");
   
   struct clist_head_t *current;
 
   for (current = list->head; current != null; current = current->next) {
-    print("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+    printf("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
     if (current->next == list->head) {
       break;
     }

@@ -72,7 +72,7 @@ extern void ih_timer(size_t *ret_addr, size_t *reg_addr)
  */
 extern void ih_keyboard()
 {
-    print(MSG_IRQ1);
+    printf(MSG_IRQ1);
 
     u_char status = asm_read_port(KEYBOARD_STATUS_PORT);
     if (status & 0x01)

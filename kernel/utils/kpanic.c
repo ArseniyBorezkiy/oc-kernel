@@ -13,8 +13,8 @@ extern void kpanic(char *message, ...)
     va_start(list, message);
 
     kmode(true);
-    kvprint(message, list);
-    kprint(MSG_KERNEL_PANIC);
+    kvprintf(message, list);
+    kprintf(MSG_KERNEL_PANIC);
     asm_lock();
     asm_hlt();
 }

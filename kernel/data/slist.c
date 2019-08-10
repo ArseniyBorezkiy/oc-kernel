@@ -209,12 +209,12 @@ extern struct slist_head_t *slist_find(struct slist_definition_t *list, slist_fi
  * Api - Static list dump
  */
 extern void slist_dump(struct slist_head_t *head) {
-  print("-- static list dump\n");
+  printf("-- static list dump\n");
   
   struct slist_head_t *current;
 
   for (current = head; current != null; current = current->next) {
-    print("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+    printf("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
   }
 }
 

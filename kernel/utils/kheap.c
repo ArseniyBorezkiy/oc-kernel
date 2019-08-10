@@ -222,14 +222,14 @@ extern void kfree(void *addr)
  * Api - Kernel heap dump
  */
 extern void kheap_dump() {
-  print("-- dump kernel heap\n");
+  printf("-- dump kernel heap\n");
   
   struct slist_head_t *current;
   struct kheap_entry_t *current_data = null;
 
   for (current = kheap_list.head; current != null; current = current->next) {
     current_data = (struct kheap_entry_t *)current->data;
-    print("  %X - %X bizy=%u this=%X prev=%X next=%X\n", current_data->addr, current_data->addr + current_data->size, current_data->is_buzy, current, current->prev, current->next);
+    printf("  %X - %X bizy=%u this=%X prev=%X next=%X\n", current_data->addr, current_data->addr + current_data->size, current_data->is_buzy, current, current->prev, current->next);
   }
 }
 

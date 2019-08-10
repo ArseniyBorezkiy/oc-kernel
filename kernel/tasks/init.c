@@ -14,7 +14,7 @@ extern void task_init_main()
 {
     while (1)
     {
-        print(MSG_TASK_INIT_LAUNCHED, asm_get_esp(), asm_get_eflags());
+        printf(MSG_TASK_INIT_LAUNCHED, asm_get_esp(), asm_get_eflags());
         delay(1);
     }
 }

@@ -40,7 +40,7 @@ extern bool task_create(u_short tid, void *address)
     struct task_t *task;
     struct clist_head_t *entry;
 
-    print(MSG_SCHED_TID_CREATE, tid, (u_int)address);
+    printf(MSG_SCHED_TID_CREATE, tid, (u_int)address);
 
     /* allocate memory */
     entry = clist_insert_entry_after(&task_list, task_list.head);
@@ -73,7 +73,7 @@ extern bool task_create(u_short tid, void *address)
  */
 extern void task_delete(struct task_t *task)
 {
-    print(MSG_SCHED_TID_DELETE, (u_int)task->tid);
+    printf(MSG_SCHED_TID_DELETE, (u_int)task->tid);
     assert(task != null);
     free(task->kstack);
     free(task->ustack);
@@ -182,14 +182,14 @@ static bool task_by_status_detector(struct clist_head_t *current, va_list args) 
  * Api - Task list dump
  */
 extern void task_dump() {
-  print("-- task list dump\n");
+  printf("-- task list dump\n");
   
   struct clist_head_t *current;
   struct task_t *task;
 
   for (current = task_list.head; current != null; current = current->next) {
     task = (struct task_t *)current->data;
-    print("  tid=%u status=%u this=%X prev=%X next=%X\n", task->tid, task->status, current, current->prev, current->next);
+    printf("  tid=%u status=%u this=%X prev=%X next=%X\n", task->tid, task->status, current, current->prev, current->next);
     
     if (current->next == task_list.head) {
       break;

@@ -21,7 +21,7 @@ extern void kassert(const char *file, u_int line, bool expr)
  */
 extern void kunreachable(const char *file, u_int line)
 {
-    kprint(MSG_KERNEL_CODE_UNREACHABLE);
+    kprintf(MSG_KERNEL_CODE_UNREACHABLE);
     kpanic(MSG_KERNEL_FILE_LINE, file, line);
 }
 
@@ -34,7 +34,7 @@ extern void kassert_kernel_stack(const char *file, u_int line)
     u32 esp = asm_get_esp();
     if (esp > kernel_stack_addr || esp < kernel_stack_addr + KERNEL_STACK_SIZE)
     {
-        kprint(MSG_KERNEL_STACK_EXPECTED, esp);
+        kprintf(MSG_KERNEL_STACK_EXPECTED, esp);
         kpanic(MSG_KERNEL_FILE_LINE, file, line);
     }
 }

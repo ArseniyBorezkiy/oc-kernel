@@ -39,8 +39,8 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   clear();
 
   /* hello */
-  print(MSG_KERNEL_NAME);
-  print(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
+  printf(MSG_KERNEL_NAME);
+  printf(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
 
   /* init arch */
   lib_init();
@@ -56,7 +56,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   
   /* init scheduler */
   sched_init();
-  print(MSG_KERNEL_SCHEDULER_INITIALIZED);
+  printf(MSG_KERNEL_SCHEDULER_INITIALIZED);
   kernel_create_tasks();
   kernel_run_tasks();
 
@@ -65,7 +65,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   asm_unlock();
 
   /* start scheduler */
-  print(MSG_KERNEL_STARTED);
+  printf(MSG_KERNEL_STARTED);
   sched_yield();
   unreachable();
 }
