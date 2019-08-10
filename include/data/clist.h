@@ -20,7 +20,7 @@ struct clist_definition_t
   struct clist_head_t *head;
 };
 
-typedef bool (*clist_find_callback_t)(struct clist_head_t *current);
+typedef bool (*clist_find_callback_t)(struct clist_head_t *current, va_list list);
 
 /*
  * Api
@@ -29,4 +29,5 @@ extern void clist_init();
 extern struct clist_head_t *clist_insert_entry_after(struct clist_definition_t *list, struct clist_head_t *pos);
 extern struct clist_head_t *clist_insert_entry_before(struct clist_definition_t *list, struct clist_head_t *pos);
 extern void clist_delete_entry(struct clist_definition_t *list, struct clist_head_t *entry);
+extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_find_callback_t detector, ...);
 extern void clist_dump(struct clist_definition_t *list);

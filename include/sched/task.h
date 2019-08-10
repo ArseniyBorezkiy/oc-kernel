@@ -3,6 +3,7 @@
 #include <lib/stdtypes.h>
 #include <arch/reg.h>
 #include <ipc/ipc.h>
+#include <data/clist.h>
 
 /* limits */
 #define TASK_MAX_COUNT 16
@@ -23,10 +24,10 @@
 /*
  * Process descriptor
  */
-struct sched_task_t
+struct task_t
 {
+    struct clist_head_t *list_head;                /* should be at first */
     u_short tid;                                   /* task id */
-    bool is_valid;                                 /* whether entry is valid task */
     struct gp_registers_t gp_registers;            /* general purpose registers */
     struct op_registers_t op_registers;            /* other purpose registers */
     struct flags_t flags;                          /* processor flags */
@@ -37,8 +38,6 @@ struct sched_task_t
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
     void *kstack;                                  /* kernel stack top */
     void *ustack;                                  /* user stack top */
-    struct sched_task_t *next;                     /* next entry */
-    struct sched_task_t *prev;                     /* prev entry */
 };
 
 /*
@@ -46,9 +45,10 @@ struct sched_task_t
  */
 extern void task_init();
 extern bool task_create(u_short tid, void *address);
-extern void task_delete(struct sched_task_t *task);
-extern struct sched_task_t *task_get_by_id(u_short tid);
-extern struct sched_task_t *task_find_by_id(u_short tid);
-extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task_t *list_head);
-extern void task_pack_message(struct sched_task_t *task, struct message_t *msg);
-extern void task_extract_message(struct sched_task_t *task, struct message_t *msg);
+extern void task_delete(struct task_t *task);
+extern struct task_t *task_get_by_id(u_short tid);
+extern struct task_t *task_find_by_id(u_short tid);
+extern struct task_t *task_get_by_status(u_short status);
+extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos);
+extern void task_pack_message(struct task_t *task, struct message_t *msg);
+extern void task_extract_message(struct task_t *task, struct message_t *msg);

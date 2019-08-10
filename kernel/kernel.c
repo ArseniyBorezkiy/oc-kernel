@@ -86,9 +86,9 @@ static void kernel_create_tasks()
  */
 static void kernel_run_tasks()
 {
-  struct sched_task_t *init_task;
-  struct sched_task_t *tty_task;
-  struct sched_task_t *sh_task;
+  struct task_t *init_task;
+  struct task_t *tty_task;
+  struct task_t *sh_task;
 
   init_task = task_get_by_id(TID_INIT);
   tty_task = task_get_by_id(TID_TTY);

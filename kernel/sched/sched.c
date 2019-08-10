@@ -11,7 +11,7 @@
 #include <lib/stdtypes.h>
 #include <messages.h>
 
-static struct sched_task_t *current_task; /* current running process */
+static struct task_t *current_task; /* current running process */
 
 /*
  * Api - Init
@@ -29,7 +29,7 @@ extern void sched_init()
  */
 extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
 {
-  struct sched_task_t *next_task = null;
+  struct task_t *next_task = null;
 
   /* finish current task */
   if (current_task != null)
@@ -57,7 +57,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   }
 
   /* pick next task */
-  next_task = task_get_by_status(TASK_RUNNING, current_task);
+  next_task = task_get_next_by_status(TASK_RUNNING, current_task);
   kassert(__FILE__, __LINE__, next_task != null);
 
   /* prepare context for the next task */
@@ -81,7 +81,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
 /*
  * Api - Get current running task
  */
-extern struct sched_task_t *sched_get_current_task()
+extern struct task_t *sched_get_current_task()
 {
   kassert(__FILE__, __LINE__, current_task != null);
   return current_task;

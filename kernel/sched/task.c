@@ -11,22 +11,25 @@
 #include <lib/assembly.h>
 #include <messages.h>
 
+static bool task_by_id_detector(struct clist_head_t *current, va_list list);
+static bool task_by_status_detector(struct clist_head_t *current, va_list list);
+static bool task_next_by_status_detector(struct clist_head_t *current, va_list list);
 static void task_test();
 
 /*
  * Tasks
  */
 
-static struct sched_task_t *task_list_head; /* cyclic list */
-static int task_count;                      /* list entries count */
+struct clist_definition_t task_list = {
+    .head = null,
+    .slot_size = sizeof(struct task_t)};
 
 /*
  * Api - Init
  */
 extern void task_init()
 {
-    task_list_head = null;
-    task_count = 0;
+    task_list.head = null;
     task_test();
 }
 
@@ -35,38 +38,18 @@ extern void task_init()
  */
 extern bool task_create(u_short tid, void *address)
 {
-    struct sched_task_t *task;
+    struct task_t *task;
+    struct clist_head_t *entry;
 
     kprint(MSG_SCHED_TID_CREATE, (u_int)address);
 
-    /* check tasks limit */
-    if (task_count >= TASK_MAX_COUNT)
-    {
-        return false; /* limit exceed */
-    }
-
     /* allocate memory */
-    task = kmalloc(sizeof(struct sched_task_t));
+    entry = clist_insert_entry_after(&task_list, task_list.head);
+    task = (struct task_t *)entry->data;
     task->kstack = kmalloc(TASK_KSTACK_SIZE);
     task->ustack = kmalloc(TASK_USTACK_SIZE);
-    task_count += 1;
-    /* normalize pointers */
-    if (task_list_head)
-    {
-        task->next = task_list_head->next;
-        task_list_head->next->prev = task;
-        task->prev = task_list_head;
-        task_list_head->next = task;
-    }
-    else
-    {
-        task->prev = task;
-        task->next = task;
-    }
-    task_list_head = task;
     /* fill data */
     task->tid = tid;
-    task->is_valid = true;
     task->status = TASK_UNINTERRUPTABLE;
     task->msg_count_in = 0;
     task->time = 0;
@@ -88,34 +71,20 @@ extern bool task_create(u_short tid, void *address)
 /*
  * Api - Delete task by id
  */
-extern void task_delete(struct sched_task_t *task)
+extern void task_delete(struct task_t *task)
 {
-    /* normalize list head */
-    task_count -= 1;
-    if (task_list_head == task)
-    {
-        task_list_head = task_list_head->next;
-        if (task_list_head == task)
-        {
-            task_list_head = null;
-        }
-    }
-    /* normalize pointers */
-    task->next->prev = task->prev;
-    task->prev->next = task->next;
-    /* free memory */
+    kassert(__FILE__, __LINE__, task != null);
     kfree(task->kstack);
     kfree(task->ustack);
-    memset(task, 0, sizeof(struct sched_task_t));
-    kfree(task);
+    clist_delete_entry(&task_list, (struct clist_head_t *)task);
 }
 
 /*
  * Api - Get task by id
  */
-extern struct sched_task_t *task_get_by_id(u_short tid)
+extern struct task_t *task_get_by_id(u_short tid)
 {
-    struct sched_task_t *task;
+    struct task_t *task;
 
     task = task_find_by_id(tid);
     kassert(__FILE__, __LINE__, task != null);
@@ -126,59 +95,39 @@ extern struct sched_task_t *task_get_by_id(u_short tid)
 /*
  * Api - Find task by id
  */
-extern struct sched_task_t *task_find_by_id(u_short tid)
+extern struct task_t *task_find_by_id(u_short tid)
 {
-    struct sched_task_t *task;
-
-    if (task_list_head == null)
-    {
-        return null;
-    }
-
-    task = task_list_head;
-
-    do
-    {
-        if (task->tid == tid)
-        {
-            return task;
-        }
-
-        task = task->next;
-    } while (task != task_list_head);
-
-    return null;
+    struct clist_head_t *current;
+    current = clist_find(&task_list, task_by_id_detector, tid);
+    return (struct task_t *)current->data;
 }
 
 /*
  * Api - Get task by status
  */
-extern struct sched_task_t *task_get_by_status(u_short status, struct sched_task_t *list_head)
+extern struct task_t *task_get_by_status(u_short status)
 {
-    struct sched_task_t *task;
+    struct clist_head_t *current;
+    current = clist_find(&task_list, task_by_status_detector, status);
+    kassert(__FILE__, __LINE__, current != null);
+    return (struct task_t *)current->data;
+}
 
-    task = list_head;
-    kassert(__FILE__, __LINE__, task != null);
-
-    do
-    {
-        if (task->status == status)
-        {
-            return task;
-        }
-
-        task = task->next;
-    } while (task != task_list_head);
-
-    kunreachable(__FILE__, __LINE__);
-
-    return null;
+/*
+ * Api - Get next task by status
+ */
+extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos)
+{
+    struct clist_head_t *current;
+    current = clist_find(&task_list, task_next_by_status_detector, status, pos);
+    kassert(__FILE__, __LINE__, current != null);
+    return (struct task_t *)current->data;
 }
 
 /*
  * Api - Pack message
  */
-extern void task_pack_message(struct sched_task_t *task, struct message_t *msg)
+extern void task_pack_message(struct task_t *task, struct message_t *msg)
 {
     /* check buffer size */
     if (task->msg_count_in == TASK_MSG_BUFF_SIZE)
@@ -198,7 +147,7 @@ extern void task_pack_message(struct sched_task_t *task, struct message_t *msg)
 /*
  * Api - Extract message
  */
-extern void task_extract_message(struct sched_task_t *task, struct message_t *msg)
+extern void task_extract_message(struct task_t *task, struct message_t *msg)
 {
     struct message_t *cur_msg;
 
@@ -211,13 +160,45 @@ extern void task_extract_message(struct sched_task_t *task, struct message_t *ms
 }
 
 /*
+ * Helper to find task by id
+ */
+static bool task_by_id_detector(struct clist_head_t *current, va_list list) {
+  u_short tid = va_arg(list, u_short);
+  struct task_t *task = (struct task_t *)current->data;
+  return task->tid == tid;
+}
+
+/*
+ * Helper to find task by status
+ */
+static bool task_by_status_detector(struct clist_head_t *current, va_list list) {
+  u_short status = va_arg(list, u_short);
+  struct task_t *task = (struct task_t *)current->data;
+  return task->status == status;
+}
+
+/*
+ * Helper to find next task by status
+ */
+static bool task_next_by_status_detector(struct clist_head_t *current, va_list list) {
+  u_short status = va_arg(list, u_short);
+  struct task_t *task = (struct task_t *)current->data;
+  struct task_t *pos = va_arg(list, struct task_t *);
+  if (pos != null) {
+    return task->status == status && task->list_head->prev == (struct clist_head_t *)pos;
+  } else {
+    return task->status == status;
+  }
+}
+
+/*
  * Smoke test
  */
 static void task_test()
 {
 #ifdef TEST
-    struct sched_task_t *task1;
-    struct sched_task_t *task2;
+    struct task_t *task1;
+    struct task_t *task2;
     struct message_t msg;
     struct message_t msg1;
     struct message_t msg2;
@@ -231,15 +212,13 @@ static void task_test()
     msg2.len = 0;
 
     /* tasks creation */
-    kassert(__FILE__, __LINE__, task_count == 0);
-    kassert(__FILE__, __LINE__, task_list_head == null);
+    kassert(__FILE__, __LINE__, task_list.head == null);
     task_create(tid1, 0);
     task_create(tid2, 0);
     task1 = task_get_by_id(tid1);
     kassert(__FILE__, __LINE__, task1->tid == tid1);
     task2 = task_get_by_id(tid2);
     kassert(__FILE__, __LINE__, task2->tid == tid2);
-    kassert(__FILE__, __LINE__, task_count == 2);
 
     /* messages */
     kassert(__FILE__, __LINE__, task1->msg_count_in == 0);
@@ -256,7 +235,6 @@ static void task_test()
     /* task deletion */
     task_delete(task1);
     task_delete(task2);
-    kassert(__FILE__, __LINE__, task_count == 0);
-    kassert(__FILE__, __LINE__, task_list_head == null);
+    kassert(__FILE__, __LINE__, task_list.head == null);
 #endif
 }

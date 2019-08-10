@@ -108,20 +108,11 @@ static void print_prompt()
  */
 static void show_tasks_list()
 {
-    struct sched_task_t *task;
-    char buf[IPC_MSG_DATA_BUFF_SIZE];
-
     clear();
     puts(" -- tasks list\n");
 
-    task = task_get_by_id(TID_SH);
-    do
-    {
-        snprintf(buf, IPC_MSG_DATA_BUFF_SIZE, "  tid = %u  status = %u  esp = %X\n", task->tid, task->status, task->gp_registers.esp);
-        puts(buf);
-
-        task = task->next;
-    } while (task->tid != TID_SH);
+    // snprintf(buf, IPC_MSG_DATA_BUFF_SIZE, "  tid = %u  status = %u  esp = %X\n", task->tid, task->status, task->gp_registers.esp);
+    // puts(buf);
 }
 
 /*

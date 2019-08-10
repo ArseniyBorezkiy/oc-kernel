@@ -106,13 +106,16 @@ extern void clist_delete_entry(struct clist_definition_t *list, struct clist_hea
 /*
  * Api - Find first suitable entry in cyclic list
  */
-extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_find_callback_t detector)
+extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_find_callback_t detector, ...)
 {
   struct clist_head_t *current;
 
   for (current = list->head; current->next != list->head; current = current->next)
   {
-    if (detector(current))
+    va_list list;
+    va_start(list, detector);
+    
+    if (detector(current, list))
     {
       return current;
     }

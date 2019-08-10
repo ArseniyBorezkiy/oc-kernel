@@ -11,7 +11,7 @@
  */
 extern void ksend(u_short tid, struct message_t *msg)
 {
-    struct sched_task_t *task;
+    struct task_t *task;
 
     /* get target task */
     task = task_get_by_id(tid);
@@ -31,8 +31,8 @@ extern void ksend(u_short tid, struct message_t *msg)
  */
 extern void kreceive(u_short tid, struct message_t *msg)
 {
-    struct sched_task_t *task_before; /* before yield */
-    struct sched_task_t *task_after;  /* after yield */
+    struct task_t *task_before; /* before yield */
+    struct task_t *task_after;  /* after yield */
 
     /* get current task */
     task_before = sched_get_current_task();

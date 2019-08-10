@@ -12,7 +12,7 @@
  */
 extern void spin_lock(struct spin_t *spin)
 {
-    struct sched_task_t *task;
+    struct task_t *task;
 
     task = sched_get_current_task();
 
@@ -52,7 +52,7 @@ extern void spin_lock(struct spin_t *spin)
  */
 extern void spin_unlock(struct spin_t *spin)
 {
-    struct sched_task_t *task;
+    struct task_t *task;
 
     task = sched_get_current_task();
 
