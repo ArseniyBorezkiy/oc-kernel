@@ -2,9 +2,9 @@
 #include <arch/reg.h>
 #include <vfs/elf.h>
 #include <utils/kdump.h>
-#include <utils/kprint.h>
 #include <utils/kheap.h>
 #include <lib/stdtypes.h>
+#include <lib/stdio.h>
 #include <lib/assert.h>
 #include <kernel.h>
 
@@ -15,10 +15,10 @@ extern void kdump_stack(size_t *addr)
 {
   size_t base = (size_t)addr;
 
-  kprint("-- stack dump: %X\n", base);
-  kprint("  %X : %X\n", base, *(u_int *)base);
-  kprint("  %X : %X\n", base + 4, *(u_int *)(base + 4));
-  kprint("  %X : %X\n", base + 8, *(u_int *)(base + 8));
+  print("-- stack dump: %X\n", base);
+  print("  %X : %X\n", base, *(u_int *)base);
+  print("  %X : %X\n", base + 4, *(u_int *)(base + 4));
+  print("  %X : %X\n", base + 8, *(u_int *)(base + 8));
 }
 
 /*
@@ -26,9 +26,9 @@ extern void kdump_stack(size_t *addr)
  */
 extern void kdump_multiboot(struct multiboot_t *header)
 {
-  kprint("-- multiboot header dump: %X\n", (size_t)header);
-  kprint("  mem_lower : %X Kb\n", header->mem_lower);
-  kprint("  mem_upper : %X Kb\n", header->mem_upper);
+  print("-- multiboot header dump: %X\n", (size_t)header);
+  print("  mem_lower : %X Kb\n", header->mem_lower);
+  print("  mem_upper : %X Kb\n", header->mem_upper);
 }
 
 /*
@@ -36,21 +36,21 @@ extern void kdump_multiboot(struct multiboot_t *header)
  */
 extern void kdump_elf(struct elf_header_t *header)
 {
-  kprint("-- elf header dump: %X\n", (size_t)header);
-  kprint("  entry point: %X\n", header->e_entry);
-  kprint("  headers count: %X\n", header->e_phnum);
-  kprint("  headers begin: %X\n", header->e_shoff);
+  print("-- elf header dump: %X\n", (size_t)header);
+  print("  entry point: %X\n", header->e_entry);
+  print("  headers count: %X\n", header->e_phnum);
+  print("  headers begin: %X\n", header->e_shoff);
 
   for (int i = 0; i < header->e_phnum; ++i)
   {
     struct elf_program_header_t *p_header = (void *)(header->e_shoff + i * header->e_ehsize);
-    kprint("  + program header dump: %X\n", p_header);
-    kprint("    segment type: %X\n", p_header->p_type);
-    kprint("    target virtual address: %X\n", p_header->p_vaddr);
-    kprint("    segment size in memory: %X\n", p_header->p_memsz);
-    kprint("    segment offset from file begin: %X\n", p_header->p_offset);
-    kprint("    segment size in file: %X\n", p_header->p_filesz);
-    kprint("    alignment: %X\n", p_header->p_align);
+    print("  + program header dump: %X\n", p_header);
+    print("    segment type: %X\n", p_header->p_type);
+    print("    target virtual address: %X\n", p_header->p_vaddr);
+    print("    segment size in memory: %X\n", p_header->p_memsz);
+    print("    segment offset from file begin: %X\n", p_header->p_offset);
+    print("    segment size in file: %X\n", p_header->p_filesz);
+    print("    alignment: %X\n", p_header->p_align);
   }
 }
 
@@ -59,7 +59,7 @@ extern void kdump_elf(struct elf_header_t *header)
  */
 extern void kdump_registers()
 {
-  kprint("-- dump control registers\n");
+  print("-- dump control registers\n");
   u16 cs = asm_get_cs();
   u16 ss = asm_get_ss();
   u16 ds = asm_get_ds();
@@ -67,11 +67,11 @@ extern void kdump_registers()
   u32 eflags = asm_get_eflags();
   u32 cr0 = asm_get_cr0();
   u32 cr3 = asm_get_cr3();
-  kprint("  cs = %X  ds = %X  ss = %X\n", cs, ds, ss);
-  kprint("  esp = %X\n", esp);
-  kprint("  cr0 = %X\n", cr0);
-  kprint("  cr3 = %X\n", cr3);
-  kprint("  eflags = %X\n", eflags);
+  print("  cs = %X  ds = %X  ss = %X\n", cs, ds, ss);
+  print("  esp = %X\n", esp);
+  print("  cr0 = %X\n", cr0);
+  print("  cr3 = %X\n", cr3);
+  print("  eflags = %X\n", eflags);
 }
 
 /*
@@ -79,9 +79,9 @@ extern void kdump_registers()
  */
 extern void kdump_eflags()
 {
-  kprint("-- dump flags\n");
+  print("-- dump flags\n");
   u32 eflags = asm_get_eflags();
-  kprint("  eflags = %X\n", eflags);
+  print("  eflags = %X\n", eflags);
 }
 
 /*
@@ -89,7 +89,7 @@ extern void kdump_eflags()
  */
 extern void kdump_memory_areas()
 {
-  kprint("-- dump memory areas\n");
+  print("-- dump memory areas\n");
   size_t kernel_stack_addr = (size_t)kernel_stack;
-  kprint("  kernel stack: %X - %X\n", kernel_stack_addr, kernel_stack_addr - KERNEL_STACK_SIZE);
+  print("  kernel stack: %X - %X\n", kernel_stack_addr, kernel_stack_addr - KERNEL_STACK_SIZE);
 }

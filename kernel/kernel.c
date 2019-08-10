@@ -10,7 +10,6 @@
 #include <tasks/tty.h>
 #include <tasks/init.h>
 #include <tasks/sh.h>
-#include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
@@ -18,6 +17,7 @@
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
+#include <lib/stdio.h>
 #include <messages.h>
 #include <kernel.h>
 
@@ -36,11 +36,11 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 
   /* init screen */
   video_init();
-  kclear();
+  clear();
 
   /* hello */
-  kprint(MSG_KERNEL_NAME);
-  kprint(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
+  print(MSG_KERNEL_NAME);
+  print(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
 
   /* init arch */
   lib_init();
@@ -56,7 +56,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   
   /* init scheduler */
   sched_init();
-  kprint(MSG_KERNEL_SCHEDULER_INITIALIZED);
+  print(MSG_KERNEL_SCHEDULER_INITIALIZED);
   kernel_create_tasks();
   kernel_run_tasks();
 
@@ -65,7 +65,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   asm_unlock();
 
   /* start scheduler */
-  kprint(MSG_KERNEL_STARTED);
+  print(MSG_KERNEL_STARTED);
   sched_yield();
   unreachable();
 }

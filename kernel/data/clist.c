@@ -2,8 +2,7 @@
 #include <lib/assembly.h>
 #include <lib/assert.h>
 #include <lib/stdlib.h>
-#include <utils/kprint.h>
-#include <utils/kheap.h>
+#include <lib/stdio.h>
 
 static void clist_test();
 
@@ -155,12 +154,12 @@ extern struct clist_head_t *clist_find_next(struct clist_definition_t *list, str
  * Api - Cyclic list dump
  */
 extern void clist_dump(struct clist_definition_t *list) {
-  kprint("-- cyclic list dump\n");
+  print("-- cyclic list dump\n");
   
   struct clist_head_t *current;
 
   for (current = list->head; current != null; current = current->next) {
-    kprint("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+    print("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
     if (current->next == list->head) {
       break;
     }

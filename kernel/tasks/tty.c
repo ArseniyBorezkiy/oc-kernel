@@ -9,6 +9,7 @@
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
+#include <lib/stdio.h>
 #include <messages.h>
 
 static char const tty_output_buff[SYSLOG_SIZE];      /* tty output buffer */
@@ -27,12 +28,12 @@ extern void task_tty_main()
 {
     struct message_t msg;
 
-    kprint(MSG_TASK_TTY_LAUNCHED, (size_t *)asm_get_esp());
-    kclear();
+    print(MSG_TASK_TTY_LAUNCHED, (size_t *)asm_get_esp());
+    clear();
     //kmode(false); /* detach syslog from screen */
     tty_output_buff_pos = video_clear(tty_output_buff);
     video_flush(tty_output_buff);
-    kprint(MSG_KERNEL_NAME);
+    print(MSG_KERNEL_NAME);
 
     while (1)
     {

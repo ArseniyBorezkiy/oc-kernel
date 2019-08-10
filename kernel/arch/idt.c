@@ -4,8 +4,8 @@
 #include <arch/port.h>
 #include <sched/task.h>
 #include <sched/sched.h>
-#include <utils/kprint.h>
 #include <lib/stdtypes.h>
+#include <lib/stdio.h>
 #include <messages.h>
 #include <kernel.h>
 

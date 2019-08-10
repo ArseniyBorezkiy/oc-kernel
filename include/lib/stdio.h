@@ -1,5 +1,7 @@
 #pragma once
 
+#include <lib/assembly.h>
+
 struct io_buf_t
 {
   int fd;      /* file descriptor */
@@ -10,9 +12,19 @@ struct io_buf_t
 
 #define FILE struct io_buf_t
 
+#ifdef KERNEL
+#define print(msg, ...) kprint(msg, ##__VA_ARGS__)
+#define vprintf(msg, list) kvprintf(msg, list)
+#define clear() kclear()
+#else
+#define print(msg, ...) uprint(msg, ##__VA_ARGS__)
+#define vprintf(msg, list) uvprintf(msg, list)
+#define clear() uclear()
+#endif
+
 /*
  * Api
  */
 extern void puts(const char *str);
 extern void putc(char ch);
-extern void clear();
+extern void uclear();

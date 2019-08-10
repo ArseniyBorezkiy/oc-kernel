@@ -33,7 +33,7 @@ extern void putc(char ch)
 /*
  * Api - Clear screen
  */
-extern void clear()
+extern void uclear()
 {
     struct message_t msg;
 

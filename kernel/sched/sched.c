@@ -3,12 +3,12 @@
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <utils/kheap.h>
-#include <utils/kprint.h>
 #include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
+#include <lib/stdio.h>
 #include <messages.h>
 
 static struct task_t *current_task; /* current running process */
@@ -79,7 +79,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   current_task = next_task;
 
   /* run next task */
-  kprint(MSG_SCHED_NEXT, next_task->tid, ret_addr, next_task->op_registers.cs, *ret_addr, next_task->op_registers.eip);
+  print(MSG_SCHED_NEXT, next_task->tid, ret_addr, next_task->op_registers.cs, *ret_addr, next_task->op_registers.eip);
   asm_switch_context(next_task->op_registers.u_esp);
 }
 

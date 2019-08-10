@@ -6,8 +6,8 @@
 #include <ipc/ipc.h>
 #include <tasks/tty.h>
 #include <utils/kpanic.h>
-#include <utils/kprint.h>
 #include <lib/stdtypes.h>
+#include <lib/stdio.h>
 #include <messages.h>
 
 /*
@@ -72,7 +72,7 @@ extern void ih_timer(size_t *ret_addr, size_t *reg_addr)
  */
 extern void ih_keyboard()
 {
-    kprint(MSG_IRQ1);
+    print(MSG_IRQ1);
 
     u_char status = asm_read_port(KEYBOARD_STATUS_PORT);
     if (status & 0x01)

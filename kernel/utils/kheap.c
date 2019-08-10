@@ -1,11 +1,11 @@
 #include <sync/spin.h>
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
-#include <utils/kprint.h>
 #include <utils/kdump.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
+#include <lib/stdio.h>
 #include <kernel.h>
 #include <messages.h>
 
@@ -222,14 +222,14 @@ extern void kfree(void *addr)
  * Api - Kernel heap dump
  */
 extern void kheap_dump() {
-  kprint("-- dump kernel heap\n");
+  print("-- dump kernel heap\n");
   
   struct slist_head_t *current;
   struct kheap_entry_t *current_data = null;
 
   for (current = kheap_list.head; current != null; current = current->next) {
     current_data = (struct kheap_entry_t *)current->data;
-    kprint("  %X - %X bizy=%u this=%X prev=%X next=%X\n", current_data->addr, current_data->addr + current_data->size, current_data->is_buzy, current, current->prev, current->next);
+    print("  %X - %X bizy=%u this=%X prev=%X next=%X\n", current_data->addr, current_data->addr + current_data->size, current_data->is_buzy, current, current->prev, current->next);
   }
 }
 
