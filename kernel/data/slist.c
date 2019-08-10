@@ -168,7 +168,7 @@ extern void slist_delete_entry(struct slist_definition_t *list, struct slist_hea
   }
 
   /* delete entry */
-  memset(entry, 0, list->slot_size);
+  memset(entry->data, 0, list->slot_size);
 }
 
 /*
