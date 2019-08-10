@@ -10,7 +10,6 @@
 #include <tasks/tty.h>
 #include <tasks/init.h>
 #include <tasks/sh.h>
-#include <utils/kpanic.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
 #include <utils/lib.h>
@@ -18,6 +17,7 @@
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>
+#include <lib/stdlib.h>
 #include <messages.h>
 #include <kernel.h>
 

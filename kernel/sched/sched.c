@@ -3,12 +3,12 @@
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <utils/kheap.h>
-#include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/time.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>
+#include <lib/stdlib.h>
 #include <messages.h>
 
 static struct task_t *current_task; /* current running process */

@@ -1,11 +1,11 @@
 #include <sync/spin.h>
 #include <utils/kheap.h>
-#include <utils/kpanic.h>
 #include <utils/kdump.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>
+#include <lib/stdlib.h>
 #include <kernel.h>
 #include <messages.h>
 
@@ -160,7 +160,7 @@ extern void *kmalloc(size_t size)
     /* check free memory size is enought */
     if (heap_end_addr + size >= KHEAP_END_ADDR)
     {
-        kpanic(MSG_KERNEL_HEAP_EXCEED);
+        abort(MSG_KERNEL_HEAP_EXCEED);
     }
     /* allocate new heap memory block */
     struct slist_head_t *tail = kheap_list.tail;
@@ -215,7 +215,7 @@ extern void kfree(void *addr)
         }
     }
 
-    kpanic("invalid kernel heap address to free %X", addr);
+    abort("invalid kernel heap address to free %X", addr);
 }
 
 /*

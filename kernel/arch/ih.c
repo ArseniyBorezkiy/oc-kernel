@@ -5,7 +5,7 @@
 #include <sched/task.h>
 #include <ipc/ipc.h>
 #include <tasks/tty.h>
-#include <utils/kpanic.h>
+#include <lib/stdlib.h>
 #include <lib/stdtypes.h>
 #include <lib/stdio.h>
 #include <messages.h>
@@ -15,7 +15,7 @@
  */
 extern void ih_zero()
 {
-    kpanic("division by zero!");
+    abort("division by zero!");
 }
 
 /*
@@ -23,7 +23,7 @@ extern void ih_zero()
  */
 extern void ih_opcode()
 {
-    kpanic("invalid opcode!");
+    abort("invalid opcode!");
 }
 
 /*
@@ -31,7 +31,7 @@ extern void ih_opcode()
  */
 extern void ih_double_fault()
 {
-    kpanic("double fault!");
+    abort("double fault!");
 }
 
 /*
@@ -39,7 +39,7 @@ extern void ih_double_fault()
  */
 extern void ih_general_protect()
 {
-    kpanic("general protect!");
+    abort("general protect!");
 }
 
 /*
@@ -47,7 +47,7 @@ extern void ih_general_protect()
  */
 extern void ih_page_fault()
 {
-    kpanic("page fault!");
+    abort("page fault!");
 }
 
 /*
@@ -55,7 +55,7 @@ extern void ih_page_fault()
  */
 extern void ih_alignment_check()
 {
-    kpanic("alignment check!");
+    abort("alignment check!");
 }
 
 /*

@@ -2,7 +2,6 @@
 #include <arch/reg.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
-#include <utils/kpanic.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assembly.h>
@@ -133,7 +132,7 @@ extern void task_pack_message(struct task_t *task, struct message_t *msg)
     /* check buffer size */
     if (task->msg_count_in == TASK_MSG_BUFF_SIZE)
     {
-        kpanic(MSG_KERNEL_TASK_BUFF_EXCEED, task->tid);
+        abort(MSG_KERNEL_TASK_BUFF_EXCEED, task->tid);
     }
     /* unshift message to task buffer */
     task->msg_count_in += 1;

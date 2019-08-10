@@ -1,9 +1,9 @@
 #include <arch/idt.h>
 #include <sync/spin.h>
 #include <sched/sched.h>
-#include <utils/kpanic.h>
 #include <lib/time.h>
 #include <lib/assert.h>
+#include <lib/stdlib.h>
 #include <messages.h>
 
 /*
