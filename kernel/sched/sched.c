@@ -50,31 +50,36 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
     /* save task state */
     current_task->op_registers.eip = *ret_addr;
     current_task->op_registers.cs = *(u16 *)((size_t)ret_addr + 4);
-    *(u32 *)(&current_task->flags) = *(u32 *)((size_t)ret_addr + 6);
-    current_task->op_registers.u_esp = (size_t)ret_addr + 10;
+    *(u32 *)(&current_task->flags) = *(u32 *)((size_t)ret_addr + 6) | 0x200;
+    current_task->op_registers.u_esp = (size_t)ret_addr + 12;
     current_task->gp_registers.esp = current_task->op_registers.u_esp;
     memcpy(&current_task->gp_registers, (void *)reg_addr, sizeof(struct gp_registers_t));
   }
 
   /* pick next task */
-  next_task = task_get_next_by_status(TASK_RUNNING, current_task);
+  if (current_task) {
+    next_task = task_get_next_by_status(TASK_RUNNING, current_task);
+  } else {
+    next_task = task_get_by_status(TASK_RUNNING);
+  }
   kassert(__FILE__, __LINE__, next_task != null);
 
   /* prepare context for the next task */
-  *(u32 *)(next_task->op_registers.u_esp - 4) = *(u32 *)(&next_task->flags) | 0x200;
-  *(u16 *)(next_task->op_registers.u_esp - 6) = next_task->op_registers.cs;
-  *(u32 *)(next_task->op_registers.u_esp - 10) = next_task->op_registers.eip;
-  next_task->op_registers.u_esp = next_task->op_registers.u_esp - 10;
+  next_task->op_registers.u_esp -= 4;
+  *(u32 *)(next_task->op_registers.u_esp) = (*(u16 *)(&next_task->flags));
+  next_task->op_registers.u_esp -= 4;
+  *(u32 *)(next_task->op_registers.u_esp) = next_task->op_registers.cs;
+  next_task->op_registers.u_esp -= 4;
+  *(u32 *)(next_task->op_registers.u_esp) = next_task->op_registers.eip;
   next_task->gp_registers.esp = next_task->op_registers.u_esp;
-  next_task->op_registers.u_esp = next_task->op_registers.u_esp - sizeof(struct gp_registers_t);
-  memcpy((void *)next_task->op_registers.u_esp, &next_task->gp_registers, sizeof(struct gp_registers_t));
-
+  next_task->op_registers.u_esp -= sizeof(struct gp_registers_t);
+  memcpy((void *)next_task->op_registers.u_esp, (void *)&next_task->gp_registers, sizeof(struct gp_registers_t));
+  
   /* update current task pointer */
-  kprint("scheduled tid=%u sp=%X pc=%X->%X\n", next_task->tid, ret_addr, *ret_addr, next_task->op_registers.eip);
-  // delay(5);
   current_task = next_task;
 
   /* run next task */
+  kprint(MSG_SCHED_NEXT, next_task->tid, ret_addr, next_task->op_registers.cs, *ret_addr, next_task->op_registers.eip);
   asm_switch_context(next_task->op_registers.u_esp);
 }
 

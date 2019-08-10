@@ -12,6 +12,7 @@ extern void kpanic(char *message, ...)
     va_list list;
     va_start(list, message);
 
+    kmode(true);
     kvprint(message, list);
     kprint(MSG_KERNEL_PANIC);
     asm_lock();

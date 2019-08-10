@@ -130,6 +130,27 @@ extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_fi
 }
 
 /*
+ * Api - Find first next suitable entry in cyclic list
+ */
+extern struct clist_head_t *clist_find_next(struct clist_definition_t *list, struct clist_head_t *pos, clist_find_callback_t detector, ...)
+{
+  struct clist_head_t *current;
+
+  for (current = pos->next; current != null && current != pos; current = current->next)
+  {
+    va_list args;
+    va_start(args, detector);
+    
+    if (detector(current, args))
+    {
+      return current;
+    }
+  }
+
+  return null;
+}
+
+/*
  * Api - Cyclic list dump
  */
 extern void clist_dump(struct clist_definition_t *list) {

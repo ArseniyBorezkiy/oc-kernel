@@ -28,9 +28,11 @@ extern void task_tty_main()
     struct message_t msg;
 
     kprint(MSG_TASK_TTY_LAUNCHED, (size_t *)asm_get_esp());
-    kmode(false); /* detach syslog from screen */
+    kclear();
+    //kmode(false); /* detach syslog from screen */
     tty_output_buff_pos = video_clear(tty_output_buff);
     video_flush(tty_output_buff);
+    kprint(MSG_KERNEL_NAME);
 
     while (1)
     {

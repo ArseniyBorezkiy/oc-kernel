@@ -30,4 +30,5 @@ extern struct clist_head_t *clist_insert_entry_after(struct clist_definition_t *
 extern struct clist_head_t *clist_insert_entry_before(struct clist_definition_t *list, struct clist_head_t *pos);
 extern void clist_delete_entry(struct clist_definition_t *list, struct clist_head_t *entry);
 extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_find_callback_t detector, ...);
+extern struct clist_head_t *clist_find_next(struct clist_definition_t *list, struct clist_head_t *pos, clist_find_callback_t detector, ...);
 extern void clist_dump(struct clist_definition_t *list);

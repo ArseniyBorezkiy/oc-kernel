@@ -39,6 +39,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   kclear();
 
   /* hello */
+  kprint(MSG_KERNEL_NAME);
   kprint(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
 
   /* init arch */

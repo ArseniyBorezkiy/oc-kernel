@@ -75,6 +75,16 @@ extern void kdump_registers()
 }
 
 /*
+ * Api - Dump flags
+ */
+extern void kdump_eflags()
+{
+  kprint("-- dump flags\n");
+  u32 eflags = asm_get_eflags();
+  kprint("  eflags = %X\n", eflags);
+}
+
+/*
  * Api - Dump memory areas
  */
 extern void kdump_memory_areas()

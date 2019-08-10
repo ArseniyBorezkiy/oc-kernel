@@ -13,7 +13,6 @@
 
 static bool task_by_id_detector(struct clist_head_t *current, va_list args);
 static bool task_by_status_detector(struct clist_head_t *current, va_list args);
-static bool task_next_by_status_detector(struct clist_head_t *current, va_list args);
 static void task_test();
 
 /*
@@ -55,7 +54,7 @@ extern bool task_create(u_short tid, void *address)
     task->time = 0;
     
     /* set flags */
-    *(u32 *)(&task->flags) = asm_get_eflags();
+    *(u32 *)(&task->flags) = asm_get_eflags() | 0x200;
     /* set general purpose registers */
     memset(&task->gp_registers, 0, sizeof(struct gp_registers_t));
     /* set other purpose registers */
@@ -121,7 +120,7 @@ extern struct task_t *task_get_by_status(u_short status)
 extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos)
 {
     struct clist_head_t *current;
-    current = clist_find(&task_list, task_next_by_status_detector, status, pos);
+    current = clist_find_next(&task_list, (struct clist_head_t *)pos, task_by_status_detector, status);
     kassert(__FILE__, __LINE__, current != null);
     return (struct task_t *)current->data;
 }
@@ -180,20 +179,6 @@ static bool task_by_status_detector(struct clist_head_t *current, va_list args) 
 }
 
 /*
- * Helper to find next task by status
- */
-static bool task_next_by_status_detector(struct clist_head_t *current, va_list args) {
-  u_short status = va_arg(args, u_short);
-  struct task_t *task = (struct task_t *)current->data;
-  struct task_t *pos = va_arg(args, struct task_t *);
-  if (pos != null) {
-    return task->status == status && task->list_head.prev == (struct clist_head_t *)pos;
-  } else {
-    return task->status == status;
-  }
-}
-
-/*
  * Api - Task list dump
  */
 extern void task_dump() {
@@ -204,7 +189,7 @@ extern void task_dump() {
 
   for (current = task_list.head; current != null; current = current->next) {
     task = (struct task_t *)current->data;
-    kprint("  tid=%u this=%X prev=%X next=%X\n", task->tid, current, current->prev, current->next);
+    kprint("  tid=%u status=%u this=%X prev=%X next=%X\n", task->tid, task->status, current, current->prev, current->next);
     
     if (current->next == task_list.head) {
       break;
