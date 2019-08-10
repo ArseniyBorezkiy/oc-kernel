@@ -11,6 +11,13 @@ u8 const video_memory_buff[VIDEO_SCREEN_SIZE * 2];
 extern void video_init()
 {
   memset((void *)video_memory_buff, VIDEO_MEMORY_ATTR_BLACK, VIDEO_SCREEN_SIZE);
+  video_disable_cursor();
+}
+
+/*
+ * Api - Disable cursor
+ */
+extern void video_disable_cursor() {
   asm_write_port(0x3D4, 0x0A);
 	asm_write_port(0x3D5, 0x20);
 }
