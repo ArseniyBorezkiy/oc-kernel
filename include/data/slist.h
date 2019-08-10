@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+ * Static list implementation.
+ * Located in fixed array.
+ */
+
 #include <lib/stdtypes.h>
 
 struct slist_head_t
@@ -23,7 +28,7 @@ typedef struct slist_head_t *(*slist_reduce_callback_t)(struct slist_head_t *cur
 typedef bool (*slist_find_callback_t)(struct slist_head_t *current);
 
 /*
- * Api - Static lists
+ * Api
  */
 extern void slist_init();
 extern struct slist_head_t *slist_insert_entry_after(struct slist_definition_t *list, struct slist_head_t *pos);

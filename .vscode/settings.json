@@ -30,6 +30,7 @@
     "stdarg.h": "c",
     "stddef.h": "c",
     "video.h": "c",
-    "slist.h": "c"
+    "slist.h": "c",
+    "clist.h": "c"
   }
 }

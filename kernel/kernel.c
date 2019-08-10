@@ -3,6 +3,7 @@
 #include <arch/pic.h>
 #include <arch/mmu.h>
 #include <data/slist.h>
+#include <data/clist.h>
 #include <dev/video.h>
 #include <sched/task.h>
 #include <sched/sched.h>
@@ -47,6 +48,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 
   /* init data structures */
   slist_init();
+  clist_init();
 
   /* init dynamic memory */
   kheap_init();
@@ -75,7 +77,7 @@ static void kernel_create_tasks()
   bool is_ok =
       task_create(TID_INIT, task_init_main) &&
       task_create(TID_TTY, task_tty_main) &&
-      task_create(TID_TTY, task_sh_main);
+      task_create(TID_SH, task_sh_main);
   kassert(__FILE__, __LINE__, is_ok);
 }
 

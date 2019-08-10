@@ -27,7 +27,7 @@ build: build-lib build-kernel
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
 		./bin/video.c.o \
-		./bin/slist.c.o \
+		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
 build-lib: ./lib/string.c ./lib/math.c
@@ -54,6 +54,7 @@ build-kernel-dev: ./kernel/dev/video.c
 
 build-kernel-data: ./kernel/data/slist.c
 	$(CC) $(CC_FLAGS) -c ./kernel/data/slist.c -o ./bin/slist.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/data/clist.c -o ./bin/clist.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
                    ./kernel/arch/pic.c ./kernel/arch/idt.c ./kernel/arch/mmu.s \

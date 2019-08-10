@@ -1,0 +1,181 @@
+#include <data/clist.h>
+#include <lib/assembly.h>
+#include <utils/kassert.h>
+#include <utils/kprint.h>
+#include <utils/kheap.h>
+
+static void clist_test();
+
+/*
+ * Api - init cyclic list module
+ */
+extern void clist_init() {
+  clist_test();
+}
+
+/*
+ * Api - Create list entry after position
+ */
+extern struct clist_head_t *clist_insert_entry_after(struct clist_definition_t *list, struct clist_head_t *pos)
+{
+  kassert(__FILE__, __LINE__, pos != null || pos == list->head);
+
+  /* allocate memory */
+  struct clist_head_t *entry;
+  size_t addr = (size_t)kmalloc(list->slot_size);
+  entry = (struct clist_head_t *)addr;
+  entry->data = (void *)addr;
+
+  if (list->head == null) {
+    /* insert first entry */
+    entry->next = entry;
+    entry->prev = entry;
+    list->head = entry;
+  } else {
+    /* insert next entry between pos and pos next */
+    struct clist_head_t *prev = pos;
+    struct clist_head_t *next = pos->next;
+    entry->prev = prev;
+    entry->next = next;
+    if (prev != null) {
+      prev->next = entry;
+    }
+    if (next != null) {
+      next->prev = entry;
+    }
+  }
+
+  return entry;
+}
+
+/*
+ * Api - Create list entry before position
+ */
+extern struct clist_head_t *clist_insert_entry_before(struct clist_definition_t *list, struct clist_head_t *pos)
+{
+  kassert(__FILE__, __LINE__, pos != null || pos == list->head);
+
+  /* allocate memory */
+  struct clist_head_t *entry;
+  size_t addr = (size_t)kmalloc(list->slot_size);
+  entry = (struct clist_head_t *)addr;
+  entry->data = (void *)addr;
+
+  if (list->head == null) {
+    /* insert first entry */
+    entry->next = entry;
+    entry->prev = entry;
+    list->head = entry;
+  } else {
+    /* insert next entry between pos prev and pos */
+    struct clist_head_t *prev = pos->prev;
+    struct clist_head_t *next = pos;
+    entry->prev = prev;
+    entry->next = next;
+    if (prev != null) {
+      prev->next = entry;
+    }
+    if (next != null) {
+      next->prev = entry;
+    }
+  }
+
+  return entry;
+}
+
+/*
+ * Api - Delete list entry
+ */
+extern void clist_delete_entry(struct clist_definition_t *list, struct clist_head_t *entry)
+{
+  kassert(__FILE__, __LINE__, entry != null);
+
+  struct clist_head_t *prev = entry->prev;
+  struct clist_head_t *next = entry->next;
+
+  prev->next = next;
+  next->prev = prev;
+
+  if (list->head == entry) {
+    list->head = entry->next != entry ? entry->next : null;
+  }
+
+  kfree(entry);
+}
+
+/*
+ * Api - Find first suitable entry in cyclic list
+ */
+extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_find_callback_t detector)
+{
+  struct clist_head_t *current;
+
+  for (current = list->head; current->next != list->head; current = current->next)
+  {
+    if (detector(current))
+    {
+      return current;
+    }
+  }
+
+  return null;
+}
+
+/*
+ * Api - Cyclic list dump
+ */
+extern void clist_dump(struct clist_definition_t *list) {
+  kprint("-- cyclic list dump\n");
+  
+  struct clist_head_t *current;
+
+  for (current = list->head; current->next != list->head; current = current->next) {
+    kprint("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+  }
+}
+
+/*
+ * Smoke test
+ */
+static void clist_test() {
+#ifdef TEST
+  struct clist_definition_t list = {
+      .head = null,
+      .slot_size = sizeof(struct clist_head_t)};
+
+  struct clist_head_t *entry1;
+  struct clist_head_t *entry2;
+  struct clist_head_t *entry3;
+  struct clist_head_t *entry4;
+
+  /* create first entry (1) */
+  entry1 = clist_insert_entry_after(&list, null);
+  kassert(__FILE__, __LINE__, entry1 != null);
+  kassert(__FILE__, __LINE__, list.head == entry1);
+  /* create second entry (2, 1) */
+  entry2 = clist_insert_entry_before(&list, entry1);
+  kassert(__FILE__, __LINE__, entry2 != null);
+  kassert(__FILE__, __LINE__, list.head == entry1);
+  /* create third entry (2, 1, 3) */
+  entry3 = clist_insert_entry_after(&list, entry1);
+  kassert(__FILE__, __LINE__, entry3 != null);
+  kassert(__FILE__, __LINE__, list.head == entry1);
+  /* create fourth entry (2, 1, 3, 4) */
+  entry4 = clist_insert_entry_after(&list, entry3);
+  kassert(__FILE__, __LINE__, entry4 != null);
+  kassert(__FILE__, __LINE__, list.head == entry1);
+
+  /* delete first entry (2, 3, 4) */
+  clist_delete_entry(&list, entry1);
+  kassert(__FILE__, __LINE__, list.head == entry3);
+  /* delete fourth entry (2, 3) */
+  clist_delete_entry(&list, entry4);
+  kassert(__FILE__, __LINE__, list.head == entry3);
+  /* delete third entry (2) */
+  clist_delete_entry(&list, entry3);
+  kassert(__FILE__, __LINE__, list.head == entry2);
+  /* delete second entry () */
+  clist_delete_entry(&list, entry2);
+  kassert(__FILE__, __LINE__, list.head == null);
+#endif
+}
