@@ -16,10 +16,10 @@ asm_read_port:
 
 /*
  * Send data to port
- * void asm_write_port(unsigned char port, unsigned_char data)
+ * void asm_write_port(unsigned int port, unsigned char data)
  */
 asm_write_port:
     mov   4(%esp), %edx
-    mov   8(%esp), %al
+    mov   8(%esp), %eax
     out   %al, %dx
     ret

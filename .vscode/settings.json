@@ -32,6 +32,7 @@
     "video.h": "c",
     "slist.h": "c",
     "clist.h": "c",
-    "assert.h": "c"
+    "assert.h": "c",
+    "port.h": "c"
   }
 }
