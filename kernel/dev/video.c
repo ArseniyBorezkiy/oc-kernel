@@ -32,7 +32,7 @@ extern void *video_scroll(char const *video_buff, char *pos)
   /* empty last line */
   for (int j = 0; j < VIDEO_SCREEN_WIDTH; ++j)
   {
-    ptr[(VIDEO_SCREEN_HEIGHT - 1) + j] = ' ';
+    ptr[(VIDEO_SCREEN_HEIGHT - 1) * VIDEO_SCREEN_WIDTH + j] = ' ';
   }
 
   /* move position up */
