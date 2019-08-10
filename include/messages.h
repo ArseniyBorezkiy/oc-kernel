@@ -5,9 +5,9 @@
 #define MSG_CRLN "\n"
 
 /* kernel */
-#define MSG_KERNEL_START (MSG_KERNEL_PREFIX "starting kernel at %X" MSG_CRLN)
-#define MSG_KERNEL_MEM_AVAILABLE (MSG_KERNEL_PREFIX "total memory available %X Kb" MSG_CRLN)
+#define MSG_KERNEL_START (MSG_KERNEL_PREFIX "starting kernel at %X (memory available %X Kb)" MSG_CRLN)
 #define MSG_KERNEL_STARTED (MSG_KERNEL_PREFIX "kernel started successfully" MSG_CRLN)
+#define MSG_KERNEL_SCHEDULER_INITIALIZED (MSG_KERNEL_PREFIX "scheduler initialized" MSG_CRLN)
 #define MSG_KERNEL_PANIC (MSG_KERNEL_PREFIX "kernel panic!" MSG_CRLN)
 #define MSG_KERNEL_FILE_LINE (MSG_KERNEL_PREFIX "file: %s, line: %u" MSG_CRLN)
 #define MSG_KERNEL_STACK_EXPECTED (MSG_KERNEL_PREFIX "kernel stack expected, but esp = %X" MSG_CRLN)

@@ -38,8 +38,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   kclear();
 
   /* hello */
-  kprint(MSG_KERNEL_START, &kernel_start);
-  kprint(MSG_KERNEL_MEM_AVAILABLE, multiboot->mem_upper);
+  kprint(MSG_KERNEL_START, &kernel_start, multiboot->mem_upper);
 
   /* init arch */
   lib_init();
@@ -54,6 +53,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   
   /* init scheduler */
   sched_init();
+  kprint(MSG_KERNEL_SCHEDULER_INITIALIZED);
   kernel_create_tasks();
   kernel_run_tasks();
 
