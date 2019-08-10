@@ -89,6 +89,7 @@ extern struct clist_head_t *clist_insert_entry_before(struct clist_definition_t 
 extern void clist_delete_entry(struct clist_definition_t *list, struct clist_head_t *entry)
 {
   kassert(__FILE__, __LINE__, entry != null);
+  kassert(__FILE__, __LINE__, list->head != null);
 
   struct clist_head_t *prev = entry->prev;
   struct clist_head_t *next = entry->next;
@@ -110,14 +111,18 @@ extern struct clist_head_t *clist_find(struct clist_definition_t *list, clist_fi
 {
   struct clist_head_t *current;
 
-  for (current = list->head; current->next != list->head; current = current->next)
+  for (current = list->head; current != null; current = current->next)
   {
-    va_list list;
-    va_start(list, detector);
+    va_list args;
+    va_start(args, detector);
     
-    if (detector(current, list))
+    if (detector(current, args))
     {
       return current;
+    }
+
+    if (current->next == list->head) {
+      break;
     }
   }
 
@@ -132,8 +137,11 @@ extern void clist_dump(struct clist_definition_t *list) {
   
   struct clist_head_t *current;
 
-  for (current = list->head; current->next != list->head; current = current->next) {
+  for (current = list->head; current != null; current = current->next) {
     kprint("  this=%X prev=%X next=%X\n", current, current->prev, current->next);
+    if (current->next == list->head) {
+      break;
+    }
   }
 }
 

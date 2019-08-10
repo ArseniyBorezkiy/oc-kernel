@@ -11,9 +11,9 @@
 #include <lib/assembly.h>
 #include <messages.h>
 
-static bool task_by_id_detector(struct clist_head_t *current, va_list list);
-static bool task_by_status_detector(struct clist_head_t *current, va_list list);
-static bool task_next_by_status_detector(struct clist_head_t *current, va_list list);
+static bool task_by_id_detector(struct clist_head_t *current, va_list args);
+static bool task_by_status_detector(struct clist_head_t *current, va_list args);
+static bool task_next_by_status_detector(struct clist_head_t *current, va_list args);
 static void task_test();
 
 /*
@@ -41,7 +41,7 @@ extern bool task_create(u_short tid, void *address)
     struct task_t *task;
     struct clist_head_t *entry;
 
-    kprint(MSG_SCHED_TID_CREATE, (u_int)address);
+    kprint(MSG_SCHED_TID_CREATE, tid, (u_int)address);
 
     /* allocate memory */
     entry = clist_insert_entry_after(&task_list, task_list.head);
@@ -53,6 +53,7 @@ extern bool task_create(u_short tid, void *address)
     task->status = TASK_UNINTERRUPTABLE;
     task->msg_count_in = 0;
     task->time = 0;
+    
     /* set flags */
     *(u32 *)(&task->flags) = asm_get_eflags();
     /* set general purpose registers */
@@ -73,6 +74,7 @@ extern bool task_create(u_short tid, void *address)
  */
 extern void task_delete(struct task_t *task)
 {
+    kprint(MSG_SCHED_TID_DELETE, (u_int)task->tid);
     kassert(__FILE__, __LINE__, task != null);
     kfree(task->kstack);
     kfree(task->ustack);
@@ -162,8 +164,8 @@ extern void task_extract_message(struct task_t *task, struct message_t *msg)
 /*
  * Helper to find task by id
  */
-static bool task_by_id_detector(struct clist_head_t *current, va_list list) {
-  u_short tid = va_arg(list, u_short);
+static bool task_by_id_detector(struct clist_head_t *current, va_list args) {
+  u_short tid = va_arg(args, u_short);
   struct task_t *task = (struct task_t *)current->data;
   return task->tid == tid;
 }
@@ -171,8 +173,8 @@ static bool task_by_id_detector(struct clist_head_t *current, va_list list) {
 /*
  * Helper to find task by status
  */
-static bool task_by_status_detector(struct clist_head_t *current, va_list list) {
-  u_short status = va_arg(list, u_short);
+static bool task_by_status_detector(struct clist_head_t *current, va_list args) {
+  u_short status = va_arg(args, u_short);
   struct task_t *task = (struct task_t *)current->data;
   return task->status == status;
 }
@@ -180,14 +182,33 @@ static bool task_by_status_detector(struct clist_head_t *current, va_list list) 
 /*
  * Helper to find next task by status
  */
-static bool task_next_by_status_detector(struct clist_head_t *current, va_list list) {
-  u_short status = va_arg(list, u_short);
+static bool task_next_by_status_detector(struct clist_head_t *current, va_list args) {
+  u_short status = va_arg(args, u_short);
   struct task_t *task = (struct task_t *)current->data;
-  struct task_t *pos = va_arg(list, struct task_t *);
+  struct task_t *pos = va_arg(args, struct task_t *);
   if (pos != null) {
-    return task->status == status && task->list_head->prev == (struct clist_head_t *)pos;
+    return task->status == status && task->list_head.prev == (struct clist_head_t *)pos;
   } else {
     return task->status == status;
+  }
+}
+
+/*
+ * Api - Task list dump
+ */
+extern void task_dump() {
+  kprint("-- task list dump\n");
+  
+  struct clist_head_t *current;
+  struct task_t *task;
+
+  for (current = task_list.head; current != null; current = current->next) {
+    task = (struct task_t *)current->data;
+    kprint("  tid=%u this=%X prev=%X next=%X\n", task->tid, current, current->prev, current->next);
+    
+    if (current->next == task_list.head) {
+      break;
+    }
   }
 }
 
