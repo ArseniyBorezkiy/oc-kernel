@@ -1,6 +1,7 @@
 #include <data/clist.h>
 #include <lib/assembly.h>
 #include <lib/assert.h>
+#include <lib/stdlib.h>
 #include <utils/kprint.h>
 #include <utils/kheap.h>
 
@@ -22,7 +23,7 @@ extern struct clist_head_t *clist_insert_entry_after(struct clist_definition_t *
 
   /* allocate memory */
   struct clist_head_t *entry;
-  size_t addr = (size_t)kmalloc(list->slot_size);
+  size_t addr = (size_t)malloc(list->slot_size);
   entry = (struct clist_head_t *)addr;
   entry->data = (void *)addr;
 
@@ -57,7 +58,7 @@ extern struct clist_head_t *clist_insert_entry_before(struct clist_definition_t 
 
   /* allocate memory */
   struct clist_head_t *entry;
-  size_t addr = (size_t)kmalloc(list->slot_size);
+  size_t addr = (size_t)malloc(list->slot_size);
   entry = (struct clist_head_t *)addr;
   entry->data = (void *)addr;
 
@@ -101,7 +102,7 @@ extern void clist_delete_entry(struct clist_definition_t *list, struct clist_hea
     list->head = entry->next != entry ? entry->next : null;
   }
 
-  kfree(entry);
+  free(entry);
 }
 
 /*

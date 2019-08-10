@@ -4,11 +4,11 @@
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
 #include <utils/kpanic.h>
-#include <utils/kheap.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
 #include <lib/assembly.h>
 #include <lib/assert.h>
+#include <lib/stdlib.h>
 #include <messages.h>
 
 static bool task_by_id_detector(struct clist_head_t *current, va_list args);
@@ -45,8 +45,8 @@ extern bool task_create(u_short tid, void *address)
     /* allocate memory */
     entry = clist_insert_entry_after(&task_list, task_list.head);
     task = (struct task_t *)entry->data;
-    task->kstack = kmalloc(TASK_KSTACK_SIZE);
-    task->ustack = kmalloc(TASK_USTACK_SIZE);
+    task->kstack = malloc(TASK_KSTACK_SIZE);
+    task->ustack = malloc(TASK_USTACK_SIZE);
     /* fill data */
     task->tid = tid;
     task->status = TASK_UNINTERRUPTABLE;
@@ -75,8 +75,8 @@ extern void task_delete(struct task_t *task)
 {
     kprint(MSG_SCHED_TID_DELETE, (u_int)task->tid);
     assert(task != null);
-    kfree(task->kstack);
-    kfree(task->ustack);
+    free(task->kstack);
+    free(task->ustack);
     clist_delete_entry(&task_list, (struct clist_head_t *)task);
 }
 

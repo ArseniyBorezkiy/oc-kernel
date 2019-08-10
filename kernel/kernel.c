@@ -67,7 +67,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   /* start scheduler */
   kprint(MSG_KERNEL_STARTED);
   sched_yield();
-  kunreachable(__FILE__, __LINE__);
+  unreachable();
 }
 
 /*

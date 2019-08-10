@@ -71,6 +71,6 @@ extern void spin_unlock(struct spin_t *spin)
     else
     {
         /* unpair unlock */
-        kunreachable(__FILE__, __LINE__);
+        unreachable();
     }
 }
