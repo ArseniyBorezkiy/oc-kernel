@@ -1,7 +1,19 @@
-# Operating system SKUCHUNIX.
+# Ars Boretskii OC
+## UNIX like, multitask, i80386 PM + MMU, well-commented.
 
-Well commented micro kernel based operating system made by Arsenii Boretskii
-for enjoy and study.
+Well commented kernel based on micro architecture.
+Made for enjoy and study.
+
+### Content
+- scheduler (/kernel/sched)
+- shell task (/kernel/tasks/sh.c)
+- tty task (/kernel/tasks/tty.c)
+- init task stub (/kernel/tasks/init.c)
+- interprocess communication (/kernel/ipc)
+- interprocess synchronization (/kernel/sync)
+- architecture support (/arch)
+- list implementations (/lib/data)
+- small c lib (/lib)
 
 ### Info
 Target processor: i80386 (Protected mode).
@@ -12,7 +24,19 @@ $ apt-get install gcc
 $ apt-get install qemu
 ```
 
-### Build
+### Build and run
 ```
 $ sudo make
+```
+
+### Shell commands
+Task list:
+```
+Ars Boretskii kernel 1.0
+# ps
+```
+Kernel syslog view:
+```
+Ars Boretskii kernel 1.0
+# syslog
 ```
