@@ -1,7 +1,9 @@
+#include <dev/video.h>
 #include <tasks/sh.h>
 #include <tasks/tty.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
+#include <utils/kprint.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
 #include <lib/assert.h>
@@ -123,10 +125,16 @@ static void show_tasks_list()
  */
 static void show_system_log()
 {
+    u_int count = 5;
+    char buf[VIDEO_SCREEN_WIDTH * count + 1];
+
     puts(" -- system log\n");
-    for (int i = 0; i < 5; ++i) {
-      //char *d = "asdfdsf\n";
-      //uprintf(" a%c%s\n", 'd', d);
+    klog(buf, count); /* read syslog */
+
+    /* print syslog */
+    for (int i = 0; i < count; ++i) {
+      *(buf + VIDEO_SCREEN_WIDTH * (i + 1) - 2) = 0;
+      unprintf("%s\n", VIDEO_SCREEN_WIDTH - 1, buf + VIDEO_SCREEN_WIDTH * i);
     }
 }
 
@@ -135,5 +143,5 @@ static void show_system_log()
 //
 
 static void show_task(struct task_t *entry) {
-    uprintf("  pid = %u\n", entry->tid);
+    uprintf("  pid = %u, status = %u\n", entry->tid, entry->status);
 }

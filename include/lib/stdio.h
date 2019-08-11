@@ -30,4 +30,6 @@ extern void puts(const char *str);
 extern void putc(char ch);
 extern void uclear();
 extern void uprintf(char *format, ...);
+extern void unprintf(char *format, u_int n, ...);
 extern void uvprintf(const char *format, va_list list);
+extern void uvnprintf(const char *format, u_int n, va_list list);

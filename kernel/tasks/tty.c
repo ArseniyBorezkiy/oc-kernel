@@ -21,7 +21,6 @@ static u_short tid_stdin = TID_TTY; /* target tid to send incomming chars */
 static void handle_getc(u_char keycode);
 static void handle_putc(char ch);
 static void handle_puts(char *str);
-static void handle_vprintf(const char *format, va_list list);
 
 /*
  * Api - Teletype task
@@ -34,7 +33,7 @@ extern void task_tty_main()
     clear();
     kmode(false); /* detach syslog from screen */
     tty_output_buff_pos = video_clear(tty_output_buff);
-    handle_vprintf(MSG_KERNEL_NAME, null);
+    handle_puts(MSG_KERNEL_NAME);
     video_flush(tty_output_buff);
 
     while (1)
@@ -79,14 +78,6 @@ extern void task_tty_main()
             /* redirect stdin */
             assert(msg.len == 2);
             tid_stdin = *(u16 *)msg.data;
-            break;
-        }
-        case TTY_MSG_TYPE_PRINTF: {
-            /* print to screen */
-            assert(msg.len == 8);
-            size_t addr = (size_t)msg.data;
-            handle_vprintf(*((const char **)addr), *((va_list *)(addr + 4)));
-            video_flush(tty_output_buff);
             break;
         }
         }
@@ -144,19 +135,5 @@ static void handle_puts(char *str)
     while (*str != 0)
     {
         handle_putc(*str++);
-    }
-}
-
-/*
- * Handle put formatted string to screen
- */
-static void handle_vprintf(const char *format, va_list list)
-{
-    char buff[VIDEO_SCREEN_WIDTH];
-    int len = vsprintf(buff, format, list);
-
-    for (int i = 0; i < len; ++i)
-    {
-        handle_putc(buff[i]);
     }
 }
