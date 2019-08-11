@@ -31,6 +31,7 @@ extern void task_sh_main()
     msg.len = 2;
     *(u16 *)(&msg.data) = TID_SH;
     ksend(TID_TTY, &msg);
+    print_prompt();
 
     /* init */
     cmd_ptr = command;

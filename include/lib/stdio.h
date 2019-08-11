@@ -1,5 +1,6 @@
 #pragma once
 
+#include <lib/stdtypes.h>
 #include <lib/assembly.h>
 
 struct io_buf_t
@@ -28,3 +29,5 @@ struct io_buf_t
 extern void puts(const char *str);
 extern void putc(char ch);
 extern void uclear();
+extern void uprintf(char *format, ...);
+extern void uvprintf(const char *format, va_list list);

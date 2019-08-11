@@ -6,6 +6,7 @@
 #define TTY_MSG_TYPE_CLEAR 4
 #define TTY_MSG_TYPE_STDIN 5
 #define TTY_MSG_TYPE_STDOUT 6
+#define TTY_MSG_TYPE_PRINTF 7
 
 /*
  * Api
