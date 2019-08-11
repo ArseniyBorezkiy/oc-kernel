@@ -28,6 +28,6 @@
 #define MSG_SCHED_TID_CREATE (MSG_SCHED_PREFIX "create task tid = %u, eip = %X" MSG_CRLN)
 #define MSG_SCHED_TID_DELETE (MSG_SCHED_PREFIX "delete task tid = %u" MSG_CRLN)
 #define MSG_SCHED_NO_TASKS (MSG_SCHED_PREFIX "there are no tasks to run" MSG_CRLN)
-#define MSG_SCHED_NEXT (MSG_SCHED_PREFIX "scheduled tid=%u sp=%X cs=%X eip=%X->%X\n" MSG_CRLN)
+#define MSG_SCHED_NEXT (MSG_SCHED_PREFIX "scheduled tid=%u sp=%X cs=%X eip=%X->%X" MSG_CRLN)
 #define MSG_TASK_INIT_LAUNCHED (MSG_TASK_PREFIX "task init is launched esp = %X, eflags = %X" MSG_CRLN)
 #define MSG_TASK_TTY_LAUNCHED (MSG_TASK_PREFIX "task tty is launched esp = %X" MSG_CRLN)

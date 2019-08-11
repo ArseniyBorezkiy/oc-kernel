@@ -47,7 +47,7 @@ extern void kvprintf(const char *format, va_list list)
         else
         {
             int line_pos = (syslog_pos - syslog) % VIDEO_SCREEN_WIDTH;
-            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos - 1; ++j)
+            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos; ++j)
             {
                 kputc(' ');
             }

@@ -109,11 +109,7 @@ static void print_prompt()
  */
 static void show_tasks_list()
 {
-    clear();
-    puts(" -- tasks list\n");
-
-    // snprintf(buf, IPC_MSG_DATA_BUFF_SIZE, "  tid = %u  status = %u  esp = %X\n", task->tid, task->status, task->gp_registers.esp);
-    // puts(buf);
+    puts(" -- process list\n");
 }
 
 /*
@@ -121,6 +117,5 @@ static void show_tasks_list()
  */
 static void show_system_log()
 {
-    clear();
     puts(" -- system log\n");
 }
