@@ -77,13 +77,17 @@ extern void ih_keyboard()
     u_char status = asm_read_port(KEYBOARD_STATUS_PORT);
     if (status & 0x01)
     {
-        u_char ch = asm_read_port(KEYBOARD_DATA_PORT);
+        char keycode = asm_read_port(KEYBOARD_DATA_PORT);
+
+        if (keycode < 1) {
+          return;
+        }
 
         /* send message to tty task */
         struct message_t msg = {
             .type = TTY_MSG_TYPE_GETC,
             .len = 1,
-            .data = {ch}};
+            .data = {keycode}};
         ksend(TID_TTY, &msg);
     }
 

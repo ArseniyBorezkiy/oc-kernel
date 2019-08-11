@@ -146,6 +146,16 @@ extern struct clist_head_t *clist_find_next(struct clist_definition_t *list, str
       return current;
     }
   }
+  
+  if (pos != null) {
+    va_list args;
+    va_start(args, detector);
+
+    if (detector(current, args))
+    {
+      return current;
+    }
+  }
 
   return null;
 }

@@ -1,6 +1,7 @@
 #include <arch/reg.h>
 #include <arch/idt.h>
 #include <dev/video.h>
+#include <dev/keyboard.h>
 #include <sched/task.h>
 #include <tasks/tty.h>
 #include <ipc/ipc.h>
@@ -17,7 +18,7 @@ char *tty_output_buff_pos = (char *)tty_output_buff; /* tty output position */
 
 static u_short tid_stdin = TID_TTY; /* target tid to send incomming chars */
 
-static void handle_getc(char ch);
+static void handle_getc(u_char keycode);
 static void handle_putc(char ch);
 static void handle_puts(char *str);
 
@@ -30,10 +31,10 @@ extern void task_tty_main()
 
     printf(MSG_TASK_TTY_LAUNCHED, (size_t *)asm_get_esp());
     clear();
-    //kmode(false); /* detach syslog from screen */
+    kmode(false); /* detach syslog from screen */
     tty_output_buff_pos = video_clear(tty_output_buff);
-    video_flush(tty_output_buff);
     printf(MSG_KERNEL_NAME);
+    video_flush(tty_output_buff);
 
     while (1)
     {
@@ -72,6 +73,13 @@ extern void task_tty_main()
             video_flush(tty_output_buff);
             break;
         }
+        case TTY_MSG_TYPE_STDIN:
+        {
+            /* redirect stdin */
+            assert(msg.len == 2);
+            tid_stdin = *(u16 *)msg.data;
+            break;
+        }
         }
     }
 }
@@ -79,11 +87,13 @@ extern void task_tty_main()
 /*
  * Handle key pressed
  */
-static void handle_getc(char ch)
+static void handle_getc(u_char keycode)
 {
     struct message_t msg;
+    u_char ch;
 
     /* send to stdin */
+    ch = keyboard_map[keycode];
     msg.type = tid_stdin == TID_TTY ? TTY_MSG_TYPE_PUTC : TTY_MSG_TYPE_GETC;
     msg.len = 1;
     msg.data[0] = ch;

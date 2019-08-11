@@ -3,7 +3,7 @@
 #include <lib/stdtypes.h>
 #include <sched/task.h>
 
-#define TASK_QUOTA 18
+#define TASK_QUOTA 2
 
 /*
  * Api

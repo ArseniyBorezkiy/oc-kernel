@@ -24,7 +24,6 @@ static const char *prompt = "# ";
  */
 extern void task_sh_main()
 {
-    while(1){} // to avoid crash
     struct message_t msg;
 
     /* occupy stdin */
