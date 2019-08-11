@@ -66,7 +66,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
 
   /* prepare context for the next task */
   next_task->op_registers.u_esp -= 4;
-  *(u32 *)(next_task->op_registers.u_esp) = (*(u16 *)(&next_task->flags));
+  *(u32 *)(next_task->op_registers.u_esp) = (*(u16 *)(&next_task->flags)) | 0x200;
   next_task->op_registers.u_esp -= 4;
   *(u32 *)(next_task->op_registers.u_esp) = next_task->op_registers.cs;
   next_task->op_registers.u_esp -= 4;
