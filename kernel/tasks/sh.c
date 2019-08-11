@@ -14,6 +14,7 @@ static void execute_command(char *cmd);
 static void print_prompt();
 static void show_tasks_list();
 static void show_system_log();
+static void show_task(struct task_t *entry);
 
 static const char *cmd_ps = "ps";
 static const char *cmd_syslog = "syslog";
@@ -104,12 +105,17 @@ static void print_prompt()
     puts(prompt);
 }
 
+//
+// Commands
+//
+
 /*
  * Show tasks list
  */
 static void show_tasks_list()
 {
     puts(" -- process list\n");
+    task_for_each(show_task);
 }
 
 /*
@@ -118,4 +124,16 @@ static void show_tasks_list()
 static void show_system_log()
 {
     puts(" -- system log\n");
+    for (int i = 0; i < 5; ++i) {
+      //char *d = "asdfdsf\n";
+      //uprintf(" a%c%s\n", 'd', d);
+    }
+}
+
+//
+// Helpers
+//
+
+static void show_task(struct task_t *entry) {
+    uprintf("  pid = %u\n", entry->tid);
 }

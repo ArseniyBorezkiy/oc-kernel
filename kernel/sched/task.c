@@ -197,6 +197,23 @@ extern void task_dump() {
 }
 
 /*
+ * Api - For each task
+ */
+extern void task_for_each(task_each_callback_t callback) {
+  struct clist_head_t *current;
+  struct task_t *task;
+
+  for (current = task_list.head; current != null; current = current->next) {
+    task = (struct task_t *)current->data;
+    callback(task);
+    
+    if (current->next == task_list.head) {
+      break;
+    }
+  }
+}
+
+/*
  * Smoke test
  */
 static void task_test()

@@ -9,7 +9,7 @@
 #define TASK_MAX_COUNT 16
 #define TASK_KSTACK_SIZE 1024
 #define TASK_USTACK_SIZE (4 * 1024)
-#define TASK_MSG_BUFF_SIZE 8
+#define TASK_MSG_BUFF_SIZE 16
 
 /* predefined tasks */
 #define TID_INIT 1
@@ -40,6 +40,8 @@ struct task_t
     void *ustack;                                  /* user stack top */
 } attribute(packed);
 
+typedef void (*task_each_callback_t)(struct task_t *entry);
+
 /*
  * Api
  */
@@ -53,3 +55,4 @@ extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos
 extern void task_pack_message(struct task_t *task, struct message_t *msg);
 extern void task_extract_message(struct task_t *task, struct message_t *msg);
 extern void task_dump();
+extern void task_for_each(task_each_callback_t callback);
