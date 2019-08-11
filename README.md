@@ -2,7 +2,8 @@
 ## UNIX like, multitask, i80386 PM + MMU, well-commented.
 
 Well commented kernel based on micro architecture.
-Made for enjoy and study.
+This helps you to write your own OC.
+Main goal to give you small well-commended features that you can reuse in your OC.
 
 ### Content
 - scheduler (/kernel/sched)
