@@ -115,4 +115,3 @@ headers:
 #
 list:
 	$(CC) $(CC_FLAGS) -Wa,-adhln -ggdb -c ./kernel/kernel.c -o ./bin/kernel.c.o > ./bin/kernel.c.txt
-	$(CC) $(CC_FLAGS) -Wa,-adhln -ggdb -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o > ./bin/kprint.c.txt

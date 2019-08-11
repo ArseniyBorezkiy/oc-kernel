@@ -4,6 +4,9 @@
 Well commented kernel based on micro architecture.
 This helps you to write your own OC.
 Main goal to give you small well-commended features that you can reuse in your OC.
+Currently all tasks work in kernel mode.
+
+This OC will evolute according to wish list section.
 
 ### Content
 - scheduler (/kernel/sched)
@@ -41,3 +44,10 @@ Kernel syslog view:
 Ars Boretskii kernel 1.0
 # syslog
 ```
+
+### Wish list
+- Ram disk
+- Memory protect
+- User mode (ring3)
+- System calls
+- Some POSIX functions for c lib
