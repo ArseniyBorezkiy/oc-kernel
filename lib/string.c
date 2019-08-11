@@ -230,6 +230,7 @@ extern unsigned int vsprintf(char *s1, const char *s2, va_list list)
 extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list list)
 {
     u_int j = 0;
+    size_t count = 0;
     char number[16];
     char *cur = s1;
     char *str;
@@ -272,9 +273,11 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list 
             j += 1;
         }
     }
+    
+    count = ((size_t)cur - (size_t)s1);
     *cur++ = '\0';
 
     va_end(list);
 
-    return ((size_t)cur - (size_t)s1);
+    return count;
 }

@@ -34,7 +34,7 @@ extern void task_tty_main()
     clear();
     kmode(false); /* detach syslog from screen */
     tty_output_buff_pos = video_clear(tty_output_buff);
-    uprintf(MSG_KERNEL_NAME);
+    handle_vprintf(MSG_KERNEL_NAME, null);
     video_flush(tty_output_buff);
 
     while (1)
@@ -114,9 +114,20 @@ static void handle_getc(u_char keycode)
  */
 static void handle_putc(char ch)
 {
-    if ((size_t)tty_output_buff_pos - (size_t)tty_output_buff + 1 < SYSLOG_SIZE)
+    if ((size_t)tty_output_buff_pos - (size_t)tty_output_buff + 1 < VIDEO_SCREEN_SIZE)
     {
-        *tty_output_buff_pos++ = ch;
+        if (ch != '\n')
+        {
+            *tty_output_buff_pos++ = ch;
+        }
+        else
+        {
+            int line_pos = (tty_output_buff_pos - tty_output_buff) % VIDEO_SCREEN_WIDTH;
+            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos; ++j)
+            {
+                *tty_output_buff_pos++ = ' ';
+            }
+        }
     }
     else
     {
@@ -146,17 +157,6 @@ static void handle_vprintf(const char *format, va_list list)
 
     for (int i = 0; i < len; ++i)
     {
-        if (buff[i] != '\n')
-        {
-            handle_putc(buff[i]);
-        }
-        else
-        {
-            int line_pos = (tty_output_buff_pos - tty_output_buff) % VIDEO_SCREEN_WIDTH;
-            for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos - 1; ++j)
-            {
-                handle_putc(' ');
-            }
-        }
+        handle_putc(buff[i]);
     }
 }
