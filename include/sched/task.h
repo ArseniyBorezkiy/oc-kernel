@@ -15,6 +15,7 @@
 #define TID_INIT 1
 #define TID_TTY 2
 #define TID_SH 3
+#define TID_USER 4
 
 /* task status */
 #define TASK_UNINTERRUPTABLE 1

@@ -1,9 +1,13 @@
+#include <arch/reg.h>
 #include <vfs/elf.h>
 #include <mm/mm.h>
+#include <sched/task.h>
 #include <lib/assert.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
 #include <messages.h>
+
+static u_short next_tid = TID_USER; /* tid allocator */
 
 /*
  * Api - load elf file to memory
@@ -15,7 +19,9 @@ extern void elf_load(struct elf_header_t *header) {
   elf_dump(header);
 
   size_t elf_base = (size_t)header;
+  size_t entry_point = header->e_entry;
 
+  // load sections in memory
   for (int i = 0; i < header->e_phnum; ++i) {
     struct elf_program_header_t *p_header = (void *)(header->e_phoff + elf_base + i * header->e_phentsize);
     // allocate pages
@@ -24,9 +30,17 @@ extern void elf_load(struct elf_header_t *header) {
     void *page = mm_alloc_page();
     void *section = (void *)(elf_base + p_header->p_offset);
     memcpy(page, section, p_header->p_memsz);
+    // set page directory
   }
 
-  // TODO: create task
+  // create task
+  u_short tid = next_tid++;
+  assert(task_create(tid, (void *)entry_point));
+
+  // run task
+  struct task_t *task;
+  task = task_get_by_id(tid);
+  task->status = TASK_RUNNING;
 }
 
 /*

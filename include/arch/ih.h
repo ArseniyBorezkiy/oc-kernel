@@ -2,9 +2,6 @@
 
 #include <lib/stdtypes.h>
 
-#define SYSCALL_KSEND 1
-#define SYSCALL_KRECEIVE 2
-
 /*
  * Api - IDT
  */

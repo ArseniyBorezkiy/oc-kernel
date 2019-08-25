@@ -11,14 +11,14 @@
 /*
  * Api - Stack dump
  */
-extern void kdump_stack(size_t *addr)
+extern void kdump_stack(size_t *esp)
 {
-  size_t base = (size_t)addr;
+  size_t base = (size_t)esp;
 
   printf("-- stack dump: %X\n", base);
-  printf("  %X : %X\n", base, *(u_int *)base);
-  printf("  %X : %X\n", base + 4, *(u_int *)(base + 4));
-  printf("  %X : %X\n", base + 8, *(u_int *)(base + 8));
+  for (int i = 0; i < 8; ++i) {
+    printf("  %X : %X\n", base - i * 4, *(u_int *)(base - i * 4));
+  }
 }
 
 /*

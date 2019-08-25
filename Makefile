@@ -23,7 +23,7 @@ build: build-lib build-kernel build-initrd
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
-		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o \
+		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
 		./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
@@ -35,8 +35,9 @@ build: build-lib build-kernel build-initrd
 		./bin/initrd.c.o ./bin/elf.c.o \
 		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
-build-lib: ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
+build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
            ./lib/data/slist.c ./lib/data/clist.c
+	$(CC) $(CC_FLAGS) -c ./lib/assert.c -o ./bin/assert.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
@@ -104,7 +105,7 @@ build-initrd: build-hello-elf ./bin/hello.elf
 build-hello-elf: ./initrd/hello.c
 	$(CC) $(CC_USER_FLAGS) -c ./initrd/hello.c -o ./bin/hello.rd.c.o
 	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/hello.elf ./bin/hello.rd.c.o \
-		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o
+		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o
 
 #
 # Run kernel in emulator
@@ -134,7 +135,7 @@ dump:
 
 headers:
 	objdump -h ./bin/kernel.elf > ./bin/kernel.elf.head.txt
-	objdump -h ./bin/hello.elf > ./bin/hello.elf.head.txt
+	objdump -x ./bin/hello.elf > ./bin/hello.elf.head.txt
 
 #
 # Listing

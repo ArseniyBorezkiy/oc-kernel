@@ -7,6 +7,8 @@
 #define assert(expr) kassert(__FILE__, __LINE__, expr)
 #define unreachable() kunreachable(__FILE__, __LINE__)
 #else
-#define assert(expr) uassert(expr)
-#define unreachable uunreachable(__FILE__, __LINE__)
+extern void uassert(char *file, u_int line, bool expr);
+extern void uunreachable(char *file, u_int line);
+#define assert(expr) uassert(__FILE__, __LINE__, expr)
+#define unreachable() uunreachable(__FILE__, __LINE__)
 #endif

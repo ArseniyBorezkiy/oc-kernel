@@ -6,10 +6,12 @@
 #include <sched/task.h>
 #include <ipc/ipc.h>
 #include <tasks/tty.h>
+#include <utils/kdump.h>
 #include <lib/assert.h>
 #include <lib/stdlib.h>
 #include <lib/stdtypes.h>
 #include <lib/stdio.h>
+#include <lib/syscall.h>
 #include <messages.h>
 
 /*
@@ -17,6 +19,7 @@
  */
 extern void ih_zero()
 {
+    kdump_stack((void *)asm_get_esp());
     abort(MSG_INT_DZ);
 }
 
@@ -25,6 +28,7 @@ extern void ih_zero()
  */
 extern void ih_opcode()
 {
+    kdump_stack((void *)asm_get_esp());
     abort(MSG_INT_IO);
 }
 
@@ -33,6 +37,7 @@ extern void ih_opcode()
  */
 extern void ih_double_fault()
 {
+    kdump_stack((void *)asm_get_esp());
     abort(MSG_INT_DF);
 }
 
@@ -41,6 +46,7 @@ extern void ih_double_fault()
  */
 extern void ih_general_protect()
 {
+    kdump_stack((void *)asm_get_esp());
     abort(MSG_INT_GP);
 }
 
@@ -49,7 +55,8 @@ extern void ih_general_protect()
  */
 extern void ih_page_fault()
 {
-    abort(MSG_INT_PF);
+    kdump_stack((void *)asm_get_esp());
+    abort(MSG_INT_PF, asm_get_cr2());
 }
 
 /*
@@ -113,6 +120,9 @@ extern void ih_syscall(u_int *function)
         break;
       case SYSCALL_KRECEIVE:
         kreceive(*(u_int *)params_addr, *(struct message_t **)(params_addr + 4));
+        break;
+      case SYSCALL_KILL:
+        // TODO: handle syscall
         break;
       default:
         unreachable();

@@ -4,7 +4,7 @@
 .code32
 .text
 .globl asm_get_cs, asm_get_ds, asm_get_ss, asm_get_esp, asm_get_eflags, asm_switch_context
-.globl asm_get_cr0, asm_get_cr3
+.globl asm_get_cr0, asm_get_cr2, asm_get_cr3
 
 #
 # Get code selector
@@ -49,6 +49,14 @@ asm_get_cr0:
   mov %cr0,%eax
   ret
 
+#
+# Get page fault linear address register
+# u32 asm_get_cr2()
+#
+asm_get_cr2:
+  mov %cr2,%eax
+  ret
+  
 #
 # Get page directory register
 # u32 asm_get_cr3()
