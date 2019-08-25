@@ -32,13 +32,12 @@ struct page_table_entry_t
     u32 page_phys_addr : 20; /* 4Kb | 4MB */
 } attribute(packed);
 
-#define PAGE_DIRECTORY_ENTRIES_COUNT 4
 #define PAGE_TABLE_ENTRIES_COUNT 1024
 
 /*
  * Api
  */
-extern void asm_enable_paging(void *page_directory);
 extern void mmu_init();
-extern void set_page_directory_entry(struct page_directory_entry_t *entry, u_int index);
-extern void set_page_table_entry(struct page_table_entry_t *entry, u_int dir_index, u_int tbl_index);
+extern void mmu_enable();
+extern void mmu_dump();
+extern struct page_directory_entry_t *mmu_get_kdirectory();

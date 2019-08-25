@@ -68,10 +68,12 @@ asm_get_eflags:
 
 #
 # Switch context
-# void asm_switch_context(u32 esp)
+# void asm_switch_context(u32 esp, u32 cr3)
 #
 asm_switch_context:
   mov 4(%esp),%ebp # ebp = esp
+  mov 8(%esp),%eax # eax = cr3
+  mov %eax,%cr3
   mov %ebp,%esp
   popal
   sti

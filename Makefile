@@ -85,9 +85,10 @@ build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/tty.c
 
 #
 # Run kernel in emulator
+#   use -d int to debug mmu & faults & interrupts
 #
 start:
-	qemu-system-i386 -d guest_errors -kernel ./bin/kernel.elf
+	qemu-system-i386 -no-reboot -no-shutdown -kernel ./bin/kernel.elf
 
 #
 # Delete binary files

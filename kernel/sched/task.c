@@ -1,5 +1,6 @@
 #include <arch/idt.h>
 #include <arch/reg.h>
+#include <arch/mmu.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
 #include <lib/string.h>
@@ -61,6 +62,7 @@ extern bool task_create(u_short tid, void *address)
     task->op_registers.ds = asm_get_ds();
     task->op_registers.ss = asm_get_ss();
     task->op_registers.eip = (size_t)address;
+    task->op_registers.cr3 = (size_t)mmu_get_kdirectory();
     task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
     task->op_registers.u_esp = (u32)task->ustack + TASK_USTACK_SIZE;
 

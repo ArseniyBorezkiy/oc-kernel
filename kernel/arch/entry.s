@@ -16,10 +16,8 @@ multiboot:
 start:
 	cli
 	movl $stack,%esp
-        push %esp
-        movl $multiboot,%ebx
-        movl 16(%ebx),%eax
-        push %eax
+  push %esp
+  push %ebx /* address of struct multiboot_t */
 	call kernel_start /* should never return */
 	hlt
 

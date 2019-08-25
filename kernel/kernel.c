@@ -62,6 +62,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 
   /* enable interrupts */
   pic_enable();
+  mmu_enable();
   asm_unlock();
 
   /* start scheduler */

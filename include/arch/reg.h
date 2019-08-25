@@ -24,6 +24,7 @@ struct gp_registers_t
 struct op_registers_t
 {
     u32 eip;
+    u32 cr3; /* page directory */
     u32 k_esp; /* kernel stack */
     u32 u_esp; /* user stack */
     u16 cs;
@@ -71,4 +72,4 @@ extern u32 asm_get_esp();
 extern u32 asm_get_eflags();
 extern u32 asm_get_cr0();
 extern u32 asm_get_cr3();
-extern void asm_switch_context(u32 esp);
+extern void asm_switch_context(u32 esp, u32 cr3);
