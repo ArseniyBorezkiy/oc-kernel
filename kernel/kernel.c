@@ -5,6 +5,7 @@
 #include <lib/data/slist.h>
 #include <lib/data/clist.h>
 #include <dev/video.h>
+#include <vfs/initrd.h>
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <tasks/tty.h>
@@ -59,6 +60,9 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   printf(MSG_KERNEL_SCHEDULER_INITIALIZED);
   kernel_create_tasks();
   kernel_run_tasks();
+
+  /* run initial ram disk tasks */
+  initrd_autorun(multiboot->mods_addr, multiboot->mods_count);
 
   /* enable interrupts */
   pic_enable();

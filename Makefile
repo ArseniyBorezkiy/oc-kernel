@@ -6,17 +6,18 @@ IDIR=./include
 CC=gcc
 AS=as
 LD=ld
-CC_FLAGS=-g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror
+DD=dd
+CC_FLAGS=-g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror -fno-pie
 AS_FLAGS=-g --32
-LD_FLAGS=-m elf_i386 -T ./config/link.ld
+LD_FLAGS=-m elf_i386
 
 all: build start
 
 #
 # Build kernel
 #
-build: build-lib build-kernel
-	$(LD) $(LD_FLAGS) -o ./bin/kernel.elf \
+build: build-lib build-kernel build-initrd
+	$(LD) $(LD_FLAGS) -T ./config/link.ld -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
@@ -26,8 +27,9 @@ build: build-lib build-kernel
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
-		./bin/video.c.o \
+		./bin/video.c.o ./bin/initrd.c.o \
 		./bin/slist.c.o ./bin/clist.c.o \
+		./bin/mm.c.o \
 		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
 build-lib: ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
@@ -40,7 +42,7 @@ build-lib: ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
 	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
 
 build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
-              build-kernel-ipc build-kernel-sync build-kernel-dev \
+              build-kernel-ipc build-kernel-sync build-kernel-dev build-kernel-vfs build-kernel-mm \
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
@@ -54,6 +56,12 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 
 build-kernel-dev: ./kernel/dev/video.c
 	$(CC) $(CC_FLAGS) -c ./kernel/dev/video.c -o ./bin/video.c.o
+
+build-kernel-vfs: ./kernel/vfs/initrd.c
+	$(CC) $(CC_FLAGS) -c ./kernel/vfs/initrd.c -o ./bin/initrd.c.o
+
+build-kernel-mm: ./kernel/mm/mm.c
+	$(CC) $(CC_FLAGS) -c ./kernel/mm/mm.c -o ./bin/mm.c.o
 
 build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
                    ./kernel/arch/pic.c ./kernel/arch/idt.c ./kernel/arch/mmu.s \
@@ -83,12 +91,19 @@ build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/tty.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/tty.c -o ./bin/tty.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
+build-initrd: ./initrd/hello.c
+	$(CC) $(CC_FLAGS) -c ./initrd/hello.c -o ./bin/hello.rd.c.o
+	$(LD) $(LD_FLAGS) -T ./config/link-task.ld -o ./bin/hello.elf ./bin/hello.rd.c.o
+	rm ./bin/initrd.img
+	touch ./bin/initrd.img
+	$(DD) if=./bin/hello.elf of=./bin/initrd.img
+
 #
 # Run kernel in emulator
 #   use -d int to debug mmu & faults & interrupts
 #
 start:
-	qemu-system-i386 -no-reboot -no-shutdown -kernel ./bin/kernel.elf
+	qemu-system-i386 -no-reboot -no-shutdown -kernel ./bin/kernel.elf -initrd ./bin/initrd.img
 
 #
 # Delete binary files
@@ -107,9 +122,11 @@ debug:
 #
 dump:
 	objdump -d ./bin/kernel.elf > ./bin/kernel.elf.dump.txt
+	objdump -d ./bin/hello.elf > ./bin/hello.elf.dump.txt
 
 headers:
 	objdump -h ./bin/kernel.elf > ./bin/kernel.elf.head.txt
+	objdump -h ./bin/hello.elf > ./bin/hello.elf.head.txt
 
 #
 # Listing

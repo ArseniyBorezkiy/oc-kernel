@@ -2,6 +2,11 @@
 
 #include <lib/stdtypes.h>
 
+struct mod_addr_t {
+  u32 start;
+  u32 end;
+} attribute(packed);
+
 struct multiboot_t
 {
    u32 flags;
@@ -10,7 +15,7 @@ struct multiboot_t
    u32 boot_device;
    u32 cmdline;
    u32 mods_count;
-   u32 mods_addr;
+   struct mod_addr_t *mods_addr;
    u32 num;
    u32 size;
    u32 addr;
