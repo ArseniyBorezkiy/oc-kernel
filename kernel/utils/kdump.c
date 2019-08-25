@@ -32,29 +32,6 @@ extern void kdump_multiboot(struct multiboot_t *header)
 }
 
 /*
- * Api - Elf header dump
- */
-extern void kdump_elf(struct elf_header_t *header)
-{
-  printf("-- elf header dump: %X\n", (size_t)header);
-  printf("  entry point: %X\n", header->e_entry);
-  printf("  headers count: %X\n", header->e_phnum);
-  printf("  headers begin: %X\n", header->e_shoff);
-
-  for (int i = 0; i < header->e_phnum; ++i)
-  {
-    struct elf_program_header_t *p_header = (void *)(header->e_shoff + i * header->e_ehsize);
-    printf("  + program header dump: %X\n", p_header);
-    printf("    segment type: %X\n", p_header->p_type);
-    printf("    target virtual address: %X\n", p_header->p_vaddr);
-    printf("    segment size in memory: %X\n", p_header->p_memsz);
-    printf("    segment offset from file begin: %X\n", p_header->p_offset);
-    printf("    segment size in file: %X\n", p_header->p_filesz);
-    printf("    alignment: %X\n", p_header->p_align);
-  }
-}
-
-/*
  * Api - Dump control registers
  */
 extern void kdump_registers()

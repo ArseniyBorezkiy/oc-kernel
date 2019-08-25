@@ -23,7 +23,7 @@ struct elf_program_header_t
     u32 p_memsz;  /* segment size in memory */
     u32 p_flags;  /* permissions and etc */
     u32 p_align;  /* alignment */
-};
+} attribute(packed);
 
 struct elf_header_t
 {
@@ -54,4 +54,5 @@ struct elf_header_t
 /*
  * Api
  */
-extern void elf_load(struct elf_header_t *elf);
+extern void elf_load(struct elf_header_t *header);
+extern void elf_dump(struct elf_header_t *header);
