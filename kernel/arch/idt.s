@@ -6,7 +6,7 @@
 .globl asm_idt_load, asm_lock, asm_unlock, asm_hlt
 .globl asm_ih_zero, asm_ih_opcode, asm_ih_double_fault, asm_ih_general_protect
 .globl asm_ih_page_fault, asm_ih_alignment_check
-.globl asm_ih_timer, asm_ih_keyboard
+.globl asm_ih_timer, asm_ih_keyboard, asm_ih_syscall
 
 /*
  * Load interrupt table
@@ -87,7 +87,7 @@ asm_idt_load:
 
 /*
  * Handle IRQ0
- * void asm_ih_timer(unsigned long *addr)
+ * void asm_ih_timer()
  */
 asm_ih_timer:
   cli
@@ -101,6 +101,22 @@ asm_ih_timer:
 	mov %ebp,%esp
 	popal
 	sti
+	iretl
+
+/*
+ * Handle syscall interrupt
+ * void asm_ih_syscall(unsigned int *function)
+ */
+asm_ih_syscall:
+  pushal
+  mov %esp,%ebp
+  mov %ebp,%ebx
+  add $32,%ebx
+  add $12,%ebx
+  pushl (%ebx) # &function
+	call ih_syscall
+  mov %ebp,%esp
+	popal
 	iretl
 
 /*

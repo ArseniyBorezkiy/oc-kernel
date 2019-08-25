@@ -21,7 +21,7 @@ build: build-lib build-kernel build-initrd
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
-		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
+		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/mmu.s.o \
 		./bin/idt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
@@ -39,6 +39,7 @@ build-lib: ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
 	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/stdio.c -o ./bin/stdio.c.o
+	$(AS) $(AS_FLAGS) ./lib/syscall.s -o ./bin/syscall.s.o
 	$(CC) $(CC_FLAGS) -c ./lib/data/slist.c -o ./bin/slist.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
 

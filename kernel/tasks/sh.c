@@ -20,6 +20,7 @@ static void show_task(struct task_t *entry);
 
 static const char *cmd_ps = "ps";
 static const char *cmd_syslog = "syslog";
+static const char *cmd_clear = "clear";
 static const char *prompt = "# ";
 
 /*
@@ -96,6 +97,11 @@ static void execute_command(char *cmd)
     {
         /* show system log */
         show_system_log();
+    }
+    else if (!strcmp(cmd, cmd_clear))
+    {
+        /* clear screen */
+        uclear();
     }
 }
 

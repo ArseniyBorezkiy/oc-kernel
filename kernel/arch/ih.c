@@ -1,10 +1,12 @@
 #include <arch/ih.h>
+#include <arch/idt.h>
 #include <arch/pic.h>
 #include <arch/port.h>
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
 #include <tasks/tty.h>
+#include <lib/assert.h>
 #include <lib/stdlib.h>
 #include <lib/stdtypes.h>
 #include <lib/stdio.h>
@@ -15,7 +17,7 @@
  */
 extern void ih_zero()
 {
-    abort("division by zero!");
+    abort(MSG_INT_DZ);
 }
 
 /*
@@ -23,7 +25,7 @@ extern void ih_zero()
  */
 extern void ih_opcode()
 {
-    abort("invalid opcode!");
+    abort(MSG_INT_IO);
 }
 
 /*
@@ -31,7 +33,7 @@ extern void ih_opcode()
  */
 extern void ih_double_fault()
 {
-    abort("double fault!");
+    abort(MSG_INT_DF);
 }
 
 /*
@@ -39,7 +41,7 @@ extern void ih_double_fault()
  */
 extern void ih_general_protect()
 {
-    abort("general protect!");
+    abort(MSG_INT_GP);
 }
 
 /*
@@ -47,7 +49,7 @@ extern void ih_general_protect()
  */
 extern void ih_page_fault()
 {
-    abort("page fault!");
+    abort(MSG_INT_PF);
 }
 
 /*
@@ -55,7 +57,7 @@ extern void ih_page_fault()
  */
 extern void ih_alignment_check()
 {
-    abort("alignment check!");
+    abort(MSG_INT_AC);
 }
 
 /*
@@ -72,7 +74,7 @@ extern void ih_timer(size_t *ret_addr, size_t *reg_addr)
  */
 extern void ih_keyboard()
 {
-    printf(MSG_IRQ1);
+    printf(MSG_IRQ, 1);
 
     u_char status = asm_read_port(KEYBOARD_STATUS_PORT);
     if (status & 0x01)
@@ -92,4 +94,29 @@ extern void ih_keyboard()
     }
 
     asm_write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
+}
+
+/*
+ * Api - Syscall handler
+ */
+extern void ih_syscall(u_int *function)
+{
+    size_t params_addr = ((size_t)function + sizeof(u_int));
+
+    printf(MSG_SYSCALL, *function);
+
+    asm_lock();
+
+    switch (*function) {
+      case SYSCALL_KSEND:
+        ksend(*(u_int *)params_addr, *(struct message_t **)(params_addr + 4));
+        break;
+      case SYSCALL_KRECEIVE:
+        kreceive(*(u_int *)params_addr, *(struct message_t **)(params_addr + 4));
+        break;
+      default:
+        unreachable();
+    }
+
+    asm_unlock();
 }

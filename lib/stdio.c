@@ -1,9 +1,11 @@
+#include <arch/ih.h>
 #include <dev/video.h>
 #include <ipc/ipc.h>
 #include <sched/task.h>
 #include <tasks/tty.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
+#include <lib/syscall.h>
 
 /*
  * Api - Print string to screen
@@ -40,7 +42,8 @@ extern void uclear()
 
     msg.type = TTY_MSG_TYPE_CLEAR;
     msg.len = 0;
-    ksend(TID_TTY, &msg);
+    
+    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
 }
 
 /*

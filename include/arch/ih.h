@@ -2,6 +2,9 @@
 
 #include <lib/stdtypes.h>
 
+#define SYSCALL_KSEND 1
+#define SYSCALL_KRECEIVE 2
+
 /*
  * Api - IDT
  */
@@ -23,5 +26,7 @@ extern void asm_ih_alignment_check();
  */
 extern void ih_timer(size_t *ret_addr, size_t *reg_addr);
 extern void ih_keyboard();
+extern void ih_syscall(u_int *function);
 extern void asm_ih_keyboard();
-extern void asm_ih_timer(size_t *ret_addr);
+extern void asm_ih_timer();
+extern void asm_ih_syscall(u_int *function);

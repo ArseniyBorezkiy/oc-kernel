@@ -36,6 +36,7 @@ extern void idt_init()
     idt_fill_entry(INT_ALIGNMENT_CHECK, (size_t)asm_ih_alignment_check);
     idt_fill_entry(INT_TIMER, (size_t)asm_ih_timer);
     idt_fill_entry(INT_KEYBOARD, (size_t)asm_ih_keyboard);
+    idt_fill_entry(INT_SYSCALL, (size_t)asm_ih_syscall);
 
     /* load idt */
     idt_address = (size_t)IDT;

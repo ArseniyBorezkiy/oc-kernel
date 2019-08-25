@@ -4,6 +4,7 @@
 #define MSG_KERNEL_PREFIX "[KERNEL]: "
 #define MSG_SCHED_PREFIX "[SCHED]: "
 #define MSG_TASK_PREFIX "[TASK]: "
+#define MSG_INT_PREFIX "[INT]: "
 #define MSG_CRLN "\n"
 
 /* kernel */
@@ -21,7 +22,14 @@
 #define MSG_KERNEL_HEAP_TABLE_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory table limit exceed" MSG_CRLN)
 #define MSG_KERNEL_INITRD_AREA (MSG_KERNEL_PREFIX "init ram disk area %X-%X" MSG_CRLN)
 #define MSG_KERNEL_ELF_LOADING (MSG_KERNEL_PREFIX "loading elf (sections=%u)" MSG_CRLN)
-#define MSG_IRQ1 (MSG_KERNEL_PREFIX "irq1" MSG_CRLN)
+#define MSG_IRQ (MSG_KERNEL_PREFIX "irq %u" MSG_CRLN)
+#define MSG_SYSCALL (MSG_KERNEL_PREFIX "syscall %u" MSG_CRLN)
+#define MSG_INT_GP (MSG_INT_PREFIX "general protect" MSG_CRLN)
+#define MSG_INT_PF (MSG_INT_PREFIX "page fault" MSG_CRLN)
+#define MSG_INT_AC (MSG_INT_PREFIX "alignment check" MSG_CRLN)
+#define MSG_INT_DF (MSG_INT_PREFIX "double fault" MSG_CRLN)
+#define MSG_INT_IO (MSG_INT_PREFIX "invalid opcode" MSG_CRLN)
+#define MSG_INT_DZ (MSG_INT_PREFIX "division by zero" MSG_CRLN)
 
 /* scheduler */
 #define MSG_SCHED_TID_EXISTS (MSG_SCHED_PREFIX "task id already exists" MSG_CRLN)

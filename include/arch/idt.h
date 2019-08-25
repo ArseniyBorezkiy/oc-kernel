@@ -11,6 +11,7 @@
 #define INT_ALIGNMENT_CHECK 0x11
 #define INT_TIMER 0x20
 #define INT_KEYBOARD 0x21
+#define INT_SYSCALL 0x80
 #define INTERRUPT_GATE 0x8e
 
 /*
