@@ -7,9 +7,11 @@ CC=gcc
 AS=as
 LD=ld
 DD=dd
-CC_FLAGS=-g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror -fno-pie
+CC_FLAGS=-g -m32 -isystem $(IDIR) -I include -DKERNEL=1 -fno-stack-protector -Wall -Werror -fno-pie
+CC_USER_FLAGS=-g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror -fno-pie
 AS_FLAGS=-g --32
 LD_FLAGS=-m elf_i386
+LD_USER_FLAGS=-m elf_i386
 
 all: build start
 
@@ -94,12 +96,15 @@ build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/tty.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/tty.c -o ./bin/tty.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
-build-initrd: ./initrd/hello.c
-	$(CC) $(CC_FLAGS) -c ./initrd/hello.c -o ./bin/hello.rd.c.o
-	$(LD) $(LD_FLAGS) -T ./config/link-task.ld -o ./bin/hello.elf ./bin/hello.rd.c.o
+build-initrd: build-hello-elf ./bin/hello.elf
 	rm ./bin/initrd.img
 	touch ./bin/initrd.img
 	$(DD) if=./bin/hello.elf of=./bin/initrd.img
+
+build-hello-elf: ./initrd/hello.c
+	$(CC) $(CC_USER_FLAGS) -c ./initrd/hello.c -o ./bin/hello.rd.c.o
+	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/hello.elf ./bin/hello.rd.c.o \
+		./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o
 
 #
 # Run kernel in emulator
