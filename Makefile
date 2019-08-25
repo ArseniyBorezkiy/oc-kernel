@@ -27,9 +27,10 @@ build: build-lib build-kernel build-initrd
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
-		./bin/video.c.o ./bin/initrd.c.o \
+		./bin/video.c.o \
 		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/mm.c.o \
+		./bin/initrd.c.o ./bin/elf.c.o \
 		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
 
 build-lib: ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
@@ -59,6 +60,7 @@ build-kernel-dev: ./kernel/dev/video.c
 
 build-kernel-vfs: ./kernel/vfs/initrd.c
 	$(CC) $(CC_FLAGS) -c ./kernel/vfs/initrd.c -o ./bin/initrd.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/vfs/elf.c -o ./bin/elf.c.o
 
 build-kernel-mm: ./kernel/mm/mm.c
 	$(CC) $(CC_FLAGS) -c ./kernel/mm/mm.c -o ./bin/mm.c.o

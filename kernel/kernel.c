@@ -6,6 +6,7 @@
 #include <lib/data/clist.h>
 #include <dev/video.h>
 #include <vfs/initrd.h>
+#include <mm/mm.h>
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <tasks/tty.h>
@@ -54,6 +55,7 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
 
   /* init dynamic memory */
   kheap_init();
+  mm_init();
   
   /* init scheduler */
   sched_init();

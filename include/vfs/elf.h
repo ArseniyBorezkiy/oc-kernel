@@ -50,3 +50,8 @@ struct elf_header_t
 #define ET_EXEC 2
 #define EM_386 3
 #define PT_LOAD 1
+
+/*
+ * Api
+ */
+extern void elf_load(struct elf_header_t *elf);
