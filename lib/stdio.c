@@ -17,7 +17,8 @@ extern void puts(const char *str)
     msg.type = TTY_MSG_TYPE_PUTS;
     msg.len = strlen(str) + 1;
     strcpy((char *)msg.data, str);
-    ksend(TID_TTY, &msg);
+    
+    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
 }
 
 /*
@@ -30,7 +31,8 @@ extern void putc(char ch)
     msg.type = TTY_MSG_TYPE_PUTC;
     msg.len = 1;
     msg.data[0] = ch;
-    ksend(TID_TTY, &msg);
+
+    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
 }
 
 /*
