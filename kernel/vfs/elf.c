@@ -41,6 +41,7 @@ extern void elf_load(struct elf_header_t *header) {
   struct task_t *task;
   task = task_get_by_id(tid);
   task->status = TASK_RUNNING;
+  strncpy(task->name, "elf", sizeof(task->name));
 }
 
 /*

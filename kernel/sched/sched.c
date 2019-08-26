@@ -64,6 +64,19 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   }
   assert(next_task != null);
 
+  /* whether should kill current task */
+  if (current_task && current_task->status == TASK_KILLING) {
+    /* kill current task */
+    task_delete(current_task);
+  } else {
+    /* try to kill killing tasks */
+    struct task_t *task;
+    task = task_find_by_status(TASK_KILLING);
+    if (task) {
+      task_delete(task);
+    }
+  }
+
   /* prepare context for the next task */
   next_task->op_registers.u_esp -= 4;
   *(u32 *)(next_task->op_registers.u_esp) = (*(u16 *)(&next_task->flags)) | 0x200;

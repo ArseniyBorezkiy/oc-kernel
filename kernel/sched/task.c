@@ -49,6 +49,7 @@ extern bool task_create(u_short tid, void *address)
     task->ustack = malloc(TASK_USTACK_SIZE);
     /* fill data */
     task->tid = tid;
+    task->name[0] = '\0';
     task->status = TASK_UNINTERRUPTABLE;
     task->msg_count_in = 0;
     task->time = 0;
@@ -109,10 +110,28 @@ extern struct task_t *task_find_by_id(u_short tid)
  */
 extern struct task_t *task_get_by_status(u_short status)
 {
+    struct task_t *task;
+
+    task = task_find_by_status(status);
+    assert(task != null);
+
+    return task;
+}
+
+/*
+ * Api - Find task by status
+ */
+extern struct task_t *task_find_by_status(u_short status)
+{
     struct clist_head_t *current;
+
     current = clist_find(&task_list, task_by_status_detector, status);
-    assert(current != null);
-    return (struct task_t *)current->data;
+    
+    if (current != null) {
+      return (struct task_t *)current->data;
+    } else {
+      return null;
+    }
 }
 
 /*

@@ -64,6 +64,7 @@ extern void ih_page_fault()
  */
 extern void ih_alignment_check()
 {
+    kdump_stack((void *)asm_get_esp());
     abort(MSG_INT_AC);
 }
 
@@ -114,16 +115,28 @@ extern void ih_syscall(u_int *function)
 
     asm_lock();
 
+    /* handle syscall */
     switch (*function) {
-      case SYSCALL_KSEND:
-        ksend(*(u_int *)params_addr, *(struct message_t **)(params_addr + 4));
+      case SYSCALL_KSEND: {
+        /* send message */
+        u_short tid = *(u_int *)params_addr;
+        ksend(tid, *(struct message_t **)(params_addr + 4));
         break;
-      case SYSCALL_KRECEIVE:
-        kreceive(*(u_int *)params_addr, *(struct message_t **)(params_addr + 4));
+      }
+      case SYSCALL_KRECEIVE: {
+        /* receive message */
+        u_short tid = *(u_int *)params_addr;
+        kreceive(tid, *(struct message_t **)(params_addr + 4));
         break;
-      case SYSCALL_KILL:
-        // TODO: handle syscall
+      }
+      case SYSCALL_KILL: {
+        /* kill task */
+        u_short tid = *(u_int *)params_addr;
+        struct task_t *task = task_get_by_id(tid);
+        task->status = TASK_KILLING;
+        task->reschedule = true;
         break;
+      }
       default:
         unreachable();
     }

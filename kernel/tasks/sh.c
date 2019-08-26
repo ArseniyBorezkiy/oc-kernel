@@ -7,6 +7,7 @@
 #include <lib/string.h>
 #include <lib/stdio.h>
 #include <lib/assert.h>
+#include <lib/syscall.h>
 
 static char command[SH_CMD_BUFF_SIZE];
 static char *cmd_ptr;
@@ -21,6 +22,7 @@ static void show_task(struct task_t *entry);
 static const char *cmd_ps = "ps";
 static const char *cmd_syslog = "syslog";
 static const char *cmd_clear = "clear";
+static const char *cmd_kill = "kill";
 static const char *prompt = "# ";
 
 /*
@@ -103,6 +105,15 @@ static void execute_command(char *cmd)
         /* clear screen */
         uclear();
     }
+    else if (!strncmp(cmd, cmd_kill, strlen(cmd_kill)))
+    {
+        /* kill task */
+        char *save_ptr = null;
+        strtok_r(cmd, " ", &save_ptr);
+        char *str_tid = strtok_r(null, " ", &save_ptr);
+        u_short tid = atou(str_tid);
+        asm_syscall(SYSCALL_KILL, tid);
+    }
 }
 
 /*
@@ -149,5 +160,5 @@ static void show_system_log()
 //
 
 static void show_task(struct task_t *entry) {
-    uprintf("  pid = %u, status = %u\n", entry->tid, entry->status);
+    uprintf("  pid = %u, name = %s, status = %u\n", entry->tid, entry->name, entry->status);
 }

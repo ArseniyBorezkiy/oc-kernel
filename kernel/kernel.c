@@ -19,6 +19,7 @@
 #include <lib/stdtypes.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>
+#include <lib/string.h>
 #include <lib/stdlib.h>
 #include <messages.h>
 #include <kernel.h>
@@ -105,4 +106,8 @@ static void kernel_run_tasks()
   init_task->status = TASK_RUNNING;
   tty_task->status = TASK_RUNNING;
   sh_task->status = TASK_RUNNING;
+
+  strncpy(init_task->name, "init", sizeof(init_task->name));
+  strncpy(tty_task->name, "tty", sizeof(tty_task->name));
+  strncpy(sh_task->name, "sh", sizeof(sh_task->name));
 }

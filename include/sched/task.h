@@ -21,6 +21,7 @@
 #define TASK_UNINTERRUPTABLE 1
 #define TASK_INTERRUPTABLE 2
 #define TASK_RUNNING 3
+#define TASK_KILLING 4
 
 /*
  * Process descriptor
@@ -29,6 +30,7 @@ struct task_t
 {
     struct clist_head_t list_head;                 /* should be at first */
     u_short tid;                                   /* task id */
+    char name[8];                                  /* task name */
     struct gp_registers_t gp_registers;            /* general purpose registers */
     struct op_registers_t op_registers;            /* other purpose registers */
     struct flags_t flags;                          /* processor flags */
@@ -52,6 +54,7 @@ extern void task_delete(struct task_t *task);
 extern struct task_t *task_get_by_id(u_short tid);
 extern struct task_t *task_find_by_id(u_short tid);
 extern struct task_t *task_get_by_status(u_short status);
+extern struct task_t *task_find_by_status(u_short status);
 extern struct task_t *task_get_next_by_status(u_short status, struct task_t *pos);
 extern void task_pack_message(struct task_t *task, struct message_t *msg);
 extern void task_extract_message(struct task_t *task, struct message_t *msg);
