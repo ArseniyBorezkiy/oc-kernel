@@ -38,7 +38,8 @@ extern char *strncpy(char *s1, const char *s2, u_int n)
     char *original = s1;
 
     int i = 0;
-    while (*s2 != '\0' && i < n) {
+    while (*s2 != '\0' && i < n)
+    {
         *s1++ = *s2++;
         ++i;
     }
@@ -148,86 +149,120 @@ extern char *strext(char *buf, const char *str, char sym)
 /*
  * Api - Return length of the accepted region
  */
-extern int strspn(char *str, const char *accept) {
-  int len = strlen(accept);
-  int i;
+extern int strspn(char *str, const char *accept)
+{
+    int len = strlen(accept);
+    int i;
 
-  for (i = 0; str[i] != '\0'; ++i) {
-    bool is_found = false;
+    for (i = 0; str[i] != '\0'; ++i)
+    {
+        bool is_found = false;
 
-    for (int j = 0; j < len; ++j) {
-      if (accept[j] == str[i]) {
-        is_found = true;
-        break;
-      }
+        for (int j = 0; j < len; ++j)
+        {
+            if (accept[j] == str[i])
+            {
+                is_found = true;
+                break;
+            }
+        }
+
+        if (!is_found)
+        {
+            break;
+        }
     }
 
-    if (!is_found) {
-      break;
-    }
-  }
-
-  return i;
+    return i;
 }
 
 /*
  * Api - Return length of the rejected region
  */
-extern int strcspn(char *str, const char *rejected) {
-  int len = strlen(rejected);
-  int i;
+extern int strcspn(char *str, const char *rejected)
+{
+    int len = strlen(rejected);
+    int i;
 
-  for (i = 0; str[i] != '\0'; ++i) {
-    bool is_not_found = true;
+    for (i = 0; str[i] != '\0'; ++i)
+    {
+        bool is_not_found = true;
 
-    for (int j = 0; j < len; ++j) {
-      if (rejected[j] == str[i]) {
-        is_not_found = false;
-        break;
-      }
+        for (int j = 0; j < len; ++j)
+        {
+            if (rejected[j] == str[i])
+            {
+                is_not_found = false;
+                break;
+            }
+        }
+
+        if (!is_not_found)
+        {
+            break;
+        }
     }
 
-    if (!is_not_found) {
-      break;
-    }
-  }
+    return i;
+}
 
-  return i;
+/*
+ * Api - Search character in string
+ */
+char *strchr(const char *str, char ch)
+{
+    char *ptr = str;
+    int len = strlen(str);
+
+    for (int i = 0; i < len && *ptr != '\0'; ++i, ptr++)
+    {
+        if (*ptr == ch)
+        {
+            return ptr;
+        }
+    }
+
+    return null;
 }
 
 /*
  * Api - Parse string
  */
-extern char *strtok_r(char *str, const char *delim, char **save_ptr) {
-  char *end;
+extern char *strtok_r(char *str, const char *delim, char **save_ptr)
+{
+    char *end;
 
-  if (str == null) {
-    str = *save_ptr;
-  }
+    if (str == null)
+    {
+        str = *save_ptr;
+    }
 
-  if (*str == '\0') {
-    *save_ptr = str;
-    return null;
-  }
+    if (*str == '\0')
+    {
+        *save_ptr = str;
+        return null;
+    }
 
-  /* scan leading delimiters */
-  str += strspn(str, delim);
-  if (*str == '\0') {
-    *save_ptr = str;
-    return null;
-  }
+    /* scan leading delimiters */
+    str += strspn(str, delim);
+    if (*str == '\0')
+    {
+        *save_ptr = str;
+        return null;
+    }
 
-  /* find the end of the token */
-  end = str + strcspn(str, delim);
-  if (*end == '\0') {
-    *save_ptr = end;
+    /* find the end of the token */
+    end = str + strcspn(str, delim);
+    if (*end == '\0')
+    {
+        *save_ptr = end;
+        return str;
+    }
+
+    /* terminate the token */
+    *end = '\0';
+    *save_ptr = end + 1;
     return str;
-  }
-
-  /* terminate the token */
-  *end = '\0';
-  *save_ptr = end + 1;
-  return str;
 }
 
 /*
@@ -301,9 +336,10 @@ extern unsigned int atou(char *str)
 {
     int k = 0;
 
-    while (*str) {
-      k = (k << 3) + (k << 1) + (*str) - '0';
-      str++;
+    while (*str)
+    {
+        k = (k << 3) + (k << 1) + (*str) - '0';
+        str++;
     }
 
     return k;
@@ -409,7 +445,7 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list 
             j += 1;
         }
     }
-    
+
     count = ((size_t)cur - (size_t)s1);
     *cur++ = '\0';
 

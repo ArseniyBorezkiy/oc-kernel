@@ -16,6 +16,7 @@ struct io_buf_t
 #define IOCTL_INIT 1
 #define IOCTL_FLUSH 2
 #define IOCTL_CLEAR 3
+#define IOCTL_READ_MODE_LINE 4
 
 #ifdef KERNEL
 #define printf(msg, ...) kprintf(msg, ##__VA_ARGS__)

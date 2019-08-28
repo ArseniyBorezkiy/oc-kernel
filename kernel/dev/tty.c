@@ -27,6 +27,7 @@ static char tty_read_ch(struct io_buf_t *io_buf);
 static char const tty_output_buff[VIDEO_SCREEN_SIZE]; /* teletype output buffer */
 static char const tty_input_buff[VIDEO_SCREEN_WIDTH]; /* teletype input buffer */
 char *tty_input_buff_ptr = tty_input_buff;
+bool read_line_mode = false;
 
 /*
  * Api - Teletype init
@@ -36,6 +37,9 @@ extern void tty_init()
     struct clist_head_t *entry;
     struct dev_t dev;
     struct ih_low_t *ih_low;
+
+    memset(tty_output_buff, 0, sizeof(VIDEO_SCREEN_SIZE));
+    memset(tty_input_buff, 0, sizeof(VIDEO_SCREEN_WIDTH));
 
     /* register teletype device */
     strcpy(dev.name, tty_dev_name);
@@ -91,13 +95,17 @@ static void tty_read(struct io_buf_t *io_buf, void *buffer, u_int size)
     assert((size_t)tty_input_buff_ptr >= (size_t)tty_input_buff);
 
     io_buf->is_eof = (size_t)io_buf->ptr == (size_t)tty_input_buff_ptr;
+    if (read_line_mode)
+    {
+        io_buf->is_eof = !!strchr(io_buf->ptr, '\n');
+    }
 
     for (int i = 0; i < size - 1 && !io_buf->is_eof; ++i)
     {
         char ch = tty_read_ch(io_buf);
         *ptr++ = ch;
 
-        if (ch == '\n')
+        if (read_line_mode && ch == '\n')
         {
             break;
         }
@@ -142,6 +150,16 @@ static void tty_ioctl(struct io_buf_t *io_buf, int command)
             video_flush(io_buf->base);
         }
         else if (io_buf->base == tty_input_buff)
+        {
+            unreachable();
+        }
+        break;
+    case IOCTL_READ_MODE_LINE: /* read only whole line */
+        if (io_buf->base == tty_input_buff)
+        {
+            read_line_mode = true;
+        }
+        else if (io_buf->base == tty_output_buff)
         {
             unreachable();
         }
