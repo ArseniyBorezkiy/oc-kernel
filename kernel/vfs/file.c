@@ -3,6 +3,11 @@
 #include <lib/string.h>
 #include <lib/assert.h>
 
+static bool file_list_by_name_detector(struct clist_head_t *current, va_list list);
+
+/*
+ * Data
+ */
 struct clist_definition_t file_list = {
     .head = null,
     .slot_size = sizeof(struct file_t)};
@@ -23,11 +28,21 @@ extern void file_init()
  */
 extern struct file_t *file_open(char *path, int mod_rw)
 {
+    struct clist_head_t *entry;
     struct file_t *file;
     struct dev_t *dev;
 
+    /* try to find already opened file */
+    entry = clist_find(&file_list, file_list_by_name_detector, path);
+    file = (struct file_t *)entry->data;
+    if (entry != null)
+    {
+        return file;
+    }
+
     /* create list entry */
-    file = clist_insert_entry_after(&file_list, file_list.head);
+    entry = clist_insert_entry_after(&file_list, file_list.head);
+    file = (struct file_t *)entry->data;
 
     /* whether file is device */
     dev = dev_find_by_name(path);
@@ -124,4 +139,14 @@ extern void file_ioctl(struct io_buf_t *io_buf, int command)
         /* fs node */
         unreachable(); /* fs in not implemented yet */
     }
+}
+
+/*
+ * Find file by name
+ */
+static bool file_list_by_name_detector(struct clist_head_t *current, va_list list)
+{
+    char *name = va_arg(args, char *);
+    struct file_t *file = (struct file_t *)current->data;
+    return !strcmp(name, file->name);
 }
