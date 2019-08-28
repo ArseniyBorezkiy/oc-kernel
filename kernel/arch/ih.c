@@ -145,14 +145,31 @@ extern void ih_syscall(u_int *function)
         task->reschedule = true;
         break;
     }
-
+    case SYSCALL_OPEN:
+    {
+        /* open file */
+        char *dev = *(char **)params_addr;
+        int mod_rw = *(int *)(params_addr + 4);
+        FILE **file = *(FILE ***)(params_addr + 8);
+        *file = file_open(dev, mod_rw);
+        break;
+    }
+    case SYSCALL_READ:
+    {
+        /* read from file */
+        struct io_buf_t *io_buf = *(struct io_buf_t **)params_addr;
+        char *buff = *(char **)(params_addr + 4);
+        u_int size = *(u_int *)(params_addr + 8);
+        file_read(io_buf, buff, size);
+        break;
+    }
     case SYSCALL_WRITE:
     {
         /* write to file */
         struct io_buf_t *io_buf = *(struct io_buf_t **)params_addr;
-        char *buff = *(char **)(params_addr + 4);
+        char *data = *(char **)(params_addr + 4);
         u_int size = *(u_int *)(params_addr + 8);
-        file_write(io_buf, buff, size);
+        file_write(io_buf, data, size);
         break;
     }
     case SYSCALL_IOCTL:

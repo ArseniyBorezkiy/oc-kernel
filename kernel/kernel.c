@@ -27,9 +27,6 @@
 
 void *kernel_stack = null;
 
-static void kernel_create_tasks();
-static void kernel_run_tasks();
-
 /*
  * Api - Kernel entry point
  */
@@ -60,16 +57,13 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   mm_init();
 
   /* init devices */
+  file_init();
   tty_init();
 
   /* init scheduler */
   sched_init();
-  printf(MSG_KERNEL_SCHEDULER_INITIALIZED);
-  kernel_create_tasks();
-  kernel_run_tasks();
 
   /* init vfs */
-  file_init();
   initrd_autorun(multiboot->mods_addr, multiboot->mods_count);
 
   /* enable interrupts */
@@ -81,33 +75,4 @@ extern void kernel_start(struct multiboot_t *multiboot, void *kstack)
   printf(MSG_KERNEL_STARTED);
   sched_yield();
   unreachable();
-}
-
-/*
- * Create kernel tasks
- */
-static void kernel_create_tasks()
-{
-  bool is_ok =
-      task_create(TID_INIT, task_init_main) &&
-      task_create(TID_SH, task_sh_main);
-  assert(is_ok);
-}
-
-/*
- * Run kernel tasks
- */
-static void kernel_run_tasks()
-{
-  struct task_t *init_task;
-  struct task_t *sh_task;
-
-  init_task = task_get_by_id(TID_INIT);
-  sh_task = task_get_by_id(TID_SH);
-
-  init_task->status = TASK_RUNNING;
-  sh_task->status = TASK_RUNNING;
-
-  strncpy(init_task->name, "init", sizeof(init_task->name));
-  strncpy(sh_task->name, "sh", sizeof(sh_task->name));
 }

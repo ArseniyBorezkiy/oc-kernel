@@ -30,9 +30,14 @@ struct io_buf_t
 extern FILE *stdin;
 extern FILE *stdout;
 
+#define MOD_R 1
+#define MOD_W 2
+
 /*
  * Api
  */
+extern void stdio_init();
+extern void stdio_deinit();
 extern void puts(const char *str);
 extern void putc(char ch);
 extern void uclear();
@@ -41,6 +46,8 @@ extern void unprintf(char *format, u_int n, ...);
 extern void uvprintf(const char *format, va_list list);
 extern void uvnprintf(const char *format, u_int n, va_list list);
 extern void flush();
+extern FILE *fopen(char *name, int mod_rw);
+extern void fclose(FILE *file);
 extern void fputs(FILE *file, const char *str);
 extern void fputc(FILE *file, char ch);
 extern void fflush(FILE *file);

@@ -18,15 +18,15 @@
 static void tty_write(struct io_buf_t *io_buf, void *data, u_int size);
 static void tty_read(struct io_buf_t *io_buf, void *buffer, u_int size);
 static void tty_ioctl(struct io_buf_t *io_buf, int command);
-static void tty_write_ch(char ch);
-static char tty_read_ch();
+static void tty_write_ch(struct io_buf_t *io_buf, char ch);
+static char tty_read_ch(struct io_buf_t *io_buf);
 
 /*
  * Data
  */
 static char const tty_output_buff[VIDEO_SCREEN_SIZE]; /* teletype output buffer */
 static char const tty_input_buff[VIDEO_SCREEN_WIDTH]; /* teletype input buffer */
-const char *tty_dev_name = "tty";                     /* teletype device name */
+char *tty_input_buff_ptr = tty_input_buff;
 
 /*
  * Api - Teletype init
@@ -61,9 +61,10 @@ extern void tty_init()
  */
 extern void tty_keyboard_ih_low(int number, struct ih_low_data_t *data)
 {
+    /* write character to input buffer */
     char *keycode = data->data;
     char ch = keyboard_map[*keycode];
-    // ???
+    *tty_input_buff_ptr++ = ch;
 }
 
 /*
@@ -80,18 +81,29 @@ static void tty_write(struct io_buf_t *io_buf, void *data, u_int size)
 }
 
 /*
- * Read from tty
+ * Read line from tty to string
  */
 static void tty_read(struct io_buf_t *io_buf, void *buffer, u_int size)
 {
     char *ptr = buffer;
 
-    for (int i = 0; i < size && !io_buf->is_eof; ++i)
+    assert((size_t)io_buf->ptr <= (size_t)tty_input_buff);
+    assert((size_t)tty_input_buff_ptr >= (size_t)tty_input_buff);
+
+    io_buf->is_eof = (size_t)io_buf->ptr == (size_t)tty_input_buff_ptr;
+
+    for (int i = 0; i < size - 1 && !io_buf->is_eof; ++i)
     {
-        char ch = tty_read_ch();
-        *ptr = ch;
-        // ???
+        char ch = tty_read_ch(io_buf);
+        *ptr++ = ch;
+
+        if (ch == '\n')
+        {
+            break;
+        }
     }
+
+    *ptr++ = '\0';
 }
 
 /*
@@ -109,11 +121,30 @@ static void tty_ioctl(struct io_buf_t *io_buf, int command)
         tty_write(io_buf, hello_msg, strlen(hello_msg));
         video_flush(io_buf->base);
         break;
-    case IOCTL_CLEAR: /* fill buffer with spaces */
-        io_buf->ptr = video_clear(io_buf->base);
+    case IOCTL_CLEAR:
+        if (io_buf->base == tty_output_buff)
+        {
+            /* fill output buffer with spaces */
+            io_buf->ptr = video_clear(io_buf->base);
+            video_flush(io_buf->base);
+        }
+        else if (io_buf->base == tty_input_buff)
+        {
+            /* clear input buffer */
+            tty_input_buff_ptr = tty_input_buff;
+            io_buf->ptr = io_buf->base;
+            io_buf->is_eof = true;
+        }
         break;
     case IOCTL_FLUSH: /* flush buffer to screen */
-        video_flush(io_buf->base);
+        if (io_buf->base == tty_output_buff)
+        {
+            video_flush(io_buf->base);
+        }
+        else if (io_buf->base == tty_input_buff)
+        {
+            unreachable();
+        }
         break;
     default:
         unreachable();
@@ -152,6 +183,15 @@ static void tty_write_ch(struct io_buf_t *io_buf, char ch)
 /*
  * Read single character from tty
  */
-static char tty_read_ch()
+static char tty_read_ch(struct io_buf_t *io_buf)
 {
+    if ((size_t)io_buf->ptr < (size_t)tty_input_buff_ptr)
+    {
+        return *io_buf->ptr++;
+    }
+    else
+    {
+        io_buf->is_eof = true;
+        return '\0';
+    }
 }

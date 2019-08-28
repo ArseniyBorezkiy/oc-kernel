@@ -11,8 +11,22 @@ extern FILE *stdin = null;
 extern FILE *stdout = null;
 
 /*
- * Api - get stdin
+ * Api - Lib init
  */
+extern void stdio_init()
+{
+    stdin = fopen(tty_dev_name, MOD_R);
+    stdout = fopen(tty_dev_name, MOD_W);
+}
+
+/*
+ * Api - Lib deinit
+ */
+extern void stdio_deinit()
+{
+    fclose(stdin);
+    fclose(stdout);
+}
 
 /*
  * Api - Print string to screen
@@ -94,6 +108,24 @@ extern void uvnprintf(const char *format, u_int n, va_list list)
 extern void fputs(FILE *file, const char *str)
 {
     asm_syscall(SYSCALL_WRITE, file, str, strlen(str));
+}
+
+/*
+ * Api - Open file
+ */
+extern FILE *fopen(char *file, int mod_rw)
+{
+    FILE *result = null;
+    asm_syscall(SYSCALL_OPEN, file, mod_rw, &result);
+    return result;
+}
+
+/*
+ * Api - Close file
+ */
+extern void fclose(FILE *file)
+{
+    asm_syscall(SYSCALL_CLOSE, file);
 }
 
 /*

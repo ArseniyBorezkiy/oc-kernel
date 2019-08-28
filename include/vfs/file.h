@@ -17,9 +17,6 @@ extern struct file_t
   struct dev_t *dev;           /* whether device driver */
 };
 
-#define MOD_R 1
-#define MOD_W 2
-
 /*
  * Api
  */

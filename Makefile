@@ -99,14 +99,14 @@ build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/sh.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/init.c -o ./bin/init.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
-build-initrd: build-hello-elf ./bin/hello.elf
+build-initrd: build-initrd-elfs ./bin/sh.elf
 	rm ./bin/initrd.img
 	touch ./bin/initrd.img
-	$(DD) if=./bin/hello.elf of=./bin/initrd.img
+	$(DD) if=./bin/sh.elf of=./bin/initrd.img
 
-build-hello-elf: ./initrd/hello.c
-	$(CC) $(CC_USER_FLAGS) -c ./initrd/hello.c -o ./bin/hello.rd.c.o
-	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/hello.elf ./bin/hello.rd.c.o \
+build-initrd-elfs: ./initrd/sh.c
+	$(CC) $(CC_USER_FLAGS) -c ./initrd/sh.c -o ./bin/sh.rd.c.o
+	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/sh.elf ./bin/sh.rd.c.o \
 		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o
 
 #

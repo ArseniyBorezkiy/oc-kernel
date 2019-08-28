@@ -1,5 +1,7 @@
 #pragma once
 
+const char *tty_dev_name = "tty"; /* teletype device name */
+
 /*
  * Api
  */

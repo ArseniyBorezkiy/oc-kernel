@@ -22,6 +22,8 @@ extern void sched_init()
   current_task = null;
   /* init task module */
   task_init();
+
+  printf(MSG_KERNEL_SCHEDULER_INITIALIZED);
 }
 
 /*
@@ -57,22 +59,29 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   }
 
   /* pick next task */
-  if (current_task) {
+  if (current_task)
+  {
     next_task = task_get_next_by_status(TASK_RUNNING, current_task);
-  } else {
+  }
+  else
+  {
     next_task = task_get_by_status(TASK_RUNNING);
   }
   assert(next_task != null);
 
   /* whether should kill current task */
-  if (current_task && current_task->status == TASK_KILLING) {
+  if (current_task && current_task->status == TASK_KILLING)
+  {
     /* kill current task */
     task_delete(current_task);
-  } else {
+  }
+  else
+  {
     /* try to kill killing tasks */
     struct task_t *task;
     task = task_find_by_status(TASK_KILLING);
-    if (task) {
+    if (task)
+    {
       task_delete(task);
     }
   }
@@ -87,7 +96,7 @@ extern void sched_schedule(size_t *ret_addr, size_t *reg_addr)
   next_task->gp_registers.esp = next_task->op_registers.u_esp;
   next_task->op_registers.u_esp -= sizeof(struct gp_registers_t);
   memcpy((void *)next_task->op_registers.u_esp, (void *)&next_task->gp_registers, sizeof(struct gp_registers_t));
-  
+
   /* update current task pointer */
   current_task = next_task;
 
