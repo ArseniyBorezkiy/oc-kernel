@@ -12,8 +12,8 @@ This OC will evolute according to wish list section.
 ### Content
 
 - scheduler (/kernel/sched)
-- shell task (/kernel/tasks)
 - initial ram disk (/initrd)
+- shell task (/initrd/sh.c)
 - tty device driver (/kernel/dev/tty.c)
 - interprocess communication (/kernel/ipc)
 - interprocess synchronization (/kernel/sync)
@@ -45,6 +45,13 @@ Task list:
 ```
 Ars Boretskii kernel 1.0
 # ps
+```
+
+Kill task:
+
+```
+Ars Boretskii kernel 1.0
+# kill 1
 ```
 
 Kernel syslog view:

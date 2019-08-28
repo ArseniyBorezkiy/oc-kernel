@@ -11,8 +11,6 @@
 #include <sched/task.h>
 #include <sched/sched.h>
 #include <dev/tty.h>
-#include <tasks/init.h>
-#include <tasks/sh.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
 #include <utils/lib.h>

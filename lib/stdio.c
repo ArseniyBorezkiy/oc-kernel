@@ -28,10 +28,14 @@ extern void stdio_deinit()
     fclose(stdout);
 }
 
+//
+// Stdio API
+//
+
 /*
  * Api - Print string to screen
  */
-extern void puts(const char *str)
+extern void uputs(const char *str)
 {
     fputs(stdout, str);
 }
@@ -39,7 +43,7 @@ extern void puts(const char *str)
 /*
  * Api - Print character to screen
  */
-extern void putc(char ch)
+extern void uputc(char ch)
 {
     fputc(stdout, ch);
 }
@@ -49,13 +53,13 @@ extern void putc(char ch)
  */
 extern void uclear()
 {
-    fuclear(stdout);
+    fclear(stdout);
 }
 
 /*
  * Api - Flush screen
  */
-extern void flush()
+extern void uflush()
 {
     fflush(stdout);
 }
@@ -102,13 +106,9 @@ extern void uvnprintf(const char *format, u_int n, va_list list)
     puts(buff);
 }
 
-/*
- * Api - Print string
- */
-extern void fputs(FILE *file, const char *str)
-{
-    asm_syscall(SYSCALL_WRITE, file, str, strlen(str));
-}
+//
+// File API
+//
 
 /*
  * Api - Open file
@@ -129,11 +129,35 @@ extern void fclose(FILE *file)
 }
 
 /*
+ * Api - Read from file to buffer
+ */
+extern void fread(FILE *file, char *buff, u_int size)
+{
+    asm_syscall(SYSCALL_READ, file, buff, size);
+}
+
+/*
+ * Api - Write data to file
+ */
+extern void fwrite(FILE *file, char *data, u_int size)
+{
+    asm_syscall(SYSCALL_WRITE, file, data, size);
+}
+
+/*
+ * Api - Print string
+ */
+extern void fputs(FILE *file, const char *str)
+{
+    fwrite(file, str, strlen(str));
+}
+
+/*
  * Api - Print character
  */
 extern void fputc(FILE *file, char ch)
 {
-    asm_syscall(SYSCALL_WRITE, file, &ch, 1);
+    fwrite(file, &ch, 1);
 }
 
 /*
@@ -147,7 +171,7 @@ extern void fflush(FILE *file)
 /*
  * Api - Clear
  */
-extern void fuclear(FILE *file)
+extern void fclear(FILE *file)
 {
     asm_syscall(SYSCALL_IOCTL, file, IOCTL_CLEAR);
 }

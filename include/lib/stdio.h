@@ -22,9 +22,12 @@ struct io_buf_t
 #define vprintf(msg, list) kvprintf(msg, list)
 #define clear() kclear()
 #else
+#define puts(str) uputs(str)
+#define putc(str) uputc(str)
+#define clear() uclear()
+#define flush() uflush()
 #define printf(msg, ...) uprintf(msg, ##__VA_ARGS__)
 #define vprintf(msg, list) uvprintf(msg, list)
-#define clear() uclear()
 #endif
 
 extern FILE *stdin;
@@ -38,17 +41,21 @@ extern FILE *stdout;
  */
 extern void stdio_init();
 extern void stdio_deinit();
-extern void puts(const char *str);
-extern void putc(char ch);
+
+extern void uputs(const char *str);
+extern void uputc(char ch);
 extern void uclear();
+extern void uflush();
 extern void uprintf(char *format, ...);
 extern void unprintf(char *format, u_int n, ...);
 extern void uvprintf(const char *format, va_list list);
 extern void uvnprintf(const char *format, u_int n, va_list list);
-extern void flush();
+
 extern FILE *fopen(char *name, int mod_rw);
 extern void fclose(FILE *file);
+extern void fread(FILE *file, char *buff, u_int size);
+extern void fwrite(FILE *file, char *data, u_int size);
 extern void fputs(FILE *file, const char *str);
 extern void fputc(FILE *file, char ch);
 extern void fflush(FILE *file);
-extern void fuclear(FILE *file);
+extern void fclear(FILE *file);

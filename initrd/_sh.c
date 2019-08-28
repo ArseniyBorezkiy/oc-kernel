@@ -1,5 +1,4 @@
 #include <dev/utils/video.h>
-#include <tasks/sh.h>
 #include <dev/tty.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>

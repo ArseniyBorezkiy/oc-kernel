@@ -21,7 +21,11 @@ extern int main()
  */
 static void message_loop()
 {
+  char buff[255];
+
   while (1)
   {
+    fread(stdin, buff, 255);
+    printf("%s", buff);
   }
 }

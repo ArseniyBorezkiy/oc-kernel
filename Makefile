@@ -33,7 +33,7 @@ build: build-lib build-kernel build-initrd
 		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/mm.c.o \
 		./bin/initrd.c.o ./bin/elf.c.o ./bin/file.c.o \
-		./bin/init.c.o ./bin/tty.c.o ./bin/dev.c.o ./bin/sh.c.o
+		./bin/tty.c.o ./bin/dev.c.o
 
 build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
            ./lib/data/slist.c ./lib/data/clist.c
@@ -94,10 +94,6 @@ build-kernel-sync: ./kernel/sync/spin.c
 build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/task.c -o ./bin/task.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/sched.c -o ./bin/sched.c.o
-
-build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/sh.c
-	$(CC) $(CC_FLAGS) -c ./kernel/tasks/init.c -o ./bin/init.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
 build-initrd: build-initrd-elfs ./bin/sh.elf
 	rm ./bin/initrd.img
