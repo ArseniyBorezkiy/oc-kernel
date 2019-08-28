@@ -33,7 +33,7 @@ extern struct file_t *file_open(char *path, int mod_rw)
     struct dev_t *dev;
 
     /* try to find already opened file */
-    entry = clist_find(&file_list, file_list_by_name_detector, path);
+    entry = clist_find(&file_list, file_list_by_name_detector, path, mod_rw);
     file = (struct file_t *)entry->data;
     if (entry != null)
     {
@@ -68,6 +68,7 @@ extern struct file_t *file_open(char *path, int mod_rw)
     }
 
     /* fill data */
+    file->mod_rw = mod_rw;
     file->io_buf.fd = next_fd++;
     file->io_buf.ptr = file->io_buf.base;
     file->io_buf.is_eof = false;
@@ -147,6 +148,7 @@ extern void file_ioctl(struct io_buf_t *io_buf, int command)
 static bool file_list_by_name_detector(struct clist_head_t *current, va_list list)
 {
     char *name = va_arg(args, char *);
+    int mod_rw = va_arg(args, int);
     struct file_t *file = (struct file_t *)current->data;
-    return !strcmp(name, file->name);
+    return mod_rw == file->mod_rw && !strcmp(name, file->name);
 }

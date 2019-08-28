@@ -14,6 +14,7 @@ extern struct file_t
   struct clist_head list_head; /* should be at first */
   struct io_buf_t io_buf;      /* file handler */
   char name[8];                /* file name */
+  int mod_rw;                  /* whether read or write */
   struct dev_t *dev;           /* whether device driver */
 };
 
