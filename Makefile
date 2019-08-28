@@ -32,8 +32,8 @@ build: build-lib build-kernel build-initrd
 		./bin/video.c.o \
 		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/mm.c.o \
-		./bin/initrd.c.o ./bin/elf.c.o \
-		./bin/init.c.o ./bin/tty.c.o ./bin/sh.c.o
+		./bin/initrd.c.o ./bin/elf.c.o ./bin/file.c.o \
+		./bin/init.c.o ./bin/tty.c.o ./bin/dev.c.o ./bin/sh.c.o
 
 build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c \
            ./lib/data/slist.c ./lib/data/clist.c
@@ -59,12 +59,15 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kassert.c -o ./bin/kassert.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/lib.c -o ./bin/lib.c.o
 
-build-kernel-dev: ./kernel/dev/video.c
-	$(CC) $(CC_FLAGS) -c ./kernel/dev/video.c -o ./bin/video.c.o
+build-kernel-dev: ./kernel/dev/utils/video.c ./kernel/dev/tty.c ./kernel/dev/dev.c
+	$(CC) $(CC_FLAGS) -c ./kernel/dev/utils/video.c -o ./bin/video.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/dev/tty.c -o ./bin/tty.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/dev/dev.c -o ./bin/dev.c.o
 
-build-kernel-vfs: ./kernel/vfs/initrd.c
+build-kernel-vfs: ./kernel/vfs/initrd.c ./kernel/vfs/elf.c ./kernel/vfs/file.c
 	$(CC) $(CC_FLAGS) -c ./kernel/vfs/initrd.c -o ./bin/initrd.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/vfs/elf.c -o ./bin/elf.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/vfs/file.c -o ./bin/file.c.o
 
 build-kernel-mm: ./kernel/mm/mm.c
 	$(CC) $(CC_FLAGS) -c ./kernel/mm/mm.c -o ./bin/mm.c.o
@@ -92,9 +95,8 @@ build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/task.c -o ./bin/task.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/sched.c -o ./bin/sched.c.o
 
-build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/tty.c
+build-kernel-tasks: ./kernel/tasks/init.c ./kernel/tasks/sh.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/init.c -o ./bin/init.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/tasks/tty.c -o ./bin/tty.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/sh.c -o ./bin/sh.c.o
 
 build-initrd: build-hello-elf ./bin/hello.elf

@@ -1,12 +1,12 @@
 #include <arch/idt.h>
-#include <dev/video.h>
+#include <dev/utils/video.h>
 #include <utils/kprint.h>
 #include <lib/string.h>
 #include <lib/assert.h>
 #include <messages.h>
 
 static char const syslog[SYSLOG_SIZE]; /* system log */
-char *syslog_pos = (char*)syslog;      /* system log position */
+char *syslog_pos = (char *)syslog;     /* system log position */
 bool is_early_mode = true;             /* whether syslog attached to video memory */
 
 static void kflush();       /* copy sylog to video memory */
@@ -70,17 +70,18 @@ extern void kmode(bool is_early)
 /*
  * Api - Read syslog to buffer
  */
-extern void klog(char *buf, u_int n) {
-  assert(n > 0);
-  assert(n < VIDEO_MEMORY_ADDR);
-  asm_lock();
+extern void klog(char *buf, u_int n)
+{
+    assert(n > 0);
+    assert(n < VIDEO_MEMORY_ADDR);
+    asm_lock();
 
-  u_int syslog_end_line = (syslog_pos - syslog) / VIDEO_SCREEN_WIDTH;
-  u_int syslog_start_line = syslog_end_line - n;
-  const void *syslog_begin = syslog + syslog_start_line * VIDEO_SCREEN_WIDTH;
-  memcpy(buf, syslog_begin, VIDEO_SCREEN_WIDTH * n);
-  
-  asm_unlock();
+    u_int syslog_end_line = (syslog_pos - syslog) / VIDEO_SCREEN_WIDTH;
+    u_int syslog_start_line = syslog_end_line - n;
+    const void *syslog_begin = syslog + syslog_start_line * VIDEO_SCREEN_WIDTH;
+    memcpy(buf, syslog_begin, VIDEO_SCREEN_WIDTH * n);
+
+    asm_unlock();
 }
 
 /*

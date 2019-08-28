@@ -5,7 +5,9 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
-#include <tasks/tty.h>
+#include <dev/utils/ih_low.h>
+#include <dev/tty.h>
+#include <vfs/file.h>
 #include <utils/kdump.h>
 #include <lib/assert.h>
 #include <lib/stdlib.h>
@@ -13,6 +15,8 @@
 #include <lib/stdio.h>
 #include <lib/syscall.h>
 #include <messages.h>
+
+void dev_each_low_ih_cb(struct dev_t *entry, struct ih_low_data_t *data);
 
 /*
  * Api - Division by zero
@@ -89,16 +93,16 @@ extern void ih_keyboard()
     {
         char keycode = asm_read_port(KEYBOARD_DATA_PORT);
 
-        if (keycode < 1) {
-          return;
+        if (keycode < 1)
+        {
+            return;
         }
 
-        /* send message to tty task */
-        struct message_t msg = {
-            .type = TTY_MSG_TYPE_GETC,
-            .len = 1,
-            .data = {keycode}};
-        ksend(TID_TTY, &msg);
+        /* call low half interrupt handlers */
+        struct ih_low_data_t ih_low_data;
+        ih_low_data.number = INT_KEYBOARD;
+        ih_low_data.data = &keycode;
+        dev_for_each(dev_each_low_ih_cb, &ih_low_data);
     }
 
     asm_write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
@@ -116,30 +120,76 @@ extern void ih_syscall(u_int *function)
     asm_lock();
 
     /* handle syscall */
-    switch (*function) {
-      case SYSCALL_KSEND: {
+    switch (*function)
+    {
+    case SYSCALL_KSEND:
+    {
         /* send message */
         u_short tid = *(u_int *)params_addr;
         ksend(tid, *(struct message_t **)(params_addr + 4));
         break;
-      }
-      case SYSCALL_KRECEIVE: {
+    }
+    case SYSCALL_KRECEIVE:
+    {
         /* receive message */
         u_short tid = *(u_int *)params_addr;
         kreceive(tid, *(struct message_t **)(params_addr + 4));
         break;
-      }
-      case SYSCALL_KILL: {
+    }
+    case SYSCALL_KILL:
+    {
         /* kill task */
         u_short tid = *(u_int *)params_addr;
         struct task_t *task = task_get_by_id(tid);
         task->status = TASK_KILLING;
         task->reschedule = true;
         break;
-      }
-      default:
+    }
+
+    case SYSCALL_WRITE:
+    {
+        /* write to file */
+        struct io_buf_t *io_buf = *(struct io_buf_t **)params_addr;
+        char *buff = *(char **)(params_addr + 4);
+        u_int size = *(u_int *)(params_addr + 8);
+        file_write(io_buf, buff, size);
+        break;
+    }
+    case SYSCALL_IOCTL:
+    {
+        /* device specific command */
+        struct io_buf_t *io_buf = *(struct io_buf_t **)params_addr;
+        int cmd = *(int *)(params_addr + 4);
+        file_ioctl(io_buf, cmd);
+        break;
+    }
+    default:
         unreachable();
     }
 
     asm_unlock();
+}
+
+/*
+ * Call low half interrupt handler
+ */
+void dev_each_low_ih_cb(struct dev_t *entry, struct ih_low_data_t *data)
+{
+    struct clist_head_t *current;
+    struct ih_low_t *ih_low;
+
+    for (current = entry->ih_list.head; current != null; current = current->next)
+    {
+        ih_low = (struct ih_low_t *)current->data;
+        if (ih_low->number == data->number)
+        {
+            /* call interrupt handler */
+            ih_low->handler(data->number, data);
+        }
+
+        if (current->next == entry->ih_list.head)
+        {
+            break;
+        }
+    }
 }

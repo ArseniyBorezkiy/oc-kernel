@@ -1,6 +1,6 @@
-#include <dev/video.h>
+#include <dev/utils/video.h>
 #include <tasks/sh.h>
-#include <tasks/tty.h>
+#include <dev/tty.h>
 #include <sched/task.h>
 #include <ipc/ipc.h>
 #include <utils/kprint.h>
@@ -149,9 +149,10 @@ static void show_system_log()
     klog(buf, count); /* read syslog */
 
     /* print syslog */
-    for (int i = 0; i < count; ++i) {
-      *(buf + VIDEO_SCREEN_WIDTH * (i + 1) - 2) = 0;
-      unprintf("%s\n", VIDEO_SCREEN_WIDTH - 1, buf + VIDEO_SCREEN_WIDTH * i);
+    for (int i = 0; i < count; ++i)
+    {
+        *(buf + VIDEO_SCREEN_WIDTH * (i + 1) - 2) = 0;
+        unprintf("%s\n", VIDEO_SCREEN_WIDTH - 1, buf + VIDEO_SCREEN_WIDTH * i);
     }
 }
 
@@ -159,6 +160,7 @@ static void show_system_log()
 // Helpers
 //
 
-static void show_task(struct task_t *entry) {
+static void show_task(struct task_t *entry)
+{
     uprintf("  pid = %u, name = %s, status = %u\n", entry->tid, entry->name, entry->status);
 }

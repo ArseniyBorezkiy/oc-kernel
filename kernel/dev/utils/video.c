@@ -1,5 +1,5 @@
 #include <arch/port.h>
-#include <dev/video.h>
+#include <dev/utils/video.h>
 #include <lib/string.h>
 
 u8 const *video_memory = (void *)VIDEO_MEMORY_ADDR;
@@ -17,9 +17,10 @@ extern void video_init()
 /*
  * Api - Disable cursor
  */
-extern void video_disable_cursor() {
+extern void video_disable_cursor()
+{
   asm_write_port(0x3D4, 0x0A);
-	asm_write_port(0x3D5, 0x20);
+  asm_write_port(0x3D5, 0x20);
 }
 
 /*

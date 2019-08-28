@@ -1,24 +1,25 @@
 #include <arch/ih.h>
-#include <dev/video.h>
+#include <dev/utils/video.h>
 #include <ipc/ipc.h>
 #include <sched/task.h>
-#include <tasks/tty.h>
+#include <dev/tty.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
 #include <lib/syscall.h>
+
+extern FILE *stdin = null;
+extern FILE *stdout = null;
+
+/*
+ * Api - get stdin
+ */
 
 /*
  * Api - Print string to screen
  */
 extern void puts(const char *str)
 {
-    struct message_t msg;
-
-    msg.type = TTY_MSG_TYPE_PUTS;
-    msg.len = strlen(str) + 1;
-    strcpy((char *)msg.data, str);
-    
-    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
+    fputs(stdout, str);
 }
 
 /*
@@ -26,13 +27,7 @@ extern void puts(const char *str)
  */
 extern void putc(char ch)
 {
-    struct message_t msg;
-
-    msg.type = TTY_MSG_TYPE_PUTC;
-    msg.len = 1;
-    msg.data[0] = ch;
-
-    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
+    fputc(stdout, ch);
 }
 
 /*
@@ -40,18 +35,22 @@ extern void putc(char ch)
  */
 extern void uclear()
 {
-    struct message_t msg;
+    fuclear(stdout);
+}
 
-    msg.type = TTY_MSG_TYPE_CLEAR;
-    msg.len = 0;
-    
-    asm_syscall(SYSCALL_KSEND, TID_TTY, &msg); /* ksend(TID_TTY, &msg) */
+/*
+ * Api - Flush screen
+ */
+extern void flush()
+{
+    fflush(stdout);
 }
 
 /*
  * Api - Print to screen
  */
-extern void uprintf(char *format, ...) {
+extern void uprintf(char *format, ...)
+{
     va_list list;
     va_start(list, format);
 
@@ -61,7 +60,8 @@ extern void uprintf(char *format, ...) {
 /*
  * Api - Print to screen
  */
-extern void unprintf(char *format, u_int n, ...) {
+extern void unprintf(char *format, u_int n, ...)
+{
     va_list list;
     va_start(list, n);
 
@@ -86,4 +86,36 @@ extern void uvnprintf(const char *format, u_int n, va_list list)
     char buff[VIDEO_SCREEN_WIDTH];
     vsnprintf(buff, n, format, list);
     puts(buff);
+}
+
+/*
+ * Api - Print string
+ */
+extern void fputs(FILE *file, const char *str)
+{
+    asm_syscall(SYSCALL_WRITE, file, str, strlen(str));
+}
+
+/*
+ * Api - Print character
+ */
+extern void fputc(FILE *file, char ch)
+{
+    asm_syscall(SYSCALL_WRITE, file, &ch, 1);
+}
+
+/*
+ * Api - Flush
+ */
+extern void fflush(FILE *file)
+{
+    asm_syscall(SYSCALL_IOCTL, file, IOCTL_FLUSH);
+}
+
+/*
+ * Api - Clear
+ */
+extern void fuclear(FILE *file)
+{
+    asm_syscall(SYSCALL_IOCTL, file, IOCTL_CLEAR);
 }
