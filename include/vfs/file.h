@@ -11,7 +11,7 @@
 
 extern struct file_t
 {
-  struct clist_head list_head; /* should be at first */
+  struct clist_head_t list_head; /* should be at first */
   struct io_buf_t io_buf;      /* file handler */
   char name[8];                /* file name */
   int mod_rw;                  /* whether read or write */
@@ -23,6 +23,7 @@ extern struct file_t
  */
 extern void file_init();
 extern void file_register_device(struct dev_t *dev);
-extern struct file_t *file_open(char *path, int mod_rw);
+extern struct io_buf_t *file_open(char *path, int mod_rw);
 extern void file_read(struct io_buf_t *io_buf, char *buff, u_int size);
 extern void file_write(struct io_buf_t *io_buf, char *data, u_int size);
+extern void file_ioctl(struct io_buf_t *io_buf, int command);

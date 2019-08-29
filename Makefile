@@ -46,7 +46,7 @@ build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c
 	$(CC) $(CC_FLAGS) -c ./lib/data/slist.c -o ./bin/slist.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
 
-build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
+build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched \
               build-kernel-ipc build-kernel-sync build-kernel-dev build-kernel-vfs build-kernel-mm \
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o

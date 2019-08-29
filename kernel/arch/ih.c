@@ -16,7 +16,7 @@
 #include <lib/syscall.h>
 #include <messages.h>
 
-void dev_each_low_ih_cb(struct dev_t *entry, struct ih_low_data_t *data);
+void dev_each_low_ih_cb(struct dev_t *entry, void *data);
 
 /*
  * Api - Division by zero
@@ -190,18 +190,20 @@ extern void ih_syscall(u_int *function)
 /*
  * Call low half interrupt handler
  */
-void dev_each_low_ih_cb(struct dev_t *entry, struct ih_low_data_t *data)
+void dev_each_low_ih_cb(struct dev_t *entry, void *data)
 {
+    struct ih_low_data_t *low_data;
     struct clist_head_t *current;
     struct ih_low_t *ih_low;
 
+    low_data = data;
     for (current = entry->ih_list.head; current != null; current = current->next)
     {
         ih_low = (struct ih_low_t *)current->data;
-        if (ih_low->number == data->number)
+        if (ih_low->number == low_data->number)
         {
             /* call interrupt handler */
-            ih_low->handler(data->number, data);
+            ih_low->handler(low_data->number, low_data);
         }
 
         if (current->next == entry->ih_list.head)

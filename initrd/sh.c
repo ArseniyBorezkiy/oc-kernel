@@ -10,7 +10,7 @@ extern int main()
 {
   stdio_init();
   printf(MSG_KERNEL_NAME);
-  main_loop();
+  message_loop();
   stdio_deinit();
 
   return 0;

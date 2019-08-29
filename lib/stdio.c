@@ -7,8 +7,12 @@
 #include <lib/stdio.h>
 #include <lib/syscall.h>
 
-extern FILE *stdin = null;
-extern FILE *stdout = null;
+/*
+ * Data
+ */
+FILE *stdin = null;
+FILE *stdout = null;
+static const char *tty_dev_name = TTY_DEV_NAME;
 
 /*
  * Api - Lib init
@@ -67,7 +71,7 @@ extern void uflush()
 /*
  * Api - Print to screen
  */
-extern void uprintf(char *format, ...)
+extern void uprintf(const char *format, ...)
 {
     va_list list;
     va_start(list, format);
@@ -78,7 +82,7 @@ extern void uprintf(char *format, ...)
 /*
  * Api - Print to screen
  */
-extern void unprintf(char *format, u_int n, ...)
+extern void unprintf(const char *format, u_int n, ...)
 {
     va_list list;
     va_start(list, n);
@@ -93,7 +97,7 @@ extern void uvprintf(const char *format, va_list list)
 {
     char buff[VIDEO_SCREEN_WIDTH];
     vsprintf(buff, format, list);
-    puts(buff);
+    uputs(buff);
 }
 
 /*
@@ -103,7 +107,7 @@ extern void uvnprintf(const char *format, u_int n, va_list list)
 {
     char buff[VIDEO_SCREEN_WIDTH];
     vsnprintf(buff, n, format, list);
-    puts(buff);
+    uputs(buff);
 }
 
 //
@@ -113,7 +117,7 @@ extern void uvnprintf(const char *format, u_int n, va_list list)
 /*
  * Api - Open file
  */
-extern FILE *fopen(char *file, int mod_rw)
+extern FILE *fopen(const char *file, int mod_rw)
 {
     FILE *result = null;
     asm_syscall(SYSCALL_OPEN, file, mod_rw, &result);
@@ -139,7 +143,7 @@ extern void fread(FILE *file, char *buff, u_int size)
 /*
  * Api - Write data to file
  */
-extern void fwrite(FILE *file, char *data, u_int size)
+extern void fwrite(FILE *file, const char *data, u_int size)
 {
     asm_syscall(SYSCALL_WRITE, file, data, size);
 }

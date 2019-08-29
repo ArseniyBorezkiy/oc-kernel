@@ -26,7 +26,7 @@ extern void file_init()
 /*
  * Api - open file
  */
-extern struct file_t *file_open(char *path, int mod_rw)
+extern struct io_buf_t *file_open(char *path, int mod_rw)
 {
     struct clist_head_t *entry;
     struct file_t *file;
@@ -37,7 +37,7 @@ extern struct file_t *file_open(char *path, int mod_rw)
     file = (struct file_t *)entry->data;
     if (entry != null)
     {
-        return file;
+        return &file->io_buf;
     }
 
     /* create list entry */
@@ -74,6 +74,8 @@ extern struct file_t *file_open(char *path, int mod_rw)
     file->io_buf.is_eof = false;
     file->io_buf.file = file;
     strncpy(file->name, path, sizeof(file->name));
+
+    return &file->io_buf;
 }
 
 /*
@@ -147,8 +149,8 @@ extern void file_ioctl(struct io_buf_t *io_buf, int command)
  */
 static bool file_list_by_name_detector(struct clist_head_t *current, va_list list)
 {
-    char *name = va_arg(args, char *);
-    int mod_rw = va_arg(args, int);
+    char *name = va_arg(list, char *);
+    int mod_rw = va_arg(list, int);
     struct file_t *file = (struct file_t *)current->data;
     return mod_rw == file->mod_rw && !strcmp(name, file->name);
 }

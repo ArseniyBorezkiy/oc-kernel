@@ -2,6 +2,7 @@
 #include <vfs/elf.h>
 #include <mm/mm.h>
 #include <lib/assert.h>
+#include <lib/string.h>
 #include <lib/stdio.h>
 #include <messages.h>
 
@@ -10,7 +11,7 @@ static struct initrd_node_t *initrd_get_node(char *name, struct initrd_fs_t *fs)
 /*
  * Data
  */
-extern char *shell_elf = "sh.elf";
+static char *shell_elf = "sh.elf";
 
 /*
  * Api - run initial ram disk elf file
@@ -38,13 +39,13 @@ extern void initrd_exec(char *name, size_t base)
   struct elf_header_t *elf;
 
   /* find file */
-  fs = base;
+  fs = (struct initrd_fs_t *)base;
   assert(fs->count > 0);
   node = initrd_get_node(name, fs);
   assert(node != null);
 
   /* exec elf */
-  elf = node->offset + base;
+  elf = (struct elf_header_t *)node->offset + base;
   elf_exec(elf);
 }
 

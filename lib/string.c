@@ -211,7 +211,7 @@ extern int strcspn(char *str, const char *rejected)
  */
 char *strchr(const char *str, char ch)
 {
-    char *ptr = str;
+    char *ptr = (char *)str;
     int len = strlen(str);
 
     for (int i = 0; i < len && *ptr != '\0'; ++i, ptr++)

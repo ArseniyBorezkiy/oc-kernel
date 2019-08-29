@@ -33,7 +33,7 @@ int main(char argc, char **argv)
     headers[i].magic = 0xBF;
   }
 
-  FILE *wstream = fopen("./initrd.img", "w");
+  FILE *wstream = fopen("./bin/initrd.img", "w");
   unsigned char *data = (unsigned char *)malloc(off);
   fwrite(&nheaders, sizeof(int), 1, wstream);
   fwrite(headers, sizeof(struct initrd_header), 64, wstream);

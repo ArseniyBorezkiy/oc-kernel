@@ -20,12 +20,14 @@ static void tty_read(struct io_buf_t *io_buf, void *buffer, u_int size);
 static void tty_ioctl(struct io_buf_t *io_buf, int command);
 static void tty_write_ch(struct io_buf_t *io_buf, char ch);
 static char tty_read_ch(struct io_buf_t *io_buf);
+static void tty_keyboard_ih_low(int number, struct ih_low_data_t *data);
 
 /*
  * Data
  */
-static char const tty_output_buff[VIDEO_SCREEN_SIZE]; /* teletype output buffer */
-static char const tty_input_buff[VIDEO_SCREEN_WIDTH]; /* teletype input buffer */
+static const char *tty_dev_name = TTY_DEV_NAME;
+static char tty_output_buff[VIDEO_SCREEN_SIZE]; /* teletype output buffer */
+static char tty_input_buff[VIDEO_SCREEN_WIDTH]; /* teletype input buffer */
 char *tty_input_buff_ptr = tty_input_buff;
 bool read_line_mode = false;
 
@@ -53,7 +55,7 @@ extern void tty_init()
     /* add interrupt handlers */
     dev.ih_list.slot_size = sizeof(struct ih_low_t);
     entry = clist_insert_entry_after(&dev.ih_list, dev.ih_list.head);
-    ih_low = (struct clist_head_t *)entry->data;
+    ih_low = (struct ih_low_t *)entry->data;
     ih_low->number = INT_KEYBOARD;
     ih_low->handler = tty_keyboard_ih_low;
 
@@ -61,13 +63,15 @@ extern void tty_init()
 }
 
 /*
- * Api - Key pressed
+ * Key pressed
  */
-extern void tty_keyboard_ih_low(int number, struct ih_low_data_t *data)
+static void tty_keyboard_ih_low(int number, struct ih_low_data_t *data)
 {
     /* write character to input buffer */
     char *keycode = data->data;
-    char ch = keyboard_map[*keycode];
+    int index = *keycode;
+    assert(index < 128);
+    char ch = keyboard_map[index];
     *tty_input_buff_ptr++ = ch;
 }
 
