@@ -3,13 +3,13 @@
 #include <lib/stdtypes.h>
 #include <boot/multiboot.h>
 
-#define INITRD_MAX_FILES 64
+#define INITRD_MAX_FILES 1
 #define INITRD_MAGIC 0xBF
 
 extern struct initrd_node_t
 {
   unsigned char magic; /* magic number */
-  char name[64];       /* file name */
+  char name[8];        /* file name */
   unsigned int offset; /* file base */
   unsigned int length; /* file length */
 };

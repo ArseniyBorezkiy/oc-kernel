@@ -20,7 +20,7 @@
 #define MSG_KERNEL_SYSLOG_INITIALIZED (MSG_KERNEL_PREFIX "syslog initialized" MSG_CRLN)
 #define MSG_KERNEL_HEAP_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory limit exceed" MSG_CRLN)
 #define MSG_KERNEL_HEAP_TABLE_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory table limit exceed" MSG_CRLN)
-#define MSG_KERNEL_INITRD_AREA (MSG_KERNEL_PREFIX "init ram disk area %X-%X" MSG_CRLN)
+#define MSG_KERNEL_INITRD_AREA (MSG_KERNEL_PREFIX "init ram disk area %X-%X (%u)" MSG_CRLN)
 #define MSG_KERNEL_ELF_LOADING (MSG_KERNEL_PREFIX "loading elf (sections=%u)" MSG_CRLN)
 #define MSG_IRQ (MSG_KERNEL_PREFIX "irq %u" MSG_CRLN)
 #define MSG_SYSCALL (MSG_KERNEL_PREFIX "syscall %u" MSG_CRLN)

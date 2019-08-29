@@ -96,9 +96,11 @@ build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/sched.c -o ./bin/sched.c.o
 
 build-initrd: build-initrd-elfs build-initrd-fs-generator ./bin/sh.elf
+	touch ./bin/initrd.img
 	rm ./bin/initrd.img
 	touch ./bin/initrd.img
-	./bin/fsgen.elf ./bin/sh.rd.c.o sh.elf
+	objcopy -S -g --strip-unneeded ./bin/sh.elf ./bin/sh.tiny.elf
+	./bin/fsgen.elf ./bin/sh.tiny.elf sh.elf
 
 build-initrd-elfs: ./initrd/sh.c
 	$(CC) $(CC_USER_FLAGS) -c ./initrd/sh.c -o ./bin/sh.rd.c.o
@@ -113,7 +115,7 @@ build-initrd-fs-generator: ./initrd/utils/fsgen.c
 #   use -d int to debug mmu & faults & interrupts
 #
 start:
-	qemu-system-i386 -no-reboot -no-shutdown -kernel ./bin/kernel.elf -initrd ./bin/initrd.img
+	qemu-system-i386 -no-reboot -no-shutdown -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
 
 #
 # Delete binary files
@@ -132,11 +134,13 @@ debug:
 #
 dump:
 	objdump -d ./bin/kernel.elf > ./bin/kernel.elf.dump.txt
-	objdump -d ./bin/hello.elf > ./bin/hello.elf.dump.txt
+	objdump -d ./bin/sh.elf > ./bin/sh.elf.dump.txt
+	objdump -d ./bin/sh.tiny.elf > ./bin/sh.tiny.elf.dump.txt
 
 headers:
 	objdump -h ./bin/kernel.elf > ./bin/kernel.elf.head.txt
-	objdump -x ./bin/hello.elf > ./bin/hello.elf.head.txt
+	objdump -x ./bin/sh.elf > ./bin/sh.elf.head.txt
+	objdump -x ./bin/sh.tiny.elf > ./bin/sh.tiny.elf.head.txt
 
 #
 # Listing

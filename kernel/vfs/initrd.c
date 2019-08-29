@@ -23,7 +23,7 @@ extern void initrd_autorun(struct mod_addr_t *mods_addr, int mods_count)
   u32 start = mods_addr[0].start;
   u32 end = mods_addr[0].end;
 
-  printf(MSG_KERNEL_INITRD_AREA, start, end);
+  printf(MSG_KERNEL_INITRD_AREA, start, end, mods_count);
 
   /* autorun files */
   initrd_exec(shell_elf, start);
@@ -45,7 +45,7 @@ extern void initrd_exec(char *name, size_t base)
   assert(node != null);
 
   /* exec elf */
-  elf = (struct elf_header_t *)node->offset + base;
+  elf = (struct elf_header_t *)(node->offset + base);
   elf_exec(elf);
 }
 

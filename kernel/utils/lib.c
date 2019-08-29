@@ -52,7 +52,6 @@ static void test_sprintf()
     char *save_ptr = null;
     char *token_1 = strtok_r(cmd, " ", &save_ptr);
     char *token_2 = strtok_r(null, " ", &save_ptr);
-    printf("%s %s", token_1, token_2);
     assert(!strcmp(token_1, "fork"));
     assert(!strcmp(token_2, "1"));
     /* atou */
