@@ -95,15 +95,18 @@ build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/task.c -o ./bin/task.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/sched.c -o ./bin/sched.c.o
 
-build-initrd: build-initrd-elfs ./bin/sh.elf
+build-initrd: build-initrd-elfs build-initrd-fs-generator ./bin/sh.elf
 	rm ./bin/initrd.img
 	touch ./bin/initrd.img
-	$(DD) if=./bin/sh.elf of=./bin/initrd.img
+	./bin/fsgen.elf ./bin/sh.rd.c.o sh.elf
 
 build-initrd-elfs: ./initrd/sh.c
 	$(CC) $(CC_USER_FLAGS) -c ./initrd/sh.c -o ./bin/sh.rd.c.o
 	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/sh.elf ./bin/sh.rd.c.o \
 		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o
+
+build-initrd-fs-generator: ./initrd/utils/fsgen.c
+	$(CC) -o ./bin/fsgen.elf ./initrd/utils/fsgen.c
 
 #
 # Run kernel in emulator

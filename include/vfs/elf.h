@@ -54,5 +54,5 @@ struct elf_header_t
 /*
  * Api
  */
-extern void elf_load(struct elf_header_t *header);
+extern void elf_exec(struct elf_header_t *header);
 extern void elf_dump(struct elf_header_t *header);

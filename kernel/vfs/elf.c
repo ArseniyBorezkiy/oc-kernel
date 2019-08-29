@@ -10,9 +10,10 @@
 static u_short next_tid = TID_USER; /* tid allocator */
 
 /*
- * Api - load elf file to memory
+ * Api - execute elf as a task
  */
-extern void elf_load(struct elf_header_t *header) {
+extern void elf_exec(struct elf_header_t *header)
+{
   assert(header->e_ident.ei_magic == EI_MAGIC);
 
   printf(MSG_KERNEL_ELF_LOADING, header->e_phnum);
@@ -22,7 +23,8 @@ extern void elf_load(struct elf_header_t *header) {
   size_t entry_point = header->e_entry;
 
   // load sections in memory
-  for (int i = 0; i < header->e_phnum; ++i) {
+  for (int i = 0; i < header->e_phnum; ++i)
+  {
     struct elf_program_header_t *p_header = (void *)(header->e_phoff + elf_base + i * header->e_phentsize);
     // allocate pages
     u_int pages = (p_header->p_memsz / MM_PAGE_SIZE) + 1;
@@ -60,7 +62,8 @@ extern void elf_dump(struct elf_header_t *header)
   {
     struct elf_program_header_t *p_header = (void *)(header->e_phoff + elf_base + i * header->e_phentsize);
 
-    if (p_header->p_filesz == 0) {
+    if (p_header->p_filesz == 0)
+    {
       continue;
     }
 
@@ -71,7 +74,7 @@ extern void elf_dump(struct elf_header_t *header)
     printf("    segment offset from file begin: %X\n", p_header->p_offset);
     printf("    segment size in file: %X\n", p_header->p_filesz);
     printf("    alignment: %X\n", p_header->p_align);
-    
+
     assert(header->e_phentsize == sizeof(struct elf_program_header_t));
   }
 }
