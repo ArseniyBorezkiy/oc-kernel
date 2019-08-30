@@ -56,6 +56,8 @@ extern bool task_create(u_short tid, void *address)
     task->time = 0;
     task->pages = null;
     task->pages_count = 0;
+    task->page_dir = null;
+    task->page_table = null;
 
     /* set flags */
     *(u32 *)(&task->flags) = asm_get_eflags() | 0x200;
@@ -81,17 +83,20 @@ extern void task_delete(struct task_t *task)
     printf(MSG_SCHED_TID_DELETE, (u_int)task->tid);
     assert(task != null);
 
-    /* free memory */
+    /* free stack memory */
     free(task->kstack);
     free(task->ustack);
     task->kstack = null;
     task->ustack = null;
+    /* free user pages memory */
     if (task->pages_count > 0)
     {
-        mm_free_pages(task->pages, task->pages_count);
+        mm_phys_free_pages(task->pages, task->pages_count);
         task->pages = null;
         task->pages_count = 0;
     }
+    /* clear resources */
+    mmu_destroy_user_page_directory(task->page_dir, task->page_table);
 
     clist_delete_entry(&task_list, (struct clist_head_t *)task);
 }

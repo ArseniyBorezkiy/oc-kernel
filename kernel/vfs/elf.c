@@ -1,9 +1,11 @@
 #include <arch/reg.h>
+#include <arch/mmu.h>
 #include <vfs/elf.h>
 #include <mm/mm.h>
 #include <sched/task.h>
 #include <lib/assert.h>
 #include <lib/string.h>
+#include <lib/stdlib.h>
 #include <lib/stdio.h>
 #include <messages.h>
 
@@ -24,6 +26,8 @@ extern void elf_exec(struct elf_header_t *header)
 
   void *pages = null;
   u_int pages_count = 0;
+  void *page_table = null;
+  void *page_dir = null;
 
   // load sections in memory
   assert(header->e_phnum == 1);
@@ -33,10 +37,16 @@ extern void elf_exec(struct elf_header_t *header)
     // allocate pages
     pages_count = (p_header->p_memsz / MM_PAGE_SIZE) + 1;
     assert(pages_count > 0);
-    pages = mm_alloc_pages(pages_count);
+    pages = mm_phys_alloc_pages(pages_count);
     void *section = (void *)(elf_base + p_header->p_offset);
     memcpy(pages, section, p_header->p_memsz);
-    // set page directory
+    // setup virtual memory
+    page_table = mmu_create_user_page_table();
+    page_dir = mmu_create_user_page_directory(page_table);
+    for (int i = 0; i < pages_count; ++i)
+    {
+      mmu_occupy_user_page(page_table, (void *)((size_t)pages + i * MM_PAGE_SIZE));
+    }
   }
 
   // create task
@@ -49,6 +59,8 @@ extern void elf_exec(struct elf_header_t *header)
   task->status = TASK_RUNNING;
   task->pages = pages;
   task->pages_count = pages_count;
+  task->page_dir = page_dir;
+  task->page_table = page_table;
   strncpy(task->name, "elf", sizeof(task->name));
 }
 

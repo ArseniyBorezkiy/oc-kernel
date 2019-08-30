@@ -32,7 +32,8 @@ struct page_table_entry_t
     u32 page_phys_addr : 20; /* 4Kb | 4MB */
 } attribute(packed);
 
-#define PAGE_TABLE_ENTRIES_COUNT 1024
+#define MMU_PAGE_TABLE_ENTRIES_COUNT 1024
+#define MMU_KERNEL_PAGES_COUNT 768
 
 /*
  * Api
@@ -41,3 +42,7 @@ extern void mmu_init();
 extern void mmu_enable();
 extern void mmu_dump();
 extern struct page_directory_entry_t *mmu_get_kdirectory();
+extern struct page_table_entry_t *mmu_create_user_page_table();
+extern struct page_directory_entry_t *mmu_create_user_page_directory(struct page_table_entry_t *page_table);
+extern void mmu_destroy_user_page_directory(struct page_directory_entry_t *upage_dir, struct page_table_entry_t *upage_table);
+extern bool mmu_occupy_user_page(struct page_table_entry_t *upage_table, void *phys_addr);

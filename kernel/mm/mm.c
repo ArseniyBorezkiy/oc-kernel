@@ -24,7 +24,7 @@ extern void mm_init()
 /*
  * Api - allocate pages
  */
-extern void *mm_alloc_pages(u_int count)
+extern void *mm_phys_alloc_pages(u_int count)
 {
   /* find free pages */
   for (int i = 0; i < MM_DYNAMIC_PAGES_COUNT; ++i)
@@ -54,7 +54,7 @@ extern void *mm_alloc_pages(u_int count)
 /*
  * Api - free page
  */
-extern bool mm_free_pages(void *ptr, u_int count)
+extern bool mm_phys_free_pages(void *ptr, u_int count)
 {
   size_t address = (size_t)ptr;
   assert(address >= MM_AREA_START);

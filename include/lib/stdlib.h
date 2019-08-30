@@ -6,6 +6,7 @@
 #include <utils/kheap.h>
 #include <utils/kpanic.h>
 #define malloc(size) kmalloc(size)
+#define malloc_a(size, align) kmalloc_a(size, align)
 #define free(addr) kfree(addr)
 #define abort(addr, ...) kpanic(addr, ##__VA_ARGS__)
 #else

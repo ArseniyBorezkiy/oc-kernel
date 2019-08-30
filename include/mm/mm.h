@@ -13,6 +13,6 @@
  * Api
  */
 extern void mm_init();
-extern void *mm_alloc_pages(u_int count);
-extern bool mm_free_pages(void *ptr, u_int count);
+extern void *mm_phys_alloc_pages(u_int count);
+extern bool mm_phys_free_pages(void *ptr, u_int count);
 extern void mm_dump();
