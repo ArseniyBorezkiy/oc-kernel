@@ -1,5 +1,5 @@
-#include <lib/stdtypes.h>
 #include <lib/math.h>
+#include <lib/stdtypes.h>
 
 /*
  * Api - Minimun of two numbers
@@ -7,8 +7,7 @@
 
 extern unsigned int min(unsigned int a, unsigned int b)
 {
-    if (a <= b)
-    {
+    if (a <= b) {
         return a;
     }
 
@@ -21,8 +20,7 @@ extern unsigned int min(unsigned int a, unsigned int b)
 
 extern unsigned int max(unsigned int a, unsigned int b)
 {
-    if (a > b)
-    {
+    if (a > b) {
         return a;
     }
 

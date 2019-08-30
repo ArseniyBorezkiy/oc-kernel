@@ -2,8 +2,7 @@
 
 #include <lib/stdtypes.h>
 
-struct page_directory_entry_t
-{
+struct page_directory_entry_t {
     u8 present : 1;
     u8 read_write : 1;
     u8 user_supervisor : 1;
@@ -17,8 +16,7 @@ struct page_directory_entry_t
     u32 page_table_addr : 20; /* 4Kb */
 } attribute(packed);
 
-struct page_table_entry_t
-{
+struct page_table_entry_t {
     u8 present : 1;
     u8 read_write : 1;
     u8 user_supervisor : 1;
@@ -41,8 +39,8 @@ struct page_table_entry_t
 extern void mmu_init();
 extern void mmu_enable();
 extern void mmu_dump();
-extern struct page_directory_entry_t *mmu_get_kdirectory();
-extern struct page_table_entry_t *mmu_create_user_page_table();
-extern struct page_directory_entry_t *mmu_create_user_page_directory(struct page_table_entry_t *page_table);
-extern void mmu_destroy_user_page_directory(struct page_directory_entry_t *upage_dir, struct page_table_entry_t *upage_table);
-extern bool mmu_occupy_user_page(struct page_table_entry_t *upage_table, void *phys_addr);
+extern struct page_directory_entry_t* mmu_get_kdirectory();
+extern struct page_table_entry_t* mmu_create_user_page_table();
+extern struct page_directory_entry_t* mmu_create_user_page_directory(struct page_table_entry_t* page_table);
+extern void mmu_destroy_user_page_directory(struct page_directory_entry_t* upage_dir, struct page_table_entry_t* upage_table);
+extern bool mmu_occupy_user_page(struct page_table_entry_t* upage_table, void* phys_addr);

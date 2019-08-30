@@ -11,7 +11,7 @@
 #define SYSCALL_CLOSE 7
 #define SYSCALL_IOCTL 8
 
-/*
+/* 
  * Api
  */
 extern void asm_syscall(u_int function, ...);

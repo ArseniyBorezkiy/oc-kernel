@@ -38,32 +38,32 @@ asm_get_ss:
 # u32 asm_get_esp()
 #
 asm_get_esp:
-  mov %esp,%eax
-  ret
+    mov %esp,%eax
+    ret
 
 #
 # Get control register
 # u32 asm_get_cr0()
 #
 asm_get_cr0:
-  mov %cr0,%eax
-  ret
+    mov %cr0,%eax
+    ret
 
 #
 # Get page fault linear address register
 # u32 asm_get_cr2()
 #
 asm_get_cr2:
-  mov %cr2,%eax
-  ret
+    mov %cr2,%eax
+    ret
   
 #
 # Get page directory register
 # u32 asm_get_cr3()
 #
 asm_get_cr3:
-  mov %cr3,%eax
-  ret
+    mov %cr3,%eax
+    ret
 
 #
 # Get flags register
@@ -79,10 +79,10 @@ asm_get_eflags:
 # void asm_switch_context(u32 esp, u32 cr3)
 #
 asm_switch_context:
-  mov 4(%esp),%ebp # ebp = esp
-  mov 8(%esp),%eax # eax = cr3
-  mov %eax,%cr3
-  mov %ebp,%esp
-  popal
-  sti
-  iretl
+    mov 4(%esp),%ebp # ebp = esp
+    mov 8(%esp),%eax # eax = cr3
+    mov %eax,%cr3
+    mov %ebp,%esp
+    popal
+    sti
+    iretl

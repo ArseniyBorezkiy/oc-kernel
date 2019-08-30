@@ -8,12 +8,12 @@ static void message_loop();
  */
 extern int main()
 {
-  stdio_init();
-  printf(MSG_KERNEL_NAME);
-  message_loop();
-  stdio_deinit();
+    stdio_init();
+    printf(MSG_KERNEL_NAME);
+    message_loop();
+    stdio_deinit();
 
-  return 0;
+    return 0;
 }
 
 /*
@@ -21,11 +21,10 @@ extern int main()
  */
 static void message_loop()
 {
-  char buff[255];
+    char buff[255];
 
-  while (1)
-  {
-    fread(stdin, buff, 255);
-    printf("%s", buff);
-  }
+    while (1) {
+        fread(stdin, buff, 255);
+        printf("%s", buff);
+    }
 }

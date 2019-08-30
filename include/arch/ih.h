@@ -21,9 +21,9 @@ extern void asm_ih_alignment_check();
 /*
  * Api - IRQ
  */
-extern void ih_timer(size_t *ret_addr, size_t *reg_addr);
+extern void ih_timer(size_t* ret_addr, size_t* reg_addr);
 extern void ih_keyboard();
-extern void ih_syscall(u_int *function);
+extern void ih_syscall(u_int* function);
 extern void asm_ih_keyboard();
 extern void asm_ih_timer();
-extern void asm_ih_syscall(u_int *function);
+extern void asm_ih_syscall(u_int* function);

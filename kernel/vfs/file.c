@@ -1,21 +1,22 @@
-#include <vfs/file.h>
 #include <dev/utils/video.h>
-#include <lib/string.h>
 #include <lib/assert.h>
+#include <lib/string.h>
+#include <vfs/file.h>
 
-static bool file_list_by_name_detector(struct clist_head_t *current, va_list list);
+static bool file_list_by_name_detector(struct clist_head_t* current, va_list list);
 
 /*
  * Data
  */
 struct clist_definition_t file_list = {
     .head = null,
-    .slot_size = sizeof(struct file_t)};
+    .slot_size = sizeof(struct file_t)
+};
 
 static int next_fd = 1; /* fd allocator */
 
 /*
- * Api - init module
+ * Api - init module 
  */
 extern void file_init()
 {
@@ -26,42 +27,35 @@ extern void file_init()
 /*
  * Api - open file
  */
-extern struct io_buf_t *file_open(char *path, int mod_rw)
+extern struct io_buf_t* file_open(char* path, int mod_rw)
 {
-    struct clist_head_t *entry;
-    struct file_t *file;
-    struct dev_t *dev;
+    struct clist_head_t* entry;
+    struct file_t* file;
+    struct dev_t* dev;
 
     /* try to find already opened file */
     entry = clist_find(&file_list, file_list_by_name_detector, path, mod_rw);
-    file = (struct file_t *)entry->data;
-    if (entry != null)
-    {
+    file = (struct file_t*)entry->data;
+    if (entry != null) {
         return &file->io_buf;
     }
 
     /* create list entry */
     entry = clist_insert_entry_after(&file_list, file_list.head);
-    file = (struct file_t *)entry->data;
+    file = (struct file_t*)entry->data;
 
     /* whether file is device */
     dev = dev_find_by_name(path);
-    if (dev != null)
-    {
+    if (dev != null) {
         /* device */
         file->dev = dev;
 
-        if (mod_rw == MOD_R)
-        {
+        if (mod_rw == MOD_R) {
             file->io_buf.base = dev->base_r;
-        }
-        else if (mod_rw == MOD_W)
-        {
+        } else if (mod_rw == MOD_W) {
             file->io_buf.base = dev->base_w;
         }
-    }
-    else
-    {
+    } else {
         /* fs node */
         file->dev = null;
         unreachable(); /* fs in not implemented yet */
@@ -81,20 +75,17 @@ extern struct io_buf_t *file_open(char *path, int mod_rw)
 /*
  * Api - read from file
  */
-extern void file_read(struct io_buf_t *io_buf, char *buff, u_int size)
+extern void file_read(struct io_buf_t* io_buf, char* buff, u_int size)
 {
-    struct file_t *file;
+    struct file_t* file;
 
-    file = (struct file_t *)io_buf->file;
+    file = (struct file_t*)io_buf->file;
 
     /* whether file is device */
-    if (file->dev != null)
-    {
+    if (file->dev != null) {
         /* device */
         file->dev->read_cb(&file->io_buf, buff, size);
-    }
-    else
-    {
+    } else {
         /* fs node */
         unreachable(); /* fs in not implemented yet */
     }
@@ -103,20 +94,17 @@ extern void file_read(struct io_buf_t *io_buf, char *buff, u_int size)
 /*
  * Api - write to file
  */
-extern void file_write(struct io_buf_t *io_buf, char *data, u_int size)
+extern void file_write(struct io_buf_t* io_buf, char* data, u_int size)
 {
-    struct file_t *file;
+    struct file_t* file;
 
-    file = (struct file_t *)io_buf->file;
+    file = (struct file_t*)io_buf->file;
 
     /* whether file is device */
-    if (file->dev != null)
-    {
+    if (file->dev != null) {
         /* device */
         file->dev->write_cb(&file->io_buf, data, size);
-    }
-    else
-    {
+    } else {
         /* fs node */
         unreachable(); /* fs in not implemented yet */
     }
@@ -125,20 +113,17 @@ extern void file_write(struct io_buf_t *io_buf, char *data, u_int size)
 /*
  * Api - specific file command
  */
-extern void file_ioctl(struct io_buf_t *io_buf, int command)
+extern void file_ioctl(struct io_buf_t* io_buf, int command)
 {
-    struct file_t *file;
+    struct file_t* file;
 
-    file = (struct file_t *)io_buf->file;
+    file = (struct file_t*)io_buf->file;
 
     /* whether file is device */
-    if (file->dev != null)
-    {
+    if (file->dev != null) {
         /* device */
         file->dev->ioctl_cb(&file->io_buf, command);
-    }
-    else
-    {
+    } else {
         /* fs node */
         unreachable(); /* fs in not implemented yet */
     }
@@ -147,10 +132,10 @@ extern void file_ioctl(struct io_buf_t *io_buf, int command)
 /*
  * Find file by name
  */
-static bool file_list_by_name_detector(struct clist_head_t *current, va_list list)
+static bool file_list_by_name_detector(struct clist_head_t* current, va_list list)
 {
-    char *name = va_arg(list, char *);
+    char* name = va_arg(list, char*);
     int mod_rw = va_arg(list, int);
-    struct file_t *file = (struct file_t *)current->data;
+    struct file_t* file = (struct file_t*)current->data;
     return mod_rw == file->mod_rw && !strcmp(name, file->name);
 }

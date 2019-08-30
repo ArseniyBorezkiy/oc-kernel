@@ -2,7 +2,7 @@
 
 #include <boot/multiboot.h>
 
-extern void *kernel_stack; /* kernel stack begin */
+extern void* kernel_stack; /* kernel stack begin */
 
 #define KERNEL_CODE_SEGMENT_SELECTOR 0x08
 #define KERNEL_HEAP_MEMORY_ADDR 0xC0000000
@@ -12,4 +12,4 @@ extern void *kernel_stack; /* kernel stack begin */
 /*
  * Api
  */
-extern void kernel_start(struct multiboot_t *multiboot, void *kstack);
+extern void kernel_start(struct multiboot_t* multiboot, void* kstack);

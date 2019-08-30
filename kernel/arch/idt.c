@@ -1,16 +1,16 @@
 #include <arch/idt.h>
-#include <arch/pic.h>
 #include <arch/ih.h>
+#include <arch/pic.h>
 #include <arch/port.h>
-#include <sched/task.h>
-#include <sched/sched.h>
-#include <lib/stdtypes.h>
-#include <lib/stdio.h>
-#include <messages.h>
 #include <kernel.h>
+#include <lib/stdio.h>
+#include <lib/stdtypes.h>
+#include <messages.h>
+#include <sched/sched.h>
+#include <sched/task.h>
 
 static void idt_fill_entry(u_char offset, size_t addr);
-extern void asm_idt_load(size_t *addr);
+extern void asm_idt_load(size_t* addr);
 
 /*
  * Interrupt descriptor table

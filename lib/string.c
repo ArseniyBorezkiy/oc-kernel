@@ -4,9 +4,9 @@
 /*
  * Api - Calculate string's length
  */
-extern int strlen(const char *s)
+extern int strlen(const char* s)
 {
-    const char *original = s;
+    const char* original = s;
 
     while (*s != '\0')
         s++;
@@ -18,9 +18,9 @@ extern int strlen(const char *s)
  * Api - Strings' copy
  * Copies second string to first
  */
-extern char *strcpy(char *s1, const char *s2)
+extern char* strcpy(char* s1, const char* s2)
 {
-    char *original = s1;
+    char* original = s1;
 
     while (*s2 != '\0')
         *s1++ = *s2++;
@@ -33,13 +33,12 @@ extern char *strcpy(char *s1, const char *s2)
  * Api - Strings' copy
  * Copies second string to first
  */
-extern char *strncpy(char *s1, const char *s2, u_int n)
+extern char* strncpy(char* s1, const char* s2, u_int n)
 {
-    char *original = s1;
+    char* original = s1;
 
     int i = 0;
-    while (*s2 != '\0' && i < n)
-    {
+    while (*s2 != '\0' && i < n) {
         *s1++ = *s2++;
         ++i;
     }
@@ -52,13 +51,12 @@ extern char *strncpy(char *s1, const char *s2, u_int n)
  * Api - Memory copy
  * Copies second buffer to first buffer
  */
-extern void *memcpy(void *buf1, const void *buf2, u_int bytes)
+extern void* memcpy(void* buf1, const void* buf2, u_int bytes)
 {
-    u8 *buf_dst = buf1;
-    const u8 *buf_src = buf2;
+    u8* buf_dst = buf1;
+    const u8* buf_src = buf2;
 
-    for (int i = 0; i < bytes; ++i)
-    {
+    for (int i = 0; i < bytes; ++i) {
         *buf_dst++ = *buf_src++;
     }
 
@@ -69,12 +67,11 @@ extern void *memcpy(void *buf1, const void *buf2, u_int bytes)
  * Api - Memory set
  * Fills buffer with value
  */
-extern void *memset(void *buf, u8 value, u_int bytes)
+extern void* memset(void* buf, u8 value, u_int bytes)
 {
-    u8 *buf_dst = buf;
+    u8* buf_dst = buf;
 
-    for (int i = 0; i < bytes; ++i)
-    {
+    for (int i = 0; i < bytes; ++i) {
         *buf_dst++ = (u8)value;
     }
 
@@ -84,10 +81,9 @@ extern void *memset(void *buf, u8 value, u_int bytes)
 /*
  * Api - Compare strings
  */
-extern int strcmp(const char *s1, const char *s2)
+extern int strcmp(const char* s1, const char* s2)
 {
-    while (1)
-    {
+    while (1) {
         if (*s1 != *s2)
             return (*s1 - *s2);
         if (*s1 == '\0')
@@ -100,10 +96,9 @@ extern int strcmp(const char *s1, const char *s2)
 /*
  * Api - Compare strings
  */
-extern int strncmp(const char *s1, const char *s2, u_int n)
+extern int strncmp(const char* s1, const char* s2, u_int n)
 {
-    for (int i = 0; i < n; ++i)
-    {
+    for (int i = 0; i < n; ++i) {
         if (*s1 != *s2)
             return (*s1 - *s2);
         if (*s1 == '\0')
@@ -119,9 +114,9 @@ extern int strncmp(const char *s1, const char *s2, u_int n)
  * Api - Strings' concatenation
  * Append second to the end of the first
  */
-extern char *strcat(char *s1, const char *s2)
+extern char* strcat(char* s1, const char* s2)
 {
-    char *original = s1;
+    char* original = s1;
 
     while (*s1 != '\0')
         s1++;
@@ -135,10 +130,9 @@ extern char *strcat(char *s1, const char *s2)
 /*
  * Api - Extend string with attribute symbol
  */
-extern char *strext(char *buf, const char *str, char sym)
+extern char* strext(char* buf, const char* str, char sym)
 {
-    while (*str != '\0')
-    {
+    while (*str != '\0') {
         *buf++ = *str++;
         *buf++ = sym;
     }
@@ -149,26 +143,22 @@ extern char *strext(char *buf, const char *str, char sym)
 /*
  * Api - Return length of the accepted region
  */
-extern int strspn(char *str, const char *accept)
+extern int strspn(char* str, const char* accept)
 {
     int len = strlen(accept);
     int i;
 
-    for (i = 0; str[i] != '\0'; ++i)
-    {
+    for (i = 0; str[i] != '\0'; ++i) {
         bool is_found = false;
 
-        for (int j = 0; j < len; ++j)
-        {
-            if (accept[j] == str[i])
-            {
+        for (int j = 0; j < len; ++j) {
+            if (accept[j] == str[i]) {
                 is_found = true;
                 break;
             }
         }
 
-        if (!is_found)
-        {
+        if (!is_found) {
             break;
         }
     }
@@ -179,26 +169,22 @@ extern int strspn(char *str, const char *accept)
 /*
  * Api - Return length of the rejected region
  */
-extern int strcspn(char *str, const char *rejected)
+extern int strcspn(char* str, const char* rejected)
 {
     int len = strlen(rejected);
     int i;
 
-    for (i = 0; str[i] != '\0'; ++i)
-    {
+    for (i = 0; str[i] != '\0'; ++i) {
         bool is_not_found = true;
 
-        for (int j = 0; j < len; ++j)
-        {
-            if (rejected[j] == str[i])
-            {
+        for (int j = 0; j < len; ++j) {
+            if (rejected[j] == str[i]) {
                 is_not_found = false;
                 break;
             }
         }
 
-        if (!is_not_found)
-        {
+        if (!is_not_found) {
             break;
         }
     }
@@ -209,15 +195,13 @@ extern int strcspn(char *str, const char *rejected)
 /*
  * Api - Search character in string
  */
-char *strchr(const char *str, char ch)
+char* strchr(const char* str, char ch)
 {
-    char *ptr = (char *)str;
+    char* ptr = (char*)str;
     int len = strlen(str);
 
-    for (int i = 0; i < len && *ptr != '\0'; ++i, ptr++)
-    {
-        if (*ptr == ch)
-        {
+    for (int i = 0; i < len && *ptr != '\0'; ++i, ptr++) {
+        if (*ptr == ch) {
             return ptr;
         }
     }
@@ -228,33 +212,29 @@ char *strchr(const char *str, char ch)
 /*
  * Api - Parse string
  */
-extern char *strtok_r(char *str, const char *delim, char **save_ptr)
+extern char* strtok_r(char* str, const char* delim, char** save_ptr)
 {
-    char *end;
+    char* end;
 
-    if (str == null)
-    {
+    if (str == null) {
         str = *save_ptr;
     }
 
-    if (*str == '\0')
-    {
+    if (*str == '\0') {
         *save_ptr = str;
         return null;
     }
 
     /* scan leading delimiters */
     str += strspn(str, delim);
-    if (*str == '\0')
-    {
+    if (*str == '\0') {
         *save_ptr = str;
         return null;
     }
 
     /* find the end of the token */
     end = str + strcspn(str, delim);
-    if (*end == '\0')
-    {
+    if (*end == '\0') {
         *save_ptr = end;
         return str;
     }
@@ -268,13 +248,12 @@ extern char *strtok_r(char *str, const char *delim, char **save_ptr)
 /*
  * Api - Extend memory with attribute symbol
  */
-extern char *memext(void *buff_dst, u_int n, const void *buff_src, char sym)
+extern char* memext(void* buff_dst, u_int n, const void* buff_src, char sym)
 {
-    u8 *buff_dst_ptr = buff_dst;
-    u8 *buff_src_ptr = (u8 *)buff_src;
+    u8* buff_dst_ptr = buff_dst;
+    u8* buff_src_ptr = (u8*)buff_src;
 
-    for (int i = 0; i < n; ++i)
-    {
+    for (int i = 0; i < n; ++i) {
         *buff_dst_ptr++ = *buff_src_ptr++;
         *buff_dst_ptr++ = sym;
     }
@@ -285,39 +264,30 @@ extern char *memext(void *buff_dst, u_int n, const void *buff_src, char sym)
 /*
  * Api - Integer to string
  */
-extern char *itoa(int value, char *str, int base)
+extern char* itoa(int value, char* str, int base)
 {
-    char *original = str;
+    char* original = str;
     char digit;
 
-    do
-    {
+    do {
         digit = value % base;
         value = value / base;
-        if (digit < 10)
-        {
+        if (digit < 10) {
             *str++ = digit | 0x30; /* number */
-        }
-        else
-        {
+        } else {
             *str++ = ((digit - 10) | 0x40) + 1; /* alpha */
         }
     } while (value > 0);
 
-    if (base == 16)
-    {
+    if (base == 16) {
         /* hexedecimal integer */
         *str++ = 'x';
         *str++ = '0';
-    }
-    else if (base == 8)
-    {
+    } else if (base == 8) {
         /* octal integer */
         *str++ = 'o';
         *str++ = '0';
-    }
-    else if (base == 2)
-    {
+    } else if (base == 2) {
         /* binary integer */
         *str++ = 'b';
         *str++ = '0';
@@ -332,12 +302,11 @@ extern char *itoa(int value, char *str, int base)
 /*
  * Api - String to integer
  */
-extern unsigned int atou(char *str)
+extern unsigned int atou(char* str)
 {
     int k = 0;
 
-    while (*str)
-    {
+    while (*str) {
         k = (k << 3) + (k << 1) + (*str) - '0';
         str++;
     }
@@ -348,15 +317,14 @@ extern unsigned int atou(char *str)
 /*
  * Api - Inverse string
  */
-extern char *strinv(char *str)
+extern char* strinv(char* str)
 {
     int i;
     u_int n = strlen(str);
     char buf[n + 2];
-    char *cur = buf;
+    char* cur = buf;
 
-    for (i = n - 1; i >= 0; --i)
-    {
+    for (i = n - 1; i >= 0; --i) {
         *cur++ = str[i];
     }
     *cur++ = '\0';
@@ -369,7 +337,7 @@ extern char *strinv(char *str)
 /*
  * Api - Print to string
  */
-extern unsigned int sprintf(char *s1, const char *s2, ...)
+extern unsigned int sprintf(char* s1, const char* s2, ...)
 {
     va_list list;
     va_start(list, s2);
@@ -380,7 +348,7 @@ extern unsigned int sprintf(char *s1, const char *s2, ...)
 /*
  * Api - Print to limited string
  */
-extern unsigned int snprintf(char *s1, unsigned int n, const char *s2, ...)
+extern unsigned int snprintf(char* s1, unsigned int n, const char* s2, ...)
 {
     va_list list;
     va_start(list, s2);
@@ -391,7 +359,7 @@ extern unsigned int snprintf(char *s1, unsigned int n, const char *s2, ...)
 /*
  * Api - Print to string
  */
-extern unsigned int vsprintf(char *s1, const char *s2, va_list list)
+extern unsigned int vsprintf(char* s1, const char* s2, va_list list)
 {
     return vsnprintf(s1, 4 * 1024, s2, list);
 }
@@ -399,26 +367,21 @@ extern unsigned int vsprintf(char *s1, const char *s2, va_list list)
 /*
  * Api - Print to limited string
  */
-extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list list)
+extern unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list list)
 {
     u_int j = 0;
     size_t count = 0;
     char number[16];
-    char *cur = s1;
-    char *str;
+    char* cur = s1;
+    char* str;
 
-    while (s2[j] != '\0' && j < n)
-    {
-        if (s2[j] != '%')
-        {
+    while (s2[j] != '\0' && j < n) {
+        if (s2[j] != '%') {
             /* text */
             *cur++ = s2[j++];
-        }
-        else if (s2[j] == '%')
-        {
+        } else if (s2[j] == '%') {
             /* control character */
-            switch (s2[++j])
-            {
+            switch (s2[++j]) {
             case 'c':
                 /* character */
                 *cur++ = va_arg(list, char);
@@ -437,7 +400,7 @@ extern unsigned int vsnprintf(char *s1, unsigned int n, const char *s2, va_list 
                 break;
             case 's':
                 /* string */
-                str = va_arg(list, char *);
+                str = va_arg(list, char*);
                 strcpy(cur, str);
                 cur += strlen(str);
                 break;
