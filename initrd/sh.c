@@ -10,7 +10,8 @@ static void message_loop();
 extern int main()
 {
     stdio_init();
-    printf(MSG_KERNEL_NAME);
+    printf("Unix like shell\n");
+    flush();
     message_loop();
     stdio_deinit();
 
@@ -25,8 +26,7 @@ static void message_loop()
     char buff[255];
 
     while (1) {
-        fread(stdin, buff, 255);
-        printf("%s", buff);
-        delay(1000);
+        scanf(buff);
+        delay(1);
     }
 }

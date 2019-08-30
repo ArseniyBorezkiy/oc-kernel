@@ -16,6 +16,7 @@ struct io_buf_t {
 #define IOCTL_FLUSH 2
 #define IOCTL_CLEAR 3
 #define IOCTL_READ_MODE_LINE 4
+#define IOCTL_READ_MODE_ECHO 5
 
 #ifdef KERNEL
 #define printf(msg, ...) kprintf(msg, ##__VA_ARGS__)
@@ -27,6 +28,7 @@ struct io_buf_t {
 #define clear() uclear()
 #define flush() uflush()
 #define printf(msg, ...) uprintf(msg, ##__VA_ARGS__)
+#define scanf(msg, ...) uscanf(msg, ##__VA_ARGS__)
 #define vprintf(msg, list) uvprintf(msg, list)
 #endif
 
@@ -50,10 +52,11 @@ extern void uprintf(const char* format, ...);
 extern void unprintf(const char* format, u_int n, ...);
 extern void uvprintf(const char* format, va_list list);
 extern void uvnprintf(const char* format, u_int n, va_list list);
+extern void uscanf(char* buff, ...);
 
 extern FILE* fopen(const char* name, int mod_rw);
 extern void fclose(FILE* file);
-extern void fread(FILE* file, char* buff, u_int size);
+extern u_int fread(FILE* file, char* buff, u_int size);
 extern void fwrite(FILE* file, const char* data, u_int size);
 extern void fputs(FILE* file, const char* str);
 extern void fputc(FILE* file, char ch);

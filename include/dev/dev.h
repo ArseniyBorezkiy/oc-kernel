@@ -9,7 +9,7 @@
  * Device definition
  */
 
-typedef void (*dev_read_cb_t)(struct io_buf_t* io_buf, void* buff, u_int size);
+typedef u_int (*dev_read_cb_t)(struct io_buf_t* io_buf, void* buff, u_int size);
 typedef void (*dev_write_cb_t)(struct io_buf_t* io_buf, void* data, u_int size);
 typedef void (*dev_ioctl_cb_t)(struct io_buf_t* io_buf, int command);
 

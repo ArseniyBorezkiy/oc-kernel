@@ -116,6 +116,7 @@ asm_ih_syscall:
     pushl (%ebx) # &function
     call ih_syscall
     mov %ebp,%esp
+    mov %eax,28(%esp)
     popal
     iretl
 

@@ -22,6 +22,8 @@ extern void stdio_init()
     stdin = fopen(tty_dev_name, MOD_R);
     stdout = fopen(tty_dev_name, MOD_W);
     asm_syscall(SYSCALL_IOCTL, stdout, IOCTL_INIT);
+    asm_syscall(SYSCALL_IOCTL, stdin, IOCTL_READ_MODE_LINE);
+    asm_syscall(SYSCALL_IOCTL, stdin, IOCTL_READ_MODE_ECHO);
 }
 
 /*
@@ -111,6 +113,20 @@ extern void uvnprintf(const char* format, u_int n, va_list list)
     uputs(buff);
 }
 
+/*
+ * Api - Read from file to string
+ */
+extern void uscanf(char* buff, ...)
+{
+    u_int readed = 0;
+    do {
+        readed = fread(stdin, buff, 255);
+    } while (readed == 0);
+    buff[readed] = '\0';
+    uprintf("\n");
+    uflush();
+}
+
 //
 // File API
 //
@@ -136,9 +152,9 @@ extern void fclose(FILE* file)
 /*
  * Api - Read from file to buffer
  */
-extern void fread(FILE* file, char* buff, u_int size)
+extern u_int fread(FILE* file, char* buff, u_int size)
 {
-    asm_syscall(SYSCALL_READ, file, buff, size);
+    return asm_syscall(SYSCALL_READ, file, buff, size);
 }
 
 /*

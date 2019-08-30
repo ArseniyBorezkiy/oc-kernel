@@ -93,7 +93,7 @@ extern void ih_keyboard()
         char keycode = asm_read_port(KEYBOARD_DATA_PORT);
 
         if (keycode < 1) {
-            return;
+            goto end;
         }
 
         /* call low half interrupt handlers */
@@ -103,15 +103,17 @@ extern void ih_keyboard()
         dev_for_each(dev_each_low_ih_cb, &ih_low_data);
     }
 
+end:
     asm_write_port(PIC1_CMD_PORT, 0x20); /* end of interrupt */
 }
 
 /*
  * Api - Syscall handler
  */
-extern void ih_syscall(u_int* function)
+extern size_t ih_syscall(u_int* function)
 {
     size_t params_addr = ((size_t)function + sizeof(u_int));
+    size_t result = 0;
 
     printf(MSG_SYSCALL, *function);
 
@@ -152,7 +154,7 @@ extern void ih_syscall(u_int* function)
         struct io_buf_t* io_buf = *(struct io_buf_t**)params_addr;
         char* buff = *(char**)(params_addr + 4);
         u_int size = *(u_int*)(params_addr + 8);
-        file_read(io_buf, buff, size);
+        result = file_read(io_buf, buff, size);
         break;
     }
     case SYSCALL_WRITE: {
@@ -177,6 +179,8 @@ extern void ih_syscall(u_int* function)
     printf(MSG_SYSCALL_RET, *function);
 
     asm_unlock();
+
+    return result;
 }
 
 /*

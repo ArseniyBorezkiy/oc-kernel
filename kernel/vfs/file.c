@@ -75,7 +75,7 @@ extern struct io_buf_t* file_open(char* path, int mod_rw)
 /*
  * Api - read from file
  */
-extern void file_read(struct io_buf_t* io_buf, char* buff, u_int size)
+extern size_t file_read(struct io_buf_t* io_buf, char* buff, u_int size)
 {
     struct file_t* file;
 
@@ -84,11 +84,13 @@ extern void file_read(struct io_buf_t* io_buf, char* buff, u_int size)
     /* whether file is device */
     if (file->dev != null) {
         /* device */
-        file->dev->read_cb(&file->io_buf, buff, size);
+        return file->dev->read_cb(&file->io_buf, buff, size);
     } else {
         /* fs node */
         unreachable(); /* fs in not implemented yet */
     }
+
+    return 0;
 }
 
 /*

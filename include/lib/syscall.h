@@ -14,4 +14,4 @@
 /* 
  * Api
  */
-extern void asm_syscall(u_int function, ...);
+extern size_t asm_syscall(u_int function, ...);

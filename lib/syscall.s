@@ -10,13 +10,15 @@
  * void asm_syscall(unsigned int function, ...)
  */
 asm_syscall:
-    pusha
+    push %ebx
+    push %ebp
     mov %esp,%ebp
     mov %ebp,%ebx
-    add $32,%ebx # skip registers
+    add $8,%ebx # skip registers
     add $4,%ebx # skip return address
     push %ebx # &function
     int $0x80
     mov %ebp,%esp
-    popa
+    pop %ebp
+    pop %ebx
     ret

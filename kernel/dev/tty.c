@@ -16,7 +16,7 @@
 #include <utils/kprint.h>
 
 static void tty_write(struct io_buf_t* io_buf, void* data, u_int size);
-static void tty_read(struct io_buf_t* io_buf, void* buffer, u_int size);
+static u_int tty_read(struct io_buf_t* io_buf, void* buffer, u_int size);
 static void tty_ioctl(struct io_buf_t* io_buf, int command);
 static void tty_write_ch(struct io_buf_t* io_buf, char ch);
 static char tty_read_ch(struct io_buf_t* io_buf);
@@ -25,11 +25,13 @@ static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data);
 /*
  * Data
  */
-static const char* tty_dev_name = TTY_DEV_NAME;
+static const char* tty_dev_name = TTY_DEV_NAME; /* teletype device name */
 static char tty_output_buff[VIDEO_SCREEN_SIZE]; /* teletype output buffer */
 static char tty_input_buff[VIDEO_SCREEN_WIDTH]; /* teletype input buffer */
+char* tty_output_buff_ptr = tty_output_buff;
 char* tty_input_buff_ptr = tty_input_buff;
-bool read_line_mode = false;
+bool read_line_mode = false; /* whether read only whole line */
+bool is_echo = false; /* whether to put readed symbol to stdout */
 
 /*
  * Api - Teletype init
@@ -73,6 +75,12 @@ static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data)
     assert(index < 128);
     char ch = keyboard_map[index];
     *tty_input_buff_ptr++ = ch;
+
+    if (is_echo && ch != '\n') {
+      /* echo character to screen */
+      *tty_output_buff_ptr++ = ch;
+      video_flush(tty_output_buff);
+    }
 }
 
 /*
@@ -90,16 +98,17 @@ static void tty_write(struct io_buf_t* io_buf, void* data, u_int size)
 /*
  * Read line from tty to string
  */
-static void tty_read(struct io_buf_t* io_buf, void* buffer, u_int size)
+static u_int tty_read(struct io_buf_t* io_buf, void* buffer, u_int size)
 {
     char* ptr = buffer;
 
-    assert((size_t)io_buf->ptr <= (size_t)tty_input_buff);
+    assert((size_t)io_buf->ptr <= (size_t)tty_input_buff_ptr);
     assert((size_t)tty_input_buff_ptr >= (size_t)tty_input_buff);
+    assert(size > 0);
 
     io_buf->is_eof = (size_t)io_buf->ptr == (size_t)tty_input_buff_ptr;
     if (read_line_mode) {
-        io_buf->is_eof = !!strchr(io_buf->ptr, '\n');
+        io_buf->is_eof = !strchr(io_buf->ptr, '\n');
     }
 
     for (int i = 0; i < size - 1 && !io_buf->is_eof; ++i) {
@@ -111,7 +120,7 @@ static void tty_read(struct io_buf_t* io_buf, void* buffer, u_int size)
         }
     }
 
-    *ptr++ = '\0';
+    return (size_t)ptr - (size_t)buffer;
 }
 
 /*
@@ -154,6 +163,13 @@ static void tty_ioctl(struct io_buf_t* io_buf, int command)
             unreachable();
         }
         break;
+    case IOCTL_READ_MODE_ECHO: /* put readed symbol to stdout */
+        if (io_buf->base == tty_input_buff) {
+            is_echo = true;
+        } else if (io_buf->base == tty_output_buff) {
+            unreachable();
+        }
+        break;
     default:
         unreachable();
     }
@@ -164,21 +180,23 @@ static void tty_ioctl(struct io_buf_t* io_buf, int command)
  */
 static void tty_write_ch(struct io_buf_t* io_buf, char ch)
 {
-    if ((size_t)io_buf->ptr - (size_t)io_buf->base + 1 < VIDEO_SCREEN_SIZE) {
+    if ((size_t)tty_output_buff_ptr - (size_t)tty_output_buff + 1 < VIDEO_SCREEN_SIZE) {
         if (ch != '\n') {
             /* regular character */
-            *io_buf->ptr++ = ch;
+            *tty_output_buff_ptr++ = ch;
         } else {
             /* new line character */
-            int line_pos = ((size_t)io_buf->ptr - (size_t)io_buf->base) % VIDEO_SCREEN_WIDTH;
+            int line_pos = ((size_t)tty_output_buff_ptr - (size_t)tty_output_buff) % VIDEO_SCREEN_WIDTH;
             for (int j = 0; j < VIDEO_SCREEN_WIDTH - line_pos; ++j) {
-                *io_buf->ptr++ = ' ';
+                *tty_output_buff_ptr++ = ' ';
             }
         }
     } else {
-        io_buf->ptr = video_scroll(io_buf->base, io_buf->ptr);
+        tty_output_buff_ptr = video_scroll(tty_output_buff, tty_output_buff_ptr);
         tty_write_ch(io_buf, ch);
     }
+
+    io_buf->ptr = tty_output_buff_ptr;
 }
 
 /*
