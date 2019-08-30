@@ -40,7 +40,7 @@ extern void* mm_phys_alloc_pages(u_int count)
                 mm_set_bit(i + j);
             }
 
-            return mm_get_addr(i);
+            return (void *)mm_get_addr(i);
         }
     }
 
@@ -156,29 +156,29 @@ static void mm_test()
 {
 #ifdef TEST
     // alloc 3 pages (1, 1, 1)
-    void* p1 = mm_alloc_page();
+    void* p1 = mm_phys_alloc_pages(1);
     assert(mm_get_bit(0));
-    void* p2 = mm_alloc_page();
+    void* p2 = mm_phys_alloc_pages(1);
     assert(mm_get_bit(1));
-    void* p3 = mm_alloc_page();
+    void* p3 = mm_phys_alloc_pages(1);
     assert(mm_get_bit(2));
     assert((size_t)p1 < (size_t)p2);
     assert((size_t)p2 < (size_t)p3);
     assert((size_t)p2 == (size_t)p1 + MM_PAGE_SIZE);
     // free 2th page (1, 0, 1)
-    assert(mm_free_page(p2));
+    assert(mm_phys_free_pages(p2, 1));
     assert(mm_get_bit(0));
     assert(!mm_get_bit(1));
     assert(mm_get_bit(2));
     // alloc 1 page (1, 1, 1)
-    void* p4 = mm_alloc_page();
+    void* p4 = mm_phys_alloc_pages(1);
     assert(mm_get_bit(1));
     // alloc 1 page (1, 1, 1, 1)
-    void* p5 = mm_alloc_page();
+    void* p5 = mm_phys_alloc_pages(1);
     assert(mm_get_bit(3));
     // alloc 32 pages
     for (int i = 0; i < 32; ++i) {
-        mm_alloc_page();
+        mm_phys_alloc_pages(1);
     }
     for (int i = 0; i < 32; ++i) {
         assert(mm_get_bit(i));
@@ -188,10 +188,10 @@ static void mm_test()
     assert(mm_get_bit(34));
     assert(mm_get_bit(35));
     // free pages
-    assert(mm_free_page(p1));
-    assert(mm_free_page(p3));
-    assert(mm_free_page(p4));
-    assert(mm_free_page(p5));
+    assert(mm_phys_free_pages(p1, 1));
+    assert(mm_phys_free_pages(p3, 1));
+    assert(mm_phys_free_pages(p4, 1));
+    assert(mm_phys_free_pages(p5, 1));
     // clear
     memset(&bitmap, 0, sizeof(u32) * MM_BITMAP_SIZE);
 #endif

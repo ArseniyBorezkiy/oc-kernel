@@ -11,8 +11,7 @@
 /*
  * Api - Stack dump
  */
-extern void
-kdump_stack(size_t* esp)
+extern void kdump_stack(size_t* esp)
 {
     size_t base = (size_t)esp;
 
@@ -25,8 +24,7 @@ kdump_stack(size_t* esp)
 /*
  * Api - Multiboot header dump
  */
-extern void
-kdump_multiboot(struct multiboot_t* header)
+extern void kdump_multiboot(struct multiboot_t* header)
 {
     printf("-- multiboot header dump: %X\n", (size_t)header);
     printf("  mem_lower : %X Kb\n", header->mem_lower);
@@ -36,8 +34,7 @@ kdump_multiboot(struct multiboot_t* header)
 /*
  * Api - Dump control registers
  */
-extern void
-kdump_registers()
+extern void kdump_registers()
 {
     printf("-- dump control registers\n");
     u16 cs = asm_get_cs();
@@ -57,8 +54,7 @@ kdump_registers()
 /*
  * Api - Dump flags
  */
-extern void
-kdump_eflags()
+extern void kdump_eflags()
 {
     printf("-- dump flags\n");
     u32 eflags = asm_get_eflags();
@@ -68,8 +64,7 @@ kdump_eflags()
 /*
  * Api - Dump memory areas
  */
-extern void
-kdump_memory_areas()
+extern void kdump_memory_areas()
 {
     printf("-- dump memory areas\n");
     size_t kernel_stack_addr = (size_t)kernel_stack;

@@ -1,4 +1,5 @@
 #include <lib/stdio.h>
+#include <lib/time.h>
 #include <messages.h>
 
 static void message_loop();
@@ -26,5 +27,6 @@ static void message_loop()
     while (1) {
         fread(stdin, buff, 255);
         printf("%s", buff);
+        delay(1000);
     }
 }

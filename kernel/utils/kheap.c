@@ -16,14 +16,12 @@ struct slist_definition_t kheap_list = { .head = null,
     .slots = KHEAP_MAX_ENTRIES,
     .base = (size_t)kheap_blocks };
 
-static void
-kheap_test();
+static void kheap_test();
 
 /*
  * Api - Kernel memory init
  */
-extern void
-kheap_init()
+extern void kheap_init()
 {
     /* init data structures */
     memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);
@@ -36,8 +34,7 @@ kheap_init()
 /*
  * Api - Kernel memory alloc
  */
-extern void*
-kmalloc(size_t size)
+extern void* kmalloc(size_t size)
 {
     struct kheap_entry_t* current_data = null;
     struct slist_head_t* current = null;
@@ -168,12 +165,10 @@ kmalloc(size_t size)
 /*
  * Api - Kernel aligned memory alloc
  */
-extern void*
-kmalloc_a(size_t size, u_int align)
+extern void* kmalloc_a(size_t size, u_int align)
 {
     struct kheap_entry_t* current_data = null;
     struct slist_head_t* current = null;
-    struct slist_head_t* head = kheap_list.head;
 
     assert(size > 0);
 
@@ -185,7 +180,7 @@ kmalloc_a(size_t size, u_int align)
         current_data = (struct kheap_entry_t*)current->data;
         heap_end_addr = current_data->addr + current_data->size;
     }
-    size_t heap_end_addr_aligned = heap_end_addr + heap_end_addr % align;
+    size_t heap_end_addr_aligned = heap_end_addr + (align - heap_end_addr % align);
     assert(heap_end_addr_aligned % align == 0);
     /* check free memory size is enought */
     if (heap_end_addr_aligned + size >= KHEAP_END_ADDR) {
@@ -231,8 +226,7 @@ kmalloc_a(size_t size, u_int align)
 /*
  * Api - Kernel memory free
  */
-extern void
-kfree(void* addr)
+extern void kfree(void* addr)
 {
     struct slist_head_t* current = null;
     struct kheap_entry_t* current_data = null;
@@ -263,14 +257,13 @@ kfree(void* addr)
         }
     }
 
-    abort("invalid kernel heap address to free %X", addr);
+    abort(MSG_KERNEL_HEAP_FREE_INVALID_ADDR, addr);
 }
 
 /*
  * Api - Kernel heap dump
  */
-extern void
-kheap_dump()
+extern void kheap_dump()
 {
     printf("-- dump kernel heap\n");
 
@@ -292,8 +285,7 @@ kheap_dump()
 /*
  * Smoke test
  */
-static void
-kheap_test()
+static void kheap_test()
 {
 #ifdef TEST
     /* 1[16] 2[16] 3[16] */

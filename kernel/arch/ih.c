@@ -174,6 +174,8 @@ extern void ih_syscall(u_int* function)
         unreachable();
     }
 
+    printf(MSG_SYSCALL_RET, *function);
+
     asm_unlock();
 }
 

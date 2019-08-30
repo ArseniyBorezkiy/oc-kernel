@@ -96,7 +96,9 @@ extern void task_delete(struct task_t* task)
         task->pages_count = 0;
     }
     /* clear resources */
-    mmu_destroy_user_page_directory(task->page_dir, task->page_table);
+    if (task->page_dir != null) {
+      mmu_destroy_user_page_directory(task->page_dir, task->page_table);
+    }
 
     clist_delete_entry(&task_list, (struct clist_head_t*)task);
 }

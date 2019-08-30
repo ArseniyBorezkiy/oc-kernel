@@ -21,6 +21,7 @@ extern void stdio_init()
 {
     stdin = fopen(tty_dev_name, MOD_R);
     stdout = fopen(tty_dev_name, MOD_W);
+    asm_syscall(SYSCALL_IOCTL, stdout, IOCTL_INIT);
 }
 
 /*

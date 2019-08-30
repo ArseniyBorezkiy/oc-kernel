@@ -21,7 +21,7 @@ extern int strcspn(char* str, const char* rejected);
 char* strchr(const char* str, char ch);
 extern char* strtok_r(char* str, const char* delims, char** save_ptr);
 extern char* memext(void* buff_dst, u_int n, const void* buff_src, char sym);
-extern char* itoa(int value, char* str, int base);
+extern char* itoa(unsigned int value, char* str, unsigned int base);
 extern unsigned int atou(char* str);
 extern char* strinv(char* str);
 extern unsigned int sprintf(char* s1, const char* s2, ...);

@@ -19,7 +19,7 @@ extern void elf_exec(struct elf_header_t* header)
     assert(header->e_ident.ei_magic == EI_MAGIC);
 
     printf(MSG_KERNEL_ELF_LOADING, header->e_phnum);
-    elf_dump(header);
+    // elf_dump(header);
 
     size_t elf_base = (size_t)header;
     size_t entry_point = header->e_entry;
@@ -30,12 +30,17 @@ extern void elf_exec(struct elf_header_t* header)
     void* page_dir = null;
 
     // load sections in memory
-    assert(header->e_phnum == 1);
     for (int i = 0; i < header->e_phnum; ++i) {
         struct elf_program_header_t* p_header = (void*)(header->e_phoff + elf_base + i * header->e_phentsize);
-        // allocate pages
+        
         pages_count = (p_header->p_memsz / MM_PAGE_SIZE) + 1;
+        if (p_header->p_memsz == 0) {
+          continue;
+        }
+
+        // allocate pages
         assert(pages_count > 0);
+        assert(pages == null);
         pages = mm_phys_alloc_pages(pages_count);
         void* section = (void*)(elf_base + p_header->p_offset);
         memcpy(pages, section, p_header->p_memsz);

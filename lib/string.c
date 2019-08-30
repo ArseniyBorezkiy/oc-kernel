@@ -264,7 +264,7 @@ extern char* memext(void* buff_dst, u_int n, const void* buff_src, char sym)
 /*
  * Api - Integer to string
  */
-extern char* itoa(int value, char* str, int base)
+extern char* itoa(u_int value, char* str, u_int base)
 {
     char* original = str;
     char digit;
@@ -274,8 +274,10 @@ extern char* itoa(int value, char* str, int base)
         value = value / base;
         if (digit < 10) {
             *str++ = digit | 0x30; /* number */
-        } else {
+        } else if (digit < 16) {
             *str++ = ((digit - 10) | 0x40) + 1; /* alpha */
+        } else {
+            *str++ = '?';
         }
     } while (value > 0);
 
@@ -371,7 +373,7 @@ extern unsigned int vsnprintf(char* s1, unsigned int n, const char* s2, va_list 
 {
     u_int j = 0;
     size_t count = 0;
-    char number[16];
+    char number[32];
     char* cur = s1;
     char* str;
 

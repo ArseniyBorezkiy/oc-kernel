@@ -14,6 +14,7 @@ typedef void (*dev_write_cb_t)(struct io_buf_t* io_buf, void* data, u_int size);
 typedef void (*dev_ioctl_cb_t)(struct io_buf_t* io_buf, int command);
 
 extern struct dev_t {
+    struct clist_head_t list_head; /* should be at first */
     char name[8]; /* device name */
     void* base_r; /* base read address */
     void* base_w; /* base write address */
