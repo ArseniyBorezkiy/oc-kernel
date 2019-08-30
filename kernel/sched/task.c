@@ -2,6 +2,7 @@
 #include <arch/reg.h>
 #include <arch/mmu.h>
 #include <sched/task.h>
+#include <mm/mm.h>
 #include <ipc/ipc.h>
 #include <lib/string.h>
 #include <lib/stdtypes.h>
@@ -53,7 +54,9 @@ extern bool task_create(u_short tid, void *address)
     task->status = TASK_UNINTERRUPTABLE;
     task->msg_count_in = 0;
     task->time = 0;
-    
+    task->pages = null;
+    task->pages_count = 0;
+
     /* set flags */
     *(u32 *)(&task->flags) = asm_get_eflags() | 0x200;
     /* set general purpose registers */
@@ -77,8 +80,19 @@ extern void task_delete(struct task_t *task)
 {
     printf(MSG_SCHED_TID_DELETE, (u_int)task->tid);
     assert(task != null);
+
+    /* free memory */
     free(task->kstack);
     free(task->ustack);
+    task->kstack = null;
+    task->ustack = null;
+    if (task->pages_count > 0)
+    {
+        mm_free_pages(task->pages, task->pages_count);
+        task->pages = null;
+        task->pages_count = 0;
+    }
+
     clist_delete_entry(&task_list, (struct clist_head_t *)task);
 }
 
@@ -126,11 +140,14 @@ extern struct task_t *task_find_by_status(u_short status)
     struct clist_head_t *current;
 
     current = clist_find(&task_list, task_by_status_detector, status);
-    
-    if (current != null) {
-      return (struct task_t *)current->data;
-    } else {
-      return null;
+
+    if (current != null)
+    {
+        return (struct task_t *)current->data;
+    }
+    else
+    {
+        return null;
     }
 }
 
@@ -183,55 +200,63 @@ extern void task_extract_message(struct task_t *task, struct message_t *msg)
 /*
  * Helper to find task by id
  */
-static bool task_by_id_detector(struct clist_head_t *current, va_list args) {
-  u_short tid = va_arg(args, u_short);
-  struct task_t *task = (struct task_t *)current->data;
-  return task->tid == tid;
+static bool task_by_id_detector(struct clist_head_t *current, va_list args)
+{
+    u_short tid = va_arg(args, u_short);
+    struct task_t *task = (struct task_t *)current->data;
+    return task->tid == tid;
 }
 
 /*
  * Helper to find task by status
  */
-static bool task_by_status_detector(struct clist_head_t *current, va_list args) {
-  u_short status = va_arg(args, u_short);
-  struct task_t *task = (struct task_t *)current->data;
-  return task->status == status;
+static bool task_by_status_detector(struct clist_head_t *current, va_list args)
+{
+    u_short status = va_arg(args, u_short);
+    struct task_t *task = (struct task_t *)current->data;
+    return task->status == status;
 }
 
 /*
  * Api - Task list dump
  */
-extern void task_dump() {
-  printf("-- task list dump\n");
-  
-  struct clist_head_t *current;
-  struct task_t *task;
+extern void task_dump()
+{
+    printf("-- task list dump\n");
 
-  for (current = task_list.head; current != null; current = current->next) {
-    task = (struct task_t *)current->data;
-    printf("  tid=%u status=%u this=%X prev=%X next=%X\n", task->tid, task->status, current, current->prev, current->next);
-    
-    if (current->next == task_list.head) {
-      break;
+    struct clist_head_t *current;
+    struct task_t *task;
+
+    for (current = task_list.head; current != null; current = current->next)
+    {
+        task = (struct task_t *)current->data;
+        printf("  tid=%u status=%u this=%X prev=%X next=%X\n", task->tid, task->status, current, current->prev, current->next);
+
+        if (current->next == task_list.head)
+        {
+            break;
+        }
     }
-  }
 }
 
 /*
  * Api - For each task
  */
-extern void task_for_each(task_each_callback_t callback) {
-  struct clist_head_t *current;
-  struct task_t *task;
+extern void task_for_each(task_each_callback_t callback)
+{
+    struct clist_head_t *current;
+    struct task_t *task;
 
-  for (current = task_list.head; current != null; current = current->next) {
-    task = (struct task_t *)current->data;
-    callback(task);
-    
-    if (current->next == task_list.head) {
-      break;
+    for (current = task_list.head; current != null; current = current->next)
+    {
+        task = (struct task_t *)current->data;
+        callback(task);
+
+        if (current->next == task_list.head)
+        {
+            break;
+        }
     }
-  }
 }
 
 /*

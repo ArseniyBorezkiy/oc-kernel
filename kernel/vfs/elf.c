@@ -22,16 +22,20 @@ extern void elf_exec(struct elf_header_t *header)
   size_t elf_base = (size_t)header;
   size_t entry_point = header->e_entry;
 
+  void *pages = null;
+  u_int pages_count = 0;
+
   // load sections in memory
+  assert(header->e_phnum == 1);
   for (int i = 0; i < header->e_phnum; ++i)
   {
     struct elf_program_header_t *p_header = (void *)(header->e_phoff + elf_base + i * header->e_phentsize);
     // allocate pages
-    u_int pages = (p_header->p_memsz / MM_PAGE_SIZE) + 1;
-    assert(pages == 1); /* our elfs they are all small */
-    void *page = mm_alloc_page();
+    pages_count = (p_header->p_memsz / MM_PAGE_SIZE) + 1;
+    assert(pages_count > 0);
+    pages = mm_alloc_pages(pages_count);
     void *section = (void *)(elf_base + p_header->p_offset);
-    memcpy(page, section, p_header->p_memsz);
+    memcpy(pages, section, p_header->p_memsz);
     // set page directory
   }
 
@@ -43,6 +47,8 @@ extern void elf_exec(struct elf_header_t *header)
   struct task_t *task;
   task = task_get_by_id(tid);
   task->status = TASK_RUNNING;
+  task->pages = pages;
+  task->pages_count = pages_count;
   strncpy(task->name, "elf", sizeof(task->name));
 }
 

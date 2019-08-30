@@ -40,6 +40,8 @@ struct task_t
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
     void *kstack;                                  /* kernel stack top */
     void *ustack;                                  /* user stack top */
+    void *pages;                                   /* task pages */
+    u_int pages_count;                             /* task pages count */
 } attribute(packed);
 
 typedef void (*task_each_callback_t)(struct task_t *entry);
