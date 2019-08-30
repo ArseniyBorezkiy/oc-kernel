@@ -63,8 +63,6 @@ Ars Boretskii kernel 1.0
 
 ### Wish list
 
-- Ram disk
 - Memory protect
 - User mode (ring3)
-- System calls
 - Some POSIX functions for c lib
