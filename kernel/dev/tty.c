@@ -132,16 +132,23 @@ static void tty_ioctl(struct io_buf_t* io_buf, int command)
 
     switch (command) {
     case IOCTL_INIT: /* prepare video device */
-        kmode(false); /* detach syslog from screen */
-        io_buf->ptr = video_clear(io_buf->base);
-        tty_write(io_buf, hello_msg, strlen(hello_msg));
-        video_flush(io_buf->base);
+        if (io_buf->base == tty_output_buff) {
+            kmode(false); /* detach syslog from screen */
+            tty_output_buff_ptr = video_clear(io_buf->base);
+            io_buf->ptr = tty_output_buff_ptr;
+            tty_write(io_buf, hello_msg, strlen(hello_msg));
+            video_flush(io_buf->base);
+            io_buf->ptr = tty_output_buff_ptr;
+        } else if (io_buf->base == tty_input_buff) {
+            unreachable();
+        }
         break;
     case IOCTL_CLEAR:
         if (io_buf->base == tty_output_buff) {
             /* fill output buffer with spaces */
-            io_buf->ptr = video_clear(io_buf->base);
+            tty_output_buff_ptr = video_clear(io_buf->base);
             video_flush(io_buf->base);
+            io_buf->ptr = tty_output_buff_ptr;
         } else if (io_buf->base == tty_input_buff) {
             /* clear input buffer */
             tty_input_buff_ptr = tty_input_buff;

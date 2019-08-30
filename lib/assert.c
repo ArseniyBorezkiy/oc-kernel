@@ -8,6 +8,7 @@
 extern void uassert(const char* file, u_int line, bool expr)
 {
     asm_syscall(SYSCALL_KILL);
+    noreturn;
 }
 
 /* 
@@ -16,4 +17,5 @@ extern void uassert(const char* file, u_int line, bool expr)
 extern void uunreachable(const char* file, u_int line)
 {
     asm_syscall(SYSCALL_KILL);
+    noreturn;
 }

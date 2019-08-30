@@ -73,6 +73,16 @@ extern struct io_buf_t* file_open(char* path, int mod_rw)
 }
 
 /*
+ * Api - close file
+ */
+extern void file_close(struct io_buf_t* io_buf)
+{
+    struct clist_head_t* entry;
+    entry = io_buf->file;
+    clist_delete_entry(&file_list, entry);
+}
+
+/*
  * Api - read from file
  */
 extern size_t file_read(struct io_buf_t* io_buf, char* buff, u_int size)

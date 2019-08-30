@@ -141,12 +141,28 @@ extern size_t ih_syscall(u_int* function)
         task->reschedule = true;
         break;
     }
+    case SYSCALL_EXIT: {
+        /* exit task */
+        int errno = *(int*)params_addr;
+        struct task_t *current = sched_get_current_task();
+        u_int tid = current->tid;
+        printf(MSG_TASK_FINISHED, tid, errno);
+        current->status = TASK_KILLING;
+        sched_yield();
+        break;
+    }
     case SYSCALL_OPEN: {
         /* open file */
         char* dev = *(char**)params_addr;
         int mod_rw = *(int*)(params_addr + 4);
         FILE** file = *(FILE***)(params_addr + 8);
         *file = file_open(dev, mod_rw);
+        break;
+    }
+    case SYSCALL_CLOSE: {
+        /* close file */
+        FILE* file = *(FILE**)(params_addr);
+        file_close(file);
         break;
     }
     case SYSCALL_READ: {

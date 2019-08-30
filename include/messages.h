@@ -3,8 +3,8 @@
 /* suffixes */
 #define MSG_KERNEL_PREFIX "[KERNEL]: "
 #define MSG_SCHED_PREFIX "[SCHED]: "
-#define MSG_TASK_PREFIX "[TASK]: "
 #define MSG_INT_PREFIX "[INT]: "
+#define MSG_SYSCALL_PREFIX "[SYSCALL]: "
 #define MSG_CRLN "\n"
 
 /* kernel */
@@ -41,4 +41,4 @@
 #define MSG_SCHED_TID_DELETE (MSG_SCHED_PREFIX "delete task tid = %u" MSG_CRLN)
 #define MSG_SCHED_NO_TASKS (MSG_SCHED_PREFIX "there are no tasks to run" MSG_CRLN)
 #define MSG_SCHED_NEXT (MSG_SCHED_PREFIX "scheduled tid=%u sp=%X eip=%X->%X" MSG_CRLN)
-#define MSG_TASK_INIT_LAUNCHED (MSG_TASK_PREFIX "task init is launched esp = %X, eflags = %X" MSG_CRLN)
+#define MSG_TASK_FINISHED (MSG_SYSCALL_PREFIX "task %X finished errno=%u" MSG_CRLN)

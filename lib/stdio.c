@@ -122,7 +122,7 @@ extern void uscanf(char* buff, ...)
     do {
         readed = fread(stdin, buff, 255);
     } while (readed == 0);
-    buff[readed] = '\0';
+    buff[readed - 1] = '\0'; /* erase new line character */
     uprintf("\n");
     uflush();
 }
