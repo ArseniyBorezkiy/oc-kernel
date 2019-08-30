@@ -157,6 +157,24 @@ extern struct clist_head_t* clist_find_next(struct clist_definition_t* list, str
 }
 
 /*
+ * Api - Cyclic list for each
+ */
+extern void clist_for_each(struct clist_definition_t* list, clist_each_callback_t cb, ...) {
+    struct clist_head_t* current;
+
+    for (current = list->head; current != null; current = current->next) {
+        va_list args;
+        va_start(args, cb);
+
+        cb(current, args);
+
+        if (current->next == list->head) {
+            break;
+        }
+    }
+}
+
+/*
  * Api - Cyclic list dump
  */
 extern void clist_dump(struct clist_definition_t* list)

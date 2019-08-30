@@ -35,6 +35,13 @@ extern void task_init()
 }
 
 /*
+ * Api - Task list
+ */
+extern struct clist_definition_t *task_get_task_list() {
+    return &task_list;
+}
+
+/*
  * Api - Create new task
  */
 extern bool task_create(u_short tid, void* address)

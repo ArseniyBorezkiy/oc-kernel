@@ -51,6 +51,7 @@ typedef void (*task_each_callback_t)(struct task_t* entry);
  * Api
  */
 extern void task_init();
+extern struct clist_definition_t *task_get_task_list();
 extern bool task_create(u_short tid, void* address);
 extern void task_delete(struct task_t* task);
 extern struct task_t* task_get_by_id(u_short tid);

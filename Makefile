@@ -105,8 +105,10 @@ build-initrd: build-initrd-elfs build-initrd-fs-generator ./bin/sh.elf
 
 build-initrd-elfs: ./initrd/sh.c
 	$(CC) $(CC_USER_FLAGS) -c ./initrd/sh.c -o ./bin/sh.rd.c.o
+	$(CC) $(CC_USER_FLAGS) -c ./lib/data/clist.c -o ./bin/uclist.c.o
 	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/sh.elf ./bin/sh.rd.c.o \
-		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/sys.c.o ./bin/syscall.s.o
+		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
+		./bin/sys.c.o ./bin/syscall.s.o ./bin/uclist.c.o
 
 build-initrd-fs-generator: ./initrd/utils/fsgen.c
 	$(CC) -o ./bin/fsgen.elf ./initrd/utils/fsgen.c

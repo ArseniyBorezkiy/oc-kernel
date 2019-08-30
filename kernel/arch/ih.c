@@ -188,6 +188,11 @@ extern size_t ih_syscall(u_int* function)
         file_ioctl(io_buf, cmd);
         break;
     }
+    case SYSCALL_TASK_LIST: {
+        /* get current task */
+        result = (size_t)task_get_task_list();
+        break;
+    }
     default:
         unreachable();
     }

@@ -2,10 +2,12 @@
 #include <lib/string.h>
 #include <lib/sys.h>
 #include <lib/time.h>
+#include <sched/sched.h>
 #include <messages.h>
 
 int main();
 static bool execute_command(char* cmd);
+static void print_task_info(struct clist_head_t* current, va_list list);
 
 /*
  * Data
@@ -55,7 +57,10 @@ static bool execute_command(char* cmd)
 {
     if (!strcmp(cmd, cmd_ps)) {
         /* show tasks list */
-        //show_tasks_list();
+        struct clist_definition_t *task_list;
+        task_list = ps();
+        printf(" -- process list\n");
+        clist_for_each(task_list, print_task_info);
     } else if (!strcmp(cmd, cmd_syslog)) {
         /* show system log */
         //show_system_log();
@@ -76,4 +81,13 @@ static bool execute_command(char* cmd)
     }
 
     return true;
+}
+
+/*
+ * Print task info
+ */
+static void print_task_info(struct clist_head_t* current, va_list list) {
+    struct task_t *task;
+    task = (struct task_t *)current->data;
+    printf("  %s, status = %X\n", task->name, task->status);
 }

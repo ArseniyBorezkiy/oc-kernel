@@ -1,6 +1,7 @@
 #pragma once
 
 #include <lib/assembly.h>
+#include <lib/stdtypes.h>
 
 #ifdef KERNEL
 #include <utils/kassert.h>
