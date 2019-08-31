@@ -14,6 +14,7 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <utils/kdump.h>
+#include <utils/kprint.h>
 #include <vfs/file.h>
 
 void dev_each_low_ih_cb(struct dev_t* entry, void* data);
@@ -136,9 +137,15 @@ extern size_t ih_syscall(u_int* function)
     case SYSCALL_KILL: {
         /* kill task */
         u_short tid = *(u_int*)params_addr;
-        struct task_t* task = task_get_by_id(tid);
-        task->status = TASK_KILLING;
-        task->reschedule = true;
+        struct task_t* task = task_find_by_id(tid);
+        if (task != null) {
+            assert(task->tid == tid);
+            task->status = TASK_KILLING;
+            task->reschedule = true;
+            result = true;
+        } else {
+            result = false;
+        }
         break;
     }
     case SYSCALL_EXIT: {

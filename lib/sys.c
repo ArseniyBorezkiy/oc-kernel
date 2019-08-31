@@ -6,8 +6,8 @@
 /*
  * Api - kill task
  */
-extern void kill(u_int tid) {
-    asm_syscall(SYSCALL_KILL, tid);
+extern bool kill(u_int tid) {
+    return !!asm_syscall(SYSCALL_KILL, tid);
 }
 
 /*

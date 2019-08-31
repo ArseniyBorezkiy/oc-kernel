@@ -127,7 +127,11 @@ extern struct task_t* task_find_by_id(u_short tid)
 {
     struct clist_head_t* current;
     current = clist_find(&task_list, task_by_id_detector, tid);
-    return (struct task_t*)current->data;
+    if (current != null) {
+        return (struct task_t*)current->data;
+    }
+
+    return null;
 }
 
 /*

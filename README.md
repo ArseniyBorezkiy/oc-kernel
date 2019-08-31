@@ -56,6 +56,12 @@ Ars Boretskii kernel 1.0
 # kill 1
 ```
 
+Clear screen:
+```
+Ars Boretskii kernel 1.0
+# clear
+```
+
 ### Wish list
 
 - User mode & TSS (ring3)

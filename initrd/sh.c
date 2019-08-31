@@ -13,7 +13,6 @@ static void print_task_info(struct clist_head_t* current, va_list list);
  * Data
  */
 static const char* cmd_ps = "ps";
-static const char* cmd_syslog = "syslog";
 static const char* cmd_clear = "clear";
 static const char* cmd_kill = "kill";
 static const char* cmd_exit = "exit";
@@ -61,9 +60,6 @@ static bool execute_command(char* cmd)
         task_list = ps();
         printf(" -- process list\n");
         clist_for_each(task_list, print_task_info);
-    } else if (!strcmp(cmd, cmd_syslog)) {
-        /* show system log */
-        //show_system_log();
     } else if (!strcmp(cmd, cmd_clear)) {
         /* clear screen */
         uclear();
@@ -74,7 +70,9 @@ static bool execute_command(char* cmd)
         strtok_r(cmd, " ", &save_ptr);
         char* str_tid = strtok_r(null, " ", &save_ptr);
         u_short tid = atou(str_tid);
-        kill(tid);
+        if (!kill(tid)) {
+            printf("  There is no process with pid %u\n", tid);
+        };
     } else if (!strncmp(cmd, cmd_exit, strlen(cmd_exit))) {
         /* exit */
         return false;
@@ -89,5 +87,5 @@ static bool execute_command(char* cmd)
 static void print_task_info(struct clist_head_t* current, va_list list) {
     struct task_t *task;
     task = (struct task_t *)current->data;
-    printf("  %s, status = %X\n", task->name, task->status);
+    printf("  %s, tid = %u, status = %X\n", task->name, task->tid, task->status);
 }
