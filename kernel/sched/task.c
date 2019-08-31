@@ -44,7 +44,7 @@ extern struct clist_definition_t *task_get_task_list() {
 /*
  * Api - Create new task
  */
-extern bool task_create(u_short tid, void* address)
+extern bool task_create(u_short tid, void* address, struct task_mem_t *task_mem)
 {
     struct task_t* task;
     struct clist_head_t* entry;
@@ -62,10 +62,7 @@ extern bool task_create(u_short tid, void* address)
     task->status = TASK_UNINTERRUPTABLE;
     task->msg_count_in = 0;
     task->time = 0;
-    task->pages = null;
-    task->pages_count = 0;
-    task->page_dir = null;
-    task->page_table = null;
+    memcpy(&task->task_mem, task_mem, sizeof(struct task_mem_t));
 
     /* set flags */
     *(u32*)(&task->flags) = asm_get_eflags() | 0x200;
@@ -76,7 +73,7 @@ extern bool task_create(u_short tid, void* address)
     task->op_registers.ds = asm_get_ds();
     task->op_registers.ss = asm_get_ss();
     task->op_registers.eip = (size_t)address;
-    task->op_registers.cr3 = (size_t)mmu_get_kdirectory();
+    task->op_registers.cr3 = (size_t)task_mem->page_dir;
     task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
     task->op_registers.u_esp = (u32)task->ustack + TASK_USTACK_SIZE;
 
@@ -97,14 +94,14 @@ extern void task_delete(struct task_t* task)
     task->kstack = null;
     task->ustack = null;
     /* free user pages memory */
-    if (task->pages_count > 0) {
-        mm_phys_free_pages(task->pages, task->pages_count);
-        task->pages = null;
-        task->pages_count = 0;
+    if (task->task_mem.pages_count > 0) {
+        mm_phys_free_pages(task->task_mem.pages, task->task_mem.pages_count);
+        task->task_mem.pages = null;
+        task->task_mem.pages_count = 0;
     }
     /* clear resources */
-    if (task->page_dir != null) {
-      mmu_destroy_user_page_directory(task->page_dir, task->page_table);
+    if (task->task_mem.page_dir != null) {
+      mmu_destroy_user_page_directory(task->task_mem.page_dir, task->task_mem.page_table);
     }
 
     clist_delete_entry(&task_list, (struct clist_head_t*)task);
@@ -272,6 +269,7 @@ static void task_test()
 #ifdef TEST
     struct task_t* task1;
     struct task_t* task2;
+    struct task_mem_t task_mem;
     struct message_t msg;
     struct message_t msg1;
     struct message_t msg2;
@@ -283,11 +281,13 @@ static void task_test()
     msg1.len = 0;
     msg2.type = 2;
     msg2.len = 0;
+    
+    memset(&task_mem, 0, sizeof(struct task_mem_t));
 
     /* tasks creation */
     assert(task_list.head == null);
-    task_create(tid1, 0);
-    task_create(tid2, 0);
+    task_create(tid1, 0, &task_mem);
+    task_create(tid2, 0, &task_mem);
     task1 = task_get_by_id(tid1);
     assert(task1->tid == tid1);
     task2 = task_get_by_id(tid2);

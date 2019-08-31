@@ -81,7 +81,12 @@ asm_get_eflags:
 asm_switch_context:
     mov 4(%esp),%ebp # ebp = esp
     mov 8(%esp),%eax # eax = cr3
+    mov %cr0,%ebx    # ebx = cr0
+    xor $0x80000000,%ebx  # unset PG bit
+    mov %ebx,%cr0
     mov %eax,%cr3
+    or $0x80000001,%ebx  # set PE & PG bits
+    mov %ebx,%cr0
     mov %ebp,%esp
     popal
     sti

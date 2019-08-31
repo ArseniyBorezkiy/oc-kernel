@@ -23,6 +23,16 @@
 #define TASK_KILLING 4
 
 /*
+ * Process memory description
+ */
+struct task_mem_t {
+    void* pages; /* task physical pages */
+    u_int pages_count; /* task physical pages count */
+    void* page_dir; /* page directory */
+    void* page_table; /* page table */
+};
+
+/*
  * Process descriptor
  */
 struct task_t {
@@ -39,10 +49,7 @@ struct task_t {
     struct message_t msg_buff[TASK_MSG_BUFF_SIZE]; /* task message buffer */
     void* kstack; /* kernel stack top */
     void* ustack; /* user stack top */
-    void* pages; /* task physical pages */
-    u_int pages_count; /* task physical pages count */
-    void* page_dir; /* page directory */
-    void* page_table; /* page table */
+    struct task_mem_t task_mem; /* task memory */
 } attribute(packed);
 
 typedef void (*task_each_callback_t)(struct task_t* entry);
@@ -52,7 +59,7 @@ typedef void (*task_each_callback_t)(struct task_t* entry);
  */
 extern void task_init();
 extern struct clist_definition_t *task_get_task_list();
-extern bool task_create(u_short tid, void* address);
+extern bool task_create(u_short tid, void* address, struct task_mem_t *task_mem);
 extern void task_delete(struct task_t* task);
 extern struct task_t* task_get_by_id(u_short tid);
 extern struct task_t* task_find_by_id(u_short tid);
