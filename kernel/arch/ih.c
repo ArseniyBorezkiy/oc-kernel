@@ -2,6 +2,7 @@
 #include <arch/ih.h>
 #include <arch/pic.h>
 #include <arch/port.h>
+#include <arch/mmu.h>
 #include <dev/tty.h>
 #include <dev/utils/ih_low.h>
 #include <ipc/ipc.h>
@@ -162,7 +163,9 @@ extern size_t ih_syscall(u_int* function)
     case SYSCALL_EXEC: {
         /* execute executable file */
         char * name = *(char **)params_addr;
+        mmu_set_active_page_directory(mmu_get_kdirectory());
         initrd_exec(name);
+        mmu_set_active_page_directory(current->task_mem.page_dir);
         break;
     }
     case SYSCALL_OPEN: {

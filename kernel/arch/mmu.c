@@ -6,6 +6,7 @@
 #include <lib/string.h>
 
 extern void asm_enable_paging(void* page_directory);
+extern void asm_disable_paging();
 
 static struct page_directory_entry_t kpage_directory attribute(aligned(4096));
 static struct page_table_entry_t kpage_table[MMU_PAGE_TABLE_ENTRIES_COUNT] attribute(aligned(4096));
@@ -61,6 +62,14 @@ extern void mmu_enable()
 extern struct page_directory_entry_t* mmu_get_kdirectory()
 {
     return &kpage_directory;
+}
+
+/*
+ * Api - Set active page directory
+ */
+extern void mmu_set_active_page_directory(struct page_directory_entry_t* upage_dir) {
+    asm_disable_paging();
+    asm_enable_paging(upage_dir);
 }
 
 /*

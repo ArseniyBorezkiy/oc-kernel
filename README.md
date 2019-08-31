@@ -56,10 +56,27 @@ Ars Boretskii kernel 1.0
 # kill 1
 ```
 
+Exec elf on initrd:
+```
+Ars Boretskii kernel 1.0
+# exec <name>
+```
+
 Clear screen:
 ```
 Ars Boretskii kernel 1.0
 # clear
+```
+
+Example:
+```
+Ars Boretskii kernel 1.0
+# ps
+# clear
+# exec sh.elf
+# ps
+# kill 4
+# exit
 ```
 
 ### Wish list
