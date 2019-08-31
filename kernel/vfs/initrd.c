@@ -12,6 +12,7 @@ static struct initrd_node_t* initrd_get_node(char* name, struct initrd_fs_t* fs)
  * Data 
  */
 static char* shell_elf = "sh.elf";
+static size_t base = 0;
 
 /*
  * Api - run initial ram disk elf file
@@ -24,15 +25,16 @@ extern void initrd_autorun(struct mod_addr_t* mods_addr, int mods_count)
     u32 end = mods_addr[0].end;
 
     printf(MSG_KERNEL_INITRD_AREA, start, end, mods_count);
+    base = start;
 
     /* autorun files */
-    initrd_exec(shell_elf, start);
+    initrd_exec(shell_elf);
 }
 
 /*
  * Api - load elf
  */
-extern void initrd_exec(char* name, size_t base)
+extern void initrd_exec(char* name)
 {
     struct initrd_fs_t* fs;
     struct initrd_node_t* node;

@@ -24,3 +24,10 @@ extern void exit(int errno) {
 extern struct clist_definition_t* ps() {
     return (void *)asm_syscall(SYSCALL_TASK_LIST);
 }
+
+/*
+ * Api - execute file
+ */
+ extern bool exec(char *name) {
+     return !!asm_syscall(SYSCALL_EXEC, name);
+ }

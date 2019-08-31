@@ -22,4 +22,4 @@ extern struct initrd_fs_t {
  * Api
  */
 extern void initrd_autorun(struct mod_addr_t* mods_addr, int mods_count);
-extern void initrd_exec(char* name, size_t base);
+extern void initrd_exec(char* name);

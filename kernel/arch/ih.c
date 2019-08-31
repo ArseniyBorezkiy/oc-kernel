@@ -16,6 +16,7 @@
 #include <utils/kdump.h>
 #include <utils/kprint.h>
 #include <vfs/file.h>
+#include <vfs/initrd.h>
 
 void dev_each_low_ih_cb(struct dev_t* entry, void* data);
 
@@ -115,8 +116,9 @@ extern size_t ih_syscall(u_int* function)
 {
     size_t params_addr = ((size_t)function + sizeof(u_int));
     size_t result = 0;
+    struct task_t *current = sched_get_current_task();
 
-    printf(MSG_SYSCALL, *function);
+    printf(MSG_SYSCALL, *function, current->tid);
 
     asm_lock();
 
@@ -151,11 +153,16 @@ extern size_t ih_syscall(u_int* function)
     case SYSCALL_EXIT: {
         /* exit task */
         int errno = *(int*)params_addr;
-        struct task_t *current = sched_get_current_task();
         u_int tid = current->tid;
         printf(MSG_TASK_FINISHED, tid, errno);
         current->status = TASK_KILLING;
         sched_yield();
+        break;
+    }
+    case SYSCALL_EXEC: {
+        /* execute executable file */
+        char * name = *(char **)params_addr;
+        initrd_exec(name);
         break;
     }
     case SYSCALL_OPEN: {

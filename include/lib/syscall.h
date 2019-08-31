@@ -6,12 +6,13 @@
 #define SYSCALL_KRECEIVE 2
 #define SYSCALL_KILL 3
 #define SYSCALL_EXIT 4
-#define SYSCALL_READ 5
-#define SYSCALL_WRITE 6
-#define SYSCALL_OPEN 7
-#define SYSCALL_CLOSE 8
-#define SYSCALL_IOCTL 9
-#define SYSCALL_TASK_LIST 10
+#define SYSCALL_EXEC 5
+#define SYSCALL_READ 6
+#define SYSCALL_WRITE 7
+#define SYSCALL_OPEN 8
+#define SYSCALL_CLOSE 9
+#define SYSCALL_IOCTL 10
+#define SYSCALL_TASK_LIST 11
 
 #define noreturn while(1) {} /* prevent gcc warning */
 

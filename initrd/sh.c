@@ -16,6 +16,7 @@ static const char* cmd_ps = "ps";
 static const char* cmd_clear = "clear";
 static const char* cmd_kill = "kill";
 static const char* cmd_exit = "exit";
+static const char* cmd_exec = "exec";
 static const char* prompt = "# ";
 
 /*
@@ -76,6 +77,12 @@ static bool execute_command(char* cmd)
     } else if (!strncmp(cmd, cmd_exit, strlen(cmd_exit))) {
         /* exit */
         return false;
+    } else if (!strncmp(cmd, cmd_exec, strlen(cmd_exec))) {
+        /* exec file on intrd */
+        char* save_ptr = null;
+        strtok_r(cmd, " ", &save_ptr);
+        char* str_file = strtok_r(null, " ", &save_ptr);
+        exec(str_file);
     } else {
         printf("  There is no such command.\n  Available command list:\n");
         printf("    %s  %s  %s <pid>  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_clear);
