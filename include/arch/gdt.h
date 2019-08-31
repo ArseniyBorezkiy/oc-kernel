@@ -12,6 +12,15 @@
 #define GDT_TSS_SEGMENT 7
 #define GDT_ENTRIES_COUNT 8
 
+#define GDT_NULL_SELECTOR 0x00
+#define GDT_KCODE_SELECTOR 0x08
+#define GDT_KDATA_SELECTOR 0x10
+#define GDT_KSTACK_SELECTOR 0x18
+#define GDT_UCODE_SELECTOR 0x23
+#define GDT_UDATA_SELECTOR 0x2b
+#define GDT_USTACK_SELECTOR 0x33
+#define GDT_TSS_SELECTOR 0x38
+
 /*
  * Global descriptor table entry
  */

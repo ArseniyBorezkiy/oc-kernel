@@ -139,6 +139,14 @@ extern void gdt_init() {
     gdt[GDT_TSS_SEGMENT].dpl = 0;
     gdt[GDT_TSS_SEGMENT].db = 0;
 
+    /* tss */
+    tss.cs = GDT_UCODE_SELECTOR;
+    tss.ds = GDT_UDATA_SELECTOR;
+    tss.es = GDT_UDATA_SELECTOR;
+    tss.fs = GDT_UDATA_SELECTOR;
+    tss.gs = GDT_UDATA_SELECTOR;
+    tss.ss = GDT_USTACK_SELECTOR;
+
     /* load */
     asm_gdt_load(&gdt_ptr);
 }
