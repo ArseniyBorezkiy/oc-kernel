@@ -5,7 +5,7 @@
 /*
  * Task state segment
  */
-struct tts_t {
+struct TSS_entry_t {
     u16 link;
     u16 reserved0;
     u32 esp0;

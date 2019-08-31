@@ -3,11 +3,14 @@
 #include <lib/stdtypes.h>
 
 #define GDT_NULL_SEGMENT 0
-#define GDT_CODE_SEGMENT 1
-#define GDT_DATA_SEGMENT 2
-#define GDT_STACK_SEGMENT 3
-#define GDT_TSS_SEGMENT 4
-#define GDT_ENTRIES_COUNT 5
+#define GDT_KCODE_SEGMENT 1
+#define GDT_KDATA_SEGMENT 2
+#define GDT_KSTACK_SEGMENT 3
+#define GDT_UCODE_SEGMENT 4
+#define GDT_UDATA_SEGMENT 5
+#define GDT_USTACK_SEGMENT 6
+#define GDT_TSS_SEGMENT 7
+#define GDT_ENTRIES_COUNT 8
 
 /*
  * Global descriptor table entry
@@ -16,7 +19,7 @@ struct GDT_entry_t {
     u16 limit_low: 16;
     u16 base_low: 16;
     u8 base_middle: 8;
-    u8 type: 4; /* whether code (0b1010), data (0b0010) or stack (0b0110) */
+    u8 type: 4; /* whether code (0b1010), data (0b0010), stack (0b0110) or tss (0b1001) */
     u8 s: 1; /* whether system descriptor */
     u8 dpl: 2; /* privilege level */
     u8 p: 1; /* whether segment prensent */
