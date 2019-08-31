@@ -76,6 +76,9 @@ static bool execute_command(char* cmd)
     } else if (!strncmp(cmd, cmd_exit, strlen(cmd_exit))) {
         /* exit */
         return false;
+    } else {
+        printf("  There is no such command.\n  Available command list:\n");
+        printf("    %s  %s  %s <pid>  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_clear);
     }
 
     return true;
