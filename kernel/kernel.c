@@ -1,5 +1,6 @@
 #include <arch/idt.h>
 #include <arch/mmu.h>
+#include <arch/gdt.h>
 #include <arch/pic.h>
 #include <boot/multiboot.h>
 #include <dev/tty.h>
@@ -44,6 +45,7 @@ extern void kernel_start(struct multiboot_t* multiboot, void* kstack)
     /* init arch */
     lib_init();
     idt_init();
+    gdt_init();
     mmu_init();
 
     /* init data structures */
