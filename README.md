@@ -7,19 +7,16 @@ This helps you to write your own OC.
 Main goal to give you small well-commended features that you can reuse in your OC.
 Currently all tasks work in kernel mode.
 
-This OC will evolute according to wish list section.
-
 ### Content
 
 - scheduler (/kernel/sched)
 - initial ram disk (/initrd)
 - shell task (/initrd/sh.c)
-- tty device driver (/kernel/dev/tty.c)
+- tty character device driver (/kernel/dev/tty.c)
+- abstract file operations (/kernel/vfs/file.c)
 - interprocess communication (/kernel/ipc)
-- interprocess synchronization (/kernel/sync)
 - architecture support (/arch)
-- list implementations (/lib/data)
-- small c lib (/lib)
+- small c lib with lists support (/lib)
 
 ### Info
 
@@ -35,34 +32,32 @@ $ apt-get install qemu
 ### Build and run
 
 ```
+$ mkdir bin
 $ sudo make
 ```
 
 ### Shell commands
 
-Task list:
-
+Process list:
 ```
 Ars Boretskii kernel 1.0
 # ps
 ```
 
-Kill task:
+Exit from current process (returns you to kernel console):
+```
+Ars Boretskii kernel 1.0
+# exit
+```
 
+Kill process:
 ```
 Ars Boretskii kernel 1.0
 # kill 1
 ```
 
-Kernel syslog view:
-
-```
-Ars Boretskii kernel 1.0
-# syslog
-```
-
 ### Wish list
 
-- Memory protect
-- User mode (ring3)
-- Some POSIX functions for c lib
+- User mode & TSS (ring3)
+- Extend initrd to support more that 4Kb (reseach needed why qemu cut it)
+- Forth interpreter (as next initrd elf)
