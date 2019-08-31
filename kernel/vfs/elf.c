@@ -59,6 +59,7 @@ extern void elf_exec(struct elf_header_t* header)
     task = task_get_by_id(tid);
     task->status = TASK_RUNNING;
     strncpy(task->name, "elf", sizeof(task->name));
+    printf(MSG_KERNEL_ELF_LOADED);
 }
 
 /*
