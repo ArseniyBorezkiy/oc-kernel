@@ -63,8 +63,8 @@ static bool execute_command(char* cmd)
         clist_for_each(task_list, print_task_info);
     } else if (!strcmp(cmd, cmd_clear)) {
         /* clear screen */
-        uclear();
-        uflush();
+        clear();
+        flush();
     } else if (!strncmp(cmd, cmd_kill, strlen(cmd_kill))) {
         /* kill task */
         char* save_ptr = null;
@@ -76,6 +76,9 @@ static bool execute_command(char* cmd)
         };
     } else if (!strncmp(cmd, cmd_exit, strlen(cmd_exit))) {
         /* exit */
+        clear();
+        printf(prompt);
+        flush();
         return false;
     } else if (!strncmp(cmd, cmd_exec, strlen(cmd_exec))) {
         /* exec file on intrd */

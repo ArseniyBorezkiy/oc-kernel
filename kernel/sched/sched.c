@@ -96,7 +96,7 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
     /* run next task */
     printf(MSG_SCHED_NEXT, next_task->tid, next_task->op_registers.u_esp,
         *ret_addr, next_task->op_registers.eip);
-    asm_switch_context(next_task->op_registers.u_esp,
+    asm_switch_kcontext(next_task->op_registers.u_esp,
         next_task->op_registers.cr3);
 }
 

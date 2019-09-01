@@ -122,5 +122,6 @@ struct TSS_entry_t {
 extern void gdt_init();
 extern void idt_init();
 extern void tss_set_kernel_stack(void *esp0);
-extern void asm_switch_context(u32 esp, u32 cr3);
 extern void asm_tss_load(u_int index);
+extern void asm_switch_kcontext(u32 esp, u32 cr3);
+extern void asm_switch_ucontext(u32 esp, u32 cr3);
