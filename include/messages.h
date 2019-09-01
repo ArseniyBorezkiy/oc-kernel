@@ -29,6 +29,7 @@
 #define MSG_SYSCALL_RET (MSG_KERNEL_PREFIX "ret from syscall %u" MSG_CRLN)
 #define MSG_INT_GP (MSG_INT_PREFIX "general protect %X" MSG_CRLN)
 #define MSG_INT_PF (MSG_INT_PREFIX "page fault (%X)" MSG_CRLN)
+#define MSG_INT_IT (MSG_INT_PREFIX "invalid tss (%X)" MSG_CRLN)
 #define MSG_INT_AC (MSG_INT_PREFIX "alignment check" MSG_CRLN)
 #define MSG_INT_DF (MSG_INT_PREFIX "double fault" MSG_CRLN)
 #define MSG_INT_IO (MSG_INT_PREFIX "invalid opcode" MSG_CRLN)

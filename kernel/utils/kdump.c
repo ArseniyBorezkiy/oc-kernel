@@ -17,7 +17,7 @@ extern void kdump_stack(size_t* esp)
 
     printf("-- stack dump: %X\n", base);
     for (int i = 0; i < 8; ++i) {
-        printf("  %X : %X\n", base - i * 4, *(u_int*)(base - i * 4));
+        printf("  %X : %X\n", base + i * 4, *(u_int*)(base + i * 4));
     }
 }
 

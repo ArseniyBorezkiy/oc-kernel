@@ -10,6 +10,7 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <utils/kheap.h>
+#include <utils/kdump.h>
 #include <kernel.h>
 
 static struct task_t* current_task; /* current running process */
@@ -33,6 +34,7 @@ extern void sched_init()
 extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
 {
     struct task_t* next_task = null;
+    struct TSS_entry_t *tss = tss_get();
 
     /* finish current task */
     if (current_task != null) {
@@ -63,7 +65,7 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
         next_task = task_get_next_by_status(TASK_RUNNING, current_task);
     } else {
         next_task = task_get_by_status(TASK_RUNNING);
-        tss_set_kernel_stack(next_task->kstack);
+        tss->esp0 = (u32)next_task->kstack;
     }
     assert(next_task != null);
 
@@ -81,6 +83,11 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
     }
 
     /* prepare context for the next task */
+    u32 esp3 = next_task->op_registers.u_esp;
+    next_task->op_registers.u_esp -= 4;
+    *(u32*)(next_task->op_registers.u_esp) = next_task->op_registers.ss;
+    next_task->op_registers.u_esp -= 4;
+    *(u32*)(next_task->op_registers.u_esp) = esp3;
     next_task->op_registers.u_esp -= 4;
     *(u32*)(next_task->op_registers.u_esp) = (*(u16*)(&next_task->flags)) | 0x200;
     next_task->op_registers.u_esp -= 4;

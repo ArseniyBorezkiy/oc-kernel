@@ -10,12 +10,14 @@ extern void ih_opcode();
 extern void ih_double_fault();
 extern void ih_general_protect(u32 error);
 extern void ih_page_fault();
+extern void ih_invalid_tss(u32 error);
 extern void ih_alignment_check();
 extern void asm_ih_zero();
 extern void asm_ih_opcode();
 extern void asm_ih_double_fault();
 extern void asm_ih_general_protect();
 extern void asm_ih_page_fault();
+extern void asm_ih_invalid_tss();
 extern void asm_ih_alignment_check();
 
 /*

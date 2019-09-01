@@ -4,7 +4,7 @@
 .code32
 .text
 .globl asm_ih_zero, asm_ih_opcode, asm_ih_double_fault, asm_ih_general_protect
-.globl asm_ih_page_fault, asm_ih_alignment_check
+.globl asm_ih_page_fault, asm_ih_alignment_check, asm_ih_invalid_tss
 .globl asm_ih_timer, asm_ih_keyboard, asm_ih_syscall
 
 /*
@@ -76,6 +76,23 @@
     sti
     iretl
 
+/*
+ * Invalid tss
+ */
+ asm_ih_invalid_tss:
+    cli
+    pushal
+    mov %esp,%ebx
+    add $32,%ebx
+    push (%ebx)
+    call asm_load_data_kselectors
+    call ih_invalid_tss
+    call asm_load_data_uselectors
+    pop %ebx
+    popal
+    sti
+    iretl
+    
 /*
  * Alignment check
  */

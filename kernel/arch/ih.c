@@ -67,6 +67,15 @@ extern void ih_page_fault()
 }
 
 /*
+ * Api - Invalid tss
+ */
+extern void ih_invalid_tss(u32 error)
+{
+    kdump_stack((void*)asm_get_esp());
+    abort(MSG_INT_IT, error);
+}
+
+/*
  * Api - Alignment check
  */
 extern void ih_alignment_check()

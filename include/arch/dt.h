@@ -12,15 +12,16 @@
 #define GDT_TSS_SEGMENT 7
 #define GDT_ENTRIES_COUNT 8
 
-#define GDT_NULL_SELECTOR 0x00
-#define GDT_KCODE_SELECTOR 0x08
-#define GDT_KDATA_SELECTOR 0x10
-#define GDT_KSTACK_SELECTOR 0x18
-#define GDT_KTSS_SELECTOR 0x38
-#define GDT_UCODE_SELECTOR 0x23
-#define GDT_UDATA_SELECTOR 0x2b
-#define GDT_USTACK_SELECTOR 0x33
-#define GDT_UTSS_SELECTOR 0x3b
+// TODO !!!
+#define GDT_NULL_SELECTOR 0b0000
+#define GDT_KCODE_SELECTOR 0b1000
+#define GDT_KDATA_SELECTOR 0b10000
+#define GDT_KSTACK_SELECTOR 0b11000
+#define GDT_UCODE_SELECTOR 0b100011
+#define GDT_UDATA_SELECTOR 0b101011
+#define GDT_USTACK_SELECTOR 0b110011
+#define GDT_KTSS_SELECTOR 0b111000
+#define GDT_UTSS_SELECTOR 0b111011
 
 #define IDT_SIZE 256
 #define INT_ZERO 0x0
@@ -28,6 +29,7 @@
 #define INT_DOUBLE_FAULT 0x8
 #define INT_GENERAL_PROTECT 0xD
 #define INT_PAGE_FAULT 0xE
+#define INT_INVALID_TSS 0xA
 #define INT_ALIGNMENT_CHECK 0x11
 #define INT_TIMER 0x20
 #define INT_KEYBOARD 0x21
@@ -121,7 +123,7 @@ struct TSS_entry_t {
  */
 extern void gdt_init();
 extern void idt_init();
-extern void tss_set_kernel_stack(void *esp0);
+extern struct TSS_entry_t *tss_get();
 extern void asm_tss_load(u_int index);
 extern void asm_switch_kcontext(u32 esp, u32 cr3);
 extern void asm_switch_ucontext(u32 esp, u32 cr3);

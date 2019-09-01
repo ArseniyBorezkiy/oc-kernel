@@ -120,7 +120,7 @@ build-initrd-fs-generator: ./initrd/utils/fsgen.c
 #   use -d int to debug mmu & faults & interrupts
 #
 start:
-	qemu-system-i386 -no-reboot -no-shutdown -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
+	qemu-system-i386 -no-reboot -no-shutdown -d int -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
 
 #
 # Delete binary files

@@ -152,13 +152,21 @@ extern void gdt_init() {
     tss.gs = GDT_UDATA_SELECTOR;
     tss.ss = GDT_USTACK_SELECTOR;
 
-    tss_set_kernel_stack(kernel_stack);
-
     /* load */
     asm_gdt_load(&gdt_ptr);
     asm_tss_load(GDT_UTSS_SELECTOR);
 }
 
+/*
+ * Api - get current tss
+ */
+extern struct TSS_entry_t *tss_get() {
+    return &tss;
+}
+
+/*
+ * Api - init interrupt description table
+ */
 extern void idt_init()
 {
     size_t idt_address;
@@ -172,6 +180,7 @@ extern void idt_init()
     idt_fill_entry(INT_DOUBLE_FAULT, (size_t)asm_ih_double_fault);
     idt_fill_entry(INT_GENERAL_PROTECT, (size_t)asm_ih_general_protect);
     idt_fill_entry(INT_PAGE_FAULT, (size_t)asm_ih_page_fault);
+    idt_fill_entry(INT_INVALID_TSS, (size_t)asm_ih_invalid_tss);
     idt_fill_entry(INT_ALIGNMENT_CHECK, (size_t)asm_ih_alignment_check);
     idt_fill_entry(INT_TIMER, (size_t)asm_ih_timer);
     idt_fill_entry(INT_KEYBOARD, (size_t)asm_ih_keyboard);
@@ -194,11 +203,4 @@ static void idt_fill_entry(u_char offset, size_t handler)
     IDT[offset].zero = 0;
     IDT[offset].type_attr = INTERRUPT_GATE;
     IDT[offset].offset_higherbits = HIGH_WORD(handler);
-}
-
-/*
- * Api - Set kernel stack
- */
-extern void tss_set_kernel_stack(void *esp0) {
-    tss.esp0 = (u32)esp0;
 }
