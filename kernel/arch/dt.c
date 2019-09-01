@@ -151,6 +151,8 @@ extern void gdt_init() {
     tss.fs = GDT_UDATA_SELECTOR;
     tss.gs = GDT_UDATA_SELECTOR;
     tss.ss = GDT_USTACK_SELECTOR;
+    tss.ss0 = GDT_KSTACK_SEGMENT;
+    tss.esp0 = (u32)kernel_stack;
 
     /* load */
     asm_gdt_load(&gdt_ptr);

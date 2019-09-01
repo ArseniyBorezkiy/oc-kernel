@@ -20,7 +20,7 @@ extern void mmu_init()
     memset(&kpage_directory, 0, sizeof(struct page_directory_entry_t));
 
     /* set kernel page directory */
-    kpage_directory.zero = 1;
+    kpage_directory.zero = 0;
     kpage_directory.accessed = 0;
     kpage_directory.available = 0;
     kpage_directory.cache_disabled = 0;
@@ -80,7 +80,7 @@ extern struct page_directory_entry_t* mmu_create_user_page_directory(struct page
     struct page_directory_entry_t* upage_dir;
     upage_dir = malloc_a(sizeof(struct page_directory_entry_t), 4096);
 
-    upage_dir->zero = 1;
+    upage_dir->zero = 0;
     upage_dir->accessed = 0;
     upage_dir->available = 0;
     upage_dir->cache_disabled = 0;

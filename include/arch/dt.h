@@ -72,7 +72,7 @@ struct IDT_entry_t {
     u8 zero;
     u8 type_attr;
     u16 offset_higherbits;
-};
+} attribute(packed);
 
 /*
  * Task state segment
@@ -116,7 +116,7 @@ struct TSS_entry_t {
     u16 reserved10;
     u16 reserved11;
     u16 iopb;
-};
+} attribute(packed);
 
 /*
  * Api

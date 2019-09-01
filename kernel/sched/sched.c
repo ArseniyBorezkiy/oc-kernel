@@ -65,9 +65,10 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
         next_task = task_get_next_by_status(TASK_RUNNING, current_task);
     } else {
         next_task = task_get_by_status(TASK_RUNNING);
-        tss->esp0 = (u32)next_task->kstack;
+        // asm_tss_load(GDT_UTSS_SELECTOR);
     }
     assert(next_task != null);
+    tss->esp0 = (u32)next_task->kstack;
 
     /* whether should kill current task */
     if (current_task && current_task->status == TASK_KILLING) {
