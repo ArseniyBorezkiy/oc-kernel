@@ -27,7 +27,7 @@
 #define MSG_IRQ (MSG_KERNEL_PREFIX "irq %u" MSG_CRLN)
 #define MSG_SYSCALL (MSG_KERNEL_PREFIX "syscall %u from tid = %u" MSG_CRLN)
 #define MSG_SYSCALL_RET (MSG_KERNEL_PREFIX "ret from syscall %u" MSG_CRLN)
-#define MSG_INT_GP (MSG_INT_PREFIX "general protect" MSG_CRLN)
+#define MSG_INT_GP (MSG_INT_PREFIX "general protect %X" MSG_CRLN)
 #define MSG_INT_PF (MSG_INT_PREFIX "page fault (%X)" MSG_CRLN)
 #define MSG_INT_AC (MSG_INT_PREFIX "alignment check" MSG_CRLN)
 #define MSG_INT_DF (MSG_INT_PREFIX "double fault" MSG_CRLN)

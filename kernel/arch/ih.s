@@ -52,9 +52,13 @@
  asm_ih_general_protect:
     cli
     pushal
+    mov %esp,%ebx
+    add $32,%ebx
+    push (%ebx)
     call asm_load_data_kselectors
     call ih_general_protect
     call asm_load_data_uselectors
+    pop %ebx
     popal
     sti
     iretl

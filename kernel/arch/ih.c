@@ -51,10 +51,10 @@ extern void ih_double_fault()
 /*
  * Api - General protect
  */
-extern void ih_general_protect()
+extern void ih_general_protect(u32 error)
 {
     kdump_stack((void*)asm_get_esp());
-    abort(MSG_INT_GP);
+    abort(MSG_INT_GP, error);
 }
 
 /*
