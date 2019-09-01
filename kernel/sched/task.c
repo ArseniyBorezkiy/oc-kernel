@@ -1,4 +1,3 @@
-#include <arch/idt.h>
 #include <arch/mmu.h>
 #include <arch/reg.h>
 #include <ipc/ipc.h>

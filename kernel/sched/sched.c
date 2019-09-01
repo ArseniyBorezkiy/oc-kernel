@@ -1,4 +1,4 @@
-#include <arch/idt.h>
+#include <arch/gdt.h>
 #include <arch/reg.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>

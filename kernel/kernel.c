@@ -1,6 +1,5 @@
-#include <arch/idt.h>
-#include <arch/mmu.h>
 #include <arch/gdt.h>
+#include <arch/mmu.h>
 #include <arch/pic.h>
 #include <boot/multiboot.h>
 #include <dev/tty.h>

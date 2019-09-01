@@ -1,23 +1,11 @@
 #
-# Interrupt descriptor table helpers
+# Interrupt descriptor table handlers
 #
 .code32
 .text
-.globl asm_idt_load, asm_lock, asm_unlock, asm_hlt
 .globl asm_ih_zero, asm_ih_opcode, asm_ih_double_fault, asm_ih_general_protect
 .globl asm_ih_page_fault, asm_ih_alignment_check
 .globl asm_ih_timer, asm_ih_keyboard, asm_ih_syscall
-
-/*
- * Load interrupt table
- * void asm_idt_load(unsigned long *addr)
- */
-asm_idt_load:
-    push %edx
-    mov 8(%esp), %edx
-    lidt (%edx)
-    pop %edx
-    ret
 
 /*
  * Handle error division by zero
@@ -25,7 +13,9 @@ asm_idt_load:
  asm_ih_zero:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_zero
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -36,7 +26,9 @@ asm_idt_load:
  asm_ih_opcode:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_opcode
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -47,7 +39,9 @@ asm_idt_load:
  asm_ih_double_fault:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_double_fault
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -58,7 +52,9 @@ asm_idt_load:
  asm_ih_general_protect:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_general_protect
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -69,7 +65,9 @@ asm_idt_load:
  asm_ih_page_fault:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_page_fault
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -80,7 +78,9 @@ asm_idt_load:
  asm_ih_alignment_check:
     cli
     pushal
+    call asm_load_data_kselectors
     call ih_alignment_check
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -92,6 +92,7 @@ asm_idt_load:
 asm_ih_timer:
     cli
     pushal
+    call asm_load_data_kselectors
     mov %esp,%ebp
     mov %ebp,%ebx
     pushl %ebx # &reg
@@ -99,6 +100,7 @@ asm_ih_timer:
     pushl %ebx # &ret addr
     call ih_timer
     mov %ebp,%esp
+    call asm_load_data_uselectors
     popal
     sti
     iretl
@@ -109,6 +111,7 @@ asm_ih_timer:
  */
 asm_ih_syscall:
     pushal
+    call asm_load_data_kselectors
     mov %esp,%ebp
     mov %ebp,%ebx
     add $32,%ebx
@@ -117,6 +120,7 @@ asm_ih_syscall:
     call ih_syscall
     mov %ebp,%esp
     mov %eax,28(%esp)
+    call asm_load_data_uselectors
     popal
     iretl
 
@@ -126,30 +130,9 @@ asm_ih_syscall:
  */
 asm_ih_keyboard:
     pushal
+    call asm_load_data_kselectors
     call ih_keyboard
+    call asm_load_data_uselectors
     popal
     iretl
 
-/*
- * Lock interrupts
- * void asm_lock();
- */
-asm_lock:
-    cli
-    ret
-
-/*
- * Unlock interrupts
- * void asm_unlock();
- */
-asm_unlock:
-    sti
-    ret
-
-/*
- * Halt processor
- * void asm_hlt();
- */
-asm_hlt:
-    hlt
-    ret

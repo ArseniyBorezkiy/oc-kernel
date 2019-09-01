@@ -16,10 +16,23 @@
 #define GDT_KCODE_SELECTOR 0x08
 #define GDT_KDATA_SELECTOR 0x10
 #define GDT_KSTACK_SELECTOR 0x18
+#define GDT_KTSS_SELECTOR 0x38
 #define GDT_UCODE_SELECTOR 0x23
 #define GDT_UDATA_SELECTOR 0x2b
 #define GDT_USTACK_SELECTOR 0x33
-#define GDT_TSS_SELECTOR 0x38
+#define GDT_UTSS_SELECTOR 0x3b
+
+#define IDT_SIZE 256
+#define INT_ZERO 0x0
+#define INT_OPCODE 0x6
+#define INT_DOUBLE_FAULT 0x8
+#define INT_GENERAL_PROTECT 0xD
+#define INT_PAGE_FAULT 0xE
+#define INT_ALIGNMENT_CHECK 0x11
+#define INT_TIMER 0x20
+#define INT_KEYBOARD 0x21
+#define INT_SYSCALL 0x80
+#define INTERRUPT_GATE 0x8e
 
 /*
  * Global descriptor table entry
@@ -49,6 +62,21 @@ struct GDT_pointer_t {
 } attribute(packed);
 
 /*
+ * Interrupt table entry
+ */
+struct IDT_entry {
+    u16 offset_lowerbits;
+    u16 selector;
+    u8 zero;
+    u8 type_attr;
+    u16 offset_higherbits;
+};
+
+/*
  * Api
  */
 extern void gdt_init();
+extern void idt_init();
+extern void tss_set_kernel_stack(void *esp0);
+extern void asm_switch_context(u32 esp, u32 cr3);
+extern void asm_tss_load(u_int index);

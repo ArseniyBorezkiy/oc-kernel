@@ -3,8 +3,9 @@
 #
 .code32
 .text
-.globl asm_get_cs, asm_get_ds, asm_get_ss, asm_get_esp, asm_get_eflags, asm_switch_context
+.globl asm_get_cs, asm_get_ds, asm_get_ss, asm_get_esp, asm_get_eflags
 .globl asm_get_cr0, asm_get_cr2, asm_get_cr3
+.globl asm_lock, asm_unlock, asm_hlt
 
 #
 # Get code selector
@@ -74,20 +75,26 @@ asm_get_eflags:
     popl %eax
     ret
 
-#
-# Switch context
-# void asm_switch_context(u32 esp, u32 cr3)
-#
-asm_switch_context:
-    mov 4(%esp),%ebp # ebp = esp
-    mov 8(%esp),%eax # eax = cr3
-    mov %cr0,%ebx    # ebx = cr0
-    xor $0x80000000,%ebx  # unset PG bit
-    mov %ebx,%cr0
-    mov %eax,%cr3
-    or $0x80000001,%ebx  # set PE & PG bits
-    mov %ebx,%cr0
-    mov %ebp,%esp
-    popal
+/*
+ * Lock interrupts
+ * void asm_lock();
+ */
+asm_lock:
+    cli
+    ret
+
+/*
+ * Unlock interrupts
+ * void asm_unlock();
+ */
+asm_unlock:
     sti
-    iretl
+    ret
+
+/*
+ * Halt processor
+ * void asm_hlt();
+ */
+asm_hlt:
+    hlt
+    ret

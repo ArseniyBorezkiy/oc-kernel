@@ -3,7 +3,9 @@
 #
 .code32
 .text
-.globl asm_gdt_load
+.globl asm_gdt_load, asm_idt_load, asm_tss_load
+.globl asm_load_data_kselectors, asm_load_data_uselectors
+.globl asm_switch_context
 
 /*
  * Load global descriptor table
@@ -21,3 +23,67 @@ asm_gdt_load:
     jmp $0x08,$asm_gdt_load_exit
 asm_gdt_load_exit:
     ret
+
+/*
+ * Load interrupt table
+ * void asm_idt_load(unsigned long *addr)
+ */
+asm_idt_load:
+    push %edx
+    mov 8(%esp), %edx
+    lidt (%edx)
+    pop %edx
+    ret
+
+/*
+ * Load task state segment
+ * void asm_tss_load(u_int index)
+ */
+asm_tss_load:
+    mov 4(%esp),%eax # eax = index
+    ltr %ax
+    ret
+
+/*
+ * Load kernel selectors
+ */
+ asm_load_data_kselectors:
+    push %eax
+    mov $0x10,%eax
+    mov %ax,%ds
+    mov %ax,%es
+    mov %ax,%fs
+    mov %ax,%gs
+    pop %eax
+    ret
+
+/*
+ * Load user selectors
+ */
+ asm_load_data_uselectors:
+    push %eax
+    mov $0x2b,%eax
+    mov %ax,%ds
+    mov %ax,%es
+    mov %ax,%fs
+    mov %ax,%gs
+    pop %eax
+    ret
+
+/*
+ * Switch context
+ * void asm_switch_context(u32 esp, u32 cr3)
+ */
+asm_switch_context:
+    mov 4(%esp),%ebp # ebp = esp
+    mov 8(%esp),%eax # eax = cr3
+    mov %cr0,%ebx    # ebx = cr0
+    xor $0x80000000,%ebx  # unset PG bit
+    mov %ebx,%cr0
+    mov %eax,%cr3
+    or $0x80000001,%ebx  # set PE & PG bits
+    mov %ebx,%cr0
+    mov %ebp,%esp
+    popal
+    sti
+    iretl

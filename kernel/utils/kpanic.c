@@ -1,4 +1,4 @@
-#include <arch/idt.h>
+#include <arch/reg.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
 #include <utils/kpanic.h>

@@ -1,4 +1,4 @@
-#include <arch/idt.h>
+#include <arch/reg.h>
 #include <dev/utils/video.h>
 #include <lib/assert.h>
 #include <lib/string.h>

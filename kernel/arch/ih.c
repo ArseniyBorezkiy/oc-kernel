@@ -1,4 +1,4 @@
-#include <arch/idt.h>
+#include <arch/gdt.h>
 #include <arch/ih.h>
 #include <arch/pic.h>
 #include <arch/port.h>

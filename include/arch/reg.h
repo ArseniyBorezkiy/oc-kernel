@@ -70,4 +70,6 @@ extern u32 asm_get_eflags();
 extern u32 asm_get_cr0();
 extern u32 asm_get_cr2();
 extern u32 asm_get_cr3();
-extern void asm_switch_context(u32 esp, u32 cr3);
+extern void asm_lock();
+extern void asm_unlock();
+extern void asm_hlt();
