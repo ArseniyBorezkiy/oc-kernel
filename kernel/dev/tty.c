@@ -1,4 +1,4 @@
-#include <arch/gdt.h>
+#include <arch/dt.h>
 #include <dev/dev.h>
 #include <dev/tty.h>
 #include <dev/utils/keyboard.h>

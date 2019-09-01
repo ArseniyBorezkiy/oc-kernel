@@ -1,5 +1,4 @@
-#include <arch/gdt.h>
-#include <arch/tss.h>
+#include <arch/dt.h>
 #include <arch/ih.h>
 #include <arch/pic.h>
 #include <lib/string.h>
@@ -11,7 +10,7 @@ static void idt_fill_entry(u_char offset, size_t addr);
 
 static struct GDT_entry_t gdt[GDT_ENTRIES_COUNT];
 static struct GDT_pointer_t gdt_ptr;
-static struct IDT_entry IDT[IDT_SIZE];
+static struct IDT_entry_t IDT[IDT_SIZE];
 static struct TSS_entry_t tss;
 
 /*
@@ -180,7 +179,7 @@ extern void idt_init()
 
     /* load idt */
     idt_address = (size_t)IDT;
-    idt_ptr[0] = (LOW_WORD(idt_address) << 16) + (sizeof(struct IDT_entry) * IDT_SIZE);
+    idt_ptr[0] = (LOW_WORD(idt_address) << 16) + (sizeof(struct IDT_entry_t) * IDT_SIZE);
     idt_ptr[1] = idt_address >> 16;
     asm_idt_load(idt_ptr);
 }

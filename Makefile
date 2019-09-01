@@ -24,8 +24,8 @@ build: build-lib build-kernel build-initrd
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
 		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o \
-		./bin/reg.s.o ./bin/port.s.o ./bin/idt.s.o ./bin/gdt.s.o ./bin/mmu.s.o \
-		./bin/gdt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
+		./bin/reg.s.o ./bin/port.s.o ./bin/dt.s.o ./bin/ih.s.o ./bin/mmu.s.o \
+		./bin/dt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
 		./bin/ipc.c.o \
 		./bin/spin.c.o \
@@ -73,17 +73,18 @@ build-kernel-vfs: ./kernel/vfs/initrd.c ./kernel/vfs/elf.c ./kernel/vfs/file.c
 build-kernel-mm: ./kernel/mm/mm.c
 	$(CC) $(CC_FLAGS) -c ./kernel/mm/mm.c -o ./bin/mm.c.o
 
-build-kernel-arch: ./kernel/arch/reg.s ./kernel/arch/port.s ./kernel/arch/idt.s \
-                   ./kernel/arch/pic.c ./kernel/arch/mmu.s \
+build-kernel-arch: ./kernel/arch/entry.s ./kernel/arch/reg.s ./kernel/arch/port.s \
+                   ./kernel/arch/dt.s ./kernel/arch/ih.s \
+                   ./kernel/arch/pic.c ./kernel/arch/dt.c ./kernel/arch/mmu.s \
                    ./kernel/arch/mmu.c
 	$(AS) $(AS_FLAGS) ./kernel/arch/entry.s -o ./bin/entry.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/reg.s -o ./bin/reg.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/port.s -o ./bin/port.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/idt.s -o ./bin/idt.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/gdt.s -o ./bin/gdt.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/ih.s -o ./bin/ih.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/dt.s -o ./bin/dt.s.o
 	$(AS) $(AS_FLAGS) ./kernel/arch/mmu.s -o ./bin/mmu.s.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/pic.c -o ./bin/pic.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/arch/gdt.c -o ./bin/gdt.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/dt.c -o ./bin/dt.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/ih.c -o ./bin/ih.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/mmu.c -o ./bin/mmu.c.o
 

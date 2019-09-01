@@ -1,4 +1,4 @@
-#include <arch/gdt.h>
+#include <arch/dt.h>
 #include <arch/mmu.h>
 #include <arch/pic.h>
 #include <boot/multiboot.h>
