@@ -103,5 +103,6 @@ asm_switch_ucontext:
     mov %ebx,%cr0
     mov %ebp,%esp
     popal
+    call asm_load_data_uselectors
     sti
     iretl

@@ -1,3 +1,4 @@
+#include <arch/dt.h>
 #include <arch/mmu.h>
 #include <arch/reg.h>
 #include <ipc/ipc.h>
@@ -68,9 +69,9 @@ extern bool task_create(u_short tid, void* address, struct task_mem_t *task_mem)
     /* set general purpose registers */
     memset(&task->gp_registers, 0, sizeof(struct gp_registers_t));
     /* set other purpose registers */
-    task->op_registers.cs = asm_get_cs();
-    task->op_registers.ds = asm_get_ds();
-    task->op_registers.ss = asm_get_ss();
+    task->op_registers.cs = GDT_KCODE_SELECTOR;
+    task->op_registers.ds = GDT_KDATA_SELECTOR;
+    task->op_registers.ss = GDT_KSTACK_SELECTOR;
     task->op_registers.eip = (size_t)address;
     task->op_registers.cr3 = (size_t)task_mem->page_dir;
     task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
