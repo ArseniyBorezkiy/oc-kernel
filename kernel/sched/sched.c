@@ -10,6 +10,7 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <utils/kheap.h>
+#include <kernel.h>
 
 static struct task_t* current_task; /* current running process */
 
@@ -62,6 +63,7 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
         next_task = task_get_next_by_status(TASK_RUNNING, current_task);
     } else {
         next_task = task_get_by_status(TASK_RUNNING);
+        tss_set_kernel_stack(next_task->kstack);
     }
     assert(next_task != null);
 
@@ -96,7 +98,7 @@ extern void sched_schedule(size_t* ret_addr, size_t* reg_addr)
     /* run next task */
     printf(MSG_SCHED_NEXT, next_task->tid, next_task->op_registers.u_esp,
         *ret_addr, next_task->op_registers.eip);
-    asm_switch_kcontext(next_task->op_registers.u_esp,
+    asm_switch_ucontext(next_task->op_registers.u_esp,
         next_task->op_registers.cr3);
 }
 
