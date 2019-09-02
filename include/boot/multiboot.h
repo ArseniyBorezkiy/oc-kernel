@@ -1,11 +1,11 @@
 #pragma once
 
-#include <lib/stdtypes.h>
+#include <lib/stdint.h>
 
 struct mod_addr_t {
     u32 start;
     u32 end;
-} attribute(packed);
+} __attribute__((packed));
 
 struct multiboot_t {
     u32 flags;
@@ -32,4 +32,4 @@ struct multiboot_t {
     u32 vbe_interface_seg;
     u32 vbe_interface_off;
     u32 vbe_interface_len;
-} attribute(packed);
+} __attribute((packed))__;
