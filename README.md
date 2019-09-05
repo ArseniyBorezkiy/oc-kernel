@@ -1,5 +1,5 @@
 # Ars Boretskii OC
 
-## Lesson 1.
+## Lesson 2.
 
-Entry point.
+C library.
