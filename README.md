@@ -1,5 +1,5 @@
 # Ars Boretskii OC
 
-## Lesson 1.
+## Lesson 3.
 
-Entry point.
+Print to screen.
