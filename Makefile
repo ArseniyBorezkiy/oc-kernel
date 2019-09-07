@@ -13,7 +13,8 @@ AS_FLAGS=-g --32
 LD_FLAGS=-m elf_i386
 LD_USER_FLAGS=-m elf_i386
 
-all: build start
+qemu: build start-qemu
+bochs: build start-bochs
 
 #
 # Build kernel
@@ -117,11 +118,14 @@ build-initrd-fs-generator: ./initrd/utils/fsgen.c
 
 #
 # Run kernel in emulator
-#   use -d int to debug mmu & faults & interrupts
+#   for qemu use -d int to debug mmu & faults & interrupts
 #
-start:
-	./update_image.sh
-	./run_bochs.sh
+start-qemu:
+	qemu-system-i386 -no-reboot -no-shutdown -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
+
+start-bochs:
+	./config/update_image.sh
+	./config/run_bochs.sh
 
 #
 # Delete binary files
@@ -134,7 +138,7 @@ clean:
 # Debug kernel
 #
 debug:
-	gdb -x ./debug.script -s ./bin/kernel.elf
+	gdb -x ./config/debug.script -s ./bin/kernel.elf
 
 #
 # Dup kernel
