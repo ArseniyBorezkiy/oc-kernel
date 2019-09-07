@@ -120,7 +120,8 @@ build-initrd-fs-generator: ./initrd/utils/fsgen.c
 #   use -d int to debug mmu & faults & interrupts
 #
 start:
-	./update_image.sh ./run_bochs.sh
+	./update_image.sh
+	./run_bochs.sh
 
 #
 # Delete binary files

@@ -79,6 +79,9 @@ Ars Boretskii kernel 1.0
 # exit
 ```
 
+### Contributors
+- Ilya Starchenko (thanks for bochs)
+
 ### Wish list
 
 - User mode & TSS (ring3)
