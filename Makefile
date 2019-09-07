@@ -120,12 +120,13 @@ build-initrd-fs-generator: ./initrd/utils/fsgen.c
 #   use -d int to debug mmu & faults & interrupts
 #
 start:
-	qemu-system-i386 -no-reboot -no-shutdown -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
+	./update_image.sh ./run_bochs.sh
 
 #
 # Delete binary files
 #
 clean:
+	find ./ -type f|xargs touch
 	rm -f ./bin/*
 
 #
