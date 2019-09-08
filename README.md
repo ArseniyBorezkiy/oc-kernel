@@ -24,16 +24,50 @@ Target processor: i80386 (Protected mode).
 
 ### Dependencies
 
-```
-$ apt-get install gcc
-$ apt-get install qemu
-```
-
-### Build and run
+First, share folder on via VirtualBox.
 
 ```
+$ VBoxManage sharedfolder add <vmname> --name <name> --hostpath <path>
+```
+
+```
+On your guest os:
+$ sudo apt-get install virtualbox-guest-utils
+$ sudo mount -t vboxsf -o uid=1000,gid=1000 <name> <target-path>
+```
+
+When shared folder is ready, install build tools.
+
+```
+Linux lite (support qemu only):
+$ sudo apt-get install gcc
+$ sudo apt-get install qemu
+```
+```
+Ubuntu (support both bochs and qemu):
+$ sudo apt-get install gcc
+$ sudo apt-get install bochs
+$ sudo apt-get install bochs-x
+```
+
+### Build sources and run on qemu
+
+```
+Qemu:
 $ mkdir bin
-$ sudo make
+$ sudo make qemu
+```
+
+### Build sources and run on bochs
+
+```
+Bochs:
+$ sudo mkdir bin
+$ sudo mkdir /mnt/kernel_u
+$ sudo losetup -a               # check loop13 is free
+$ sudo losetup -d /dev/loop13   # release it if not free
+$ sudo losetup -a               # make shure loop13 is not present
+$ sudo make bochs
 ```
 
 ### Shell commands
@@ -78,6 +112,9 @@ Ars Boretskii kernel 1.0
 # kill 4
 # exit
 ```
+
+### Contributors
+- Ilya Starchenko (thanks for bochs)
 
 ### Wish list
 
