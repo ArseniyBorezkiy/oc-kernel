@@ -16,7 +16,7 @@ all: build start
 #
 # Build kernel
 #
-build: build-kernel build-lib
+build: build-kernel build-kernel-arch build-lib
 	$(LD) $(LD_FLAGS) -T ./config/link.ld -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o ./bin/string.c.o
 
