@@ -62,8 +62,11 @@ $ sudo make qemu
 
 ```
 Bochs:
-$ mkdir bin
-$ mkdir /mnt/kernel_u
+$ sudo mkdir bin
+$ sudo mkdir /mnt/kernel_u
+$ sudo losetup -a               # check loop13 is free
+$ sudo losetup -d /dev/loop13   # release it if not free
+$ sudo losetup -a               # make shure loop13 is not present
 $ sudo make bochs
 ```
 
