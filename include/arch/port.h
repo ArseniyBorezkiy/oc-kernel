@@ -1,7 +1,11 @@
 #pragma once
 
+#include <lib/stddef.h>
 #include <lib/stdint.h>
 #include <lib/stdbool.h>
+
+#define KEYBOARD_STATUS_PORT 0x64
+#define KEYBOARD_DATA_PORT 0x60
 
 /*
  * Port operations

@@ -7,3 +7,5 @@ typedef unsigned long size_t;
 #define LOW_WORD(addr) ((addr & 0xffff))
 #define LOW_BYTE(addr) ((addr & 0x00ff))
 #define HIGH_BYTE(addr) ((addr & 0xff00) >> 8)
+
+#define attribute(value) __attribute__((value))
