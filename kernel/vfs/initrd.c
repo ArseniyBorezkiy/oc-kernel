@@ -11,21 +11,16 @@ static struct initrd_node_t* initrd_get_node(char* name, struct initrd_fs_t* fs)
 /*
  * Data 
  */
+size_t initrd_start = 0;
+size_t initrd_end = 0;
 static char* shell_elf = "sh.elf";
-static size_t base = 0;
 
 /*
  * Api - run initial ram disk elf file
  */
-extern void initrd_autorun(struct mod_addr_t* mods_addr, int mods_count)
+extern void initrd_autorun()
 {
-    assert(mods_count > 0);
-
-    u32 start = mods_addr[0].start;
-    u32 end = mods_addr[0].end;
-
-    printf(MSG_KERNEL_INITRD_AREA, start, end, mods_count);
-    base = start;
+    printf(MSG_KERNEL_INITRD_AREA, initrd_start, initrd_end);
 
     /* autorun files */
     initrd_exec(shell_elf);
@@ -41,13 +36,13 @@ extern void initrd_exec(char* name)
     struct elf_header_t* elf;
 
     /* find file */
-    fs = (struct initrd_fs_t*)base;
+    fs = (struct initrd_fs_t*)initrd_start;
     assert(fs->count > 0);
     node = initrd_get_node(name, fs);
     assert(node != null);
 
     /* exec elf */
-    elf = (struct elf_header_t*)(node->offset + base);
+    elf = (struct elf_header_t*)(node->offset + initrd_start);
     elf_exec(elf);
 }
 

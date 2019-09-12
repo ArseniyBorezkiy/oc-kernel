@@ -22,7 +22,7 @@
 #define MSG_KERNEL_HEAP_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory limit exceed" MSG_CRLN)
 #define MSG_KERNEL_HEAP_TABLE_EXCEED (MSG_KERNEL_PREFIX "kernel heap memory table limit exceed" MSG_CRLN)
 #define MSG_KERNEL_HEAP_FREE_INVALID_ADDR (MSG_KERNEL_PREFIX "invalid kernel heap address to free %X" MSG_CRLN)
-#define MSG_KERNEL_INITRD_AREA (MSG_KERNEL_PREFIX "init ram disk area %X-%X (%u)" MSG_CRLN)
+#define MSG_KERNEL_INITRD_AREA (MSG_KERNEL_PREFIX "init ram disk area %X-%X" MSG_CRLN)
 #define MSG_KERNEL_ELF_LOADING (MSG_KERNEL_PREFIX "loading elf (sections=%u)" MSG_CRLN)
 #define MSG_KERNEL_ELF_LOADED (MSG_KERNEL_PREFIX "elf loaded" MSG_CRLN)
 #define MSG_IRQ (MSG_KERNEL_PREFIX "irq %u" MSG_CRLN)

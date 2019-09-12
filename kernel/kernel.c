@@ -18,6 +18,7 @@
 #include <sched/sched.h>
 #include <sched/task.h>
 #include <tasks/dq.h>
+#include <tasks/init.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
 #include <utils/lib.h>
@@ -70,7 +71,9 @@ extern void kernel_start(struct multiboot_t* multiboot, void* kstack)
     create_kernel_tasks();
 
     /* init vfs */
-    initrd_autorun(multiboot->mods_addr, multiboot->mods_count);
+    assert(multiboot->mods_count > 0);
+    initrd_start = (size_t)multiboot->mods_addr[0].start;
+    initrd_end = (size_t)multiboot->mods_addr[0].end;
 
     /* enable interrupts */
     pic_enable();
@@ -93,10 +96,16 @@ static void create_kernel_tasks() {
     kernel_task_mem.page_dir = mmu_get_kdirectory();
     kernel_task_mem.page_table = mmu_get_ktable();
 
+    assert(task_create(TID_INIT, init_task, &kernel_task_mem));
     assert(task_create(TID_DQ, dq_task, &kernel_task_mem));
     
     struct task_t *task;
+
     task = task_get_by_id(TID_DQ);
     strcpy(task->name, dq_task_name);
+    task->status = TASK_RUNNING;
+
+    task = task_get_by_id(TID_INIT);
+    strcpy(task->name, init_task_name);
     task->status = TASK_RUNNING;
 }

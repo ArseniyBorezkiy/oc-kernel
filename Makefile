@@ -35,7 +35,7 @@ build: build-lib build-kernel build-initrd
 		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/mm.c.o \
 		./bin/initrd.c.o ./bin/elf.c.o ./bin/file.c.o \
-		./bin/dq.c \
+		./bin/dq.c ./bin/init.c \
 		./bin/tty.c.o ./bin/dev.c.o
 
 build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c ./lib/sys.c \
@@ -55,8 +55,9 @@ build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kern
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
 
-build-kernel-tasks: ./kernel/tasks/dq.c
+build-kernel-tasks: ./kernel/tasks/dq.c ./kernel/tasks/init.c
 	$(CC) $(CC_FLAGS) -c ./kernel/tasks/dq.c -o ./bin/dq.c
+	$(CC) $(CC_FLAGS) -c ./kernel/tasks/init.c -o ./bin/init.c
 
 build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/utils/kpanic.c ./kernel/utils/kheap.c ./kernel/utils/kassert.c
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o

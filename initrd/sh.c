@@ -98,7 +98,7 @@ static bool execute_command(char* cmd)
         clist_for_each(dev_list, print_dev_info);
     } else {
         printf("  There is no such command.\n  Available command list:\n");
-        printf("    %s  %s  %s <pid>  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_clear);
+        printf("    %s  %s  %s <pid>  %s <file.elf>  %s  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_exec, cmd_clear, cmd_dev);
     }
 
     return true;
