@@ -3,11 +3,14 @@
 #include <lib/sys.h>
 #include <lib/time.h>
 #include <sched/sched.h>
+#include <dev/dev.h>
 #include <messages.h>
 
 int main();
 static bool execute_command(char* cmd);
 static void print_task_info(struct clist_head_t* current, va_list list);
+static void print_dev_info(struct clist_head_t* current, va_list list);
+static void print_dev_ih_info(struct clist_head_t* current, va_list list);
 
 /*
  * Data
@@ -17,6 +20,7 @@ static const char* cmd_clear = "clear";
 static const char* cmd_kill = "kill";
 static const char* cmd_exit = "exit";
 static const char* cmd_exec = "exec";
+static const char* cmd_dev = "dev";
 static const char* prompt = "# ";
 
 /*
@@ -86,6 +90,12 @@ static bool execute_command(char* cmd)
         strtok_r(cmd, " ", &save_ptr);
         char* str_file = strtok_r(null, " ", &save_ptr);
         exec(str_file);
+    } else if (!strncmp(cmd, cmd_dev, strlen(cmd_dev))) {
+        /* show device list */
+        struct clist_definition_t *dev_list;
+        dev_list = devs();
+        printf(" -- device list\n");
+        clist_for_each(dev_list, print_dev_info);
     } else {
         printf("  There is no such command.\n  Available command list:\n");
         printf("    %s  %s  %s <pid>  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_clear);
@@ -101,4 +111,23 @@ static void print_task_info(struct clist_head_t* current, va_list list) {
     struct task_t *task;
     task = (struct task_t *)current->data;
     printf("  %s, tid = %u, status = %X\n", task->name, task->tid, task->status);
+}
+
+/*
+ * Print device info
+ */
+static void print_dev_info(struct clist_head_t* current, va_list list) {
+    struct dev_t *dev;
+    dev = (struct dev_t *)current->data;
+    printf("  + %s\n", dev->name);
+    clist_for_each(&dev->ih_list, print_dev_ih_info);
+}
+
+/*
+ * Print device interrupt handler info
+ */
+static void print_dev_ih_info(struct clist_head_t* current, va_list list) {
+    struct ih_low_t *ih;
+    ih = (struct ih_low_t *)current->data;
+    printf("    handles interrupt %X (handler %X) \n", ih->number, ih->handler);
 }

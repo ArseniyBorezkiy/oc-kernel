@@ -13,6 +13,7 @@
 #define SYSCALL_CLOSE 9
 #define SYSCALL_IOCTL 10
 #define SYSCALL_TASK_LIST 11
+#define SYSCALL_DEVS_LIST 12
 
 #define noreturn while(1) {} /* prevent gcc warning */
 

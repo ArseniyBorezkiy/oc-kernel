@@ -30,6 +30,7 @@ typedef void (*dev_each_callback_t)(struct dev_t* entry, void* data);
  * Api
  */
 extern void dev_init();
+extern struct clist_definition_t *dev_get_dev_list();
 extern void dev_register(struct dev_t* dev);
 extern struct dev_t* dev_find_by_name(char* name);
 extern void dev_for_each(dev_each_callback_t callback, void* data);

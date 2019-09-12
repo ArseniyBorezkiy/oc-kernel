@@ -19,10 +19,17 @@ extern void exit(int errno) {
 }
 
 /*
- * Api - get current task
+ * Api - get tasks list
  */
 extern struct clist_definition_t* ps() {
     return (void *)asm_syscall(SYSCALL_TASK_LIST);
+}
+
+/*
+ * Api - get devices list
+ */
+extern struct clist_definition_t* devs() {
+    return (void *)asm_syscall(SYSCALL_DEVS_LIST);
 }
 
 /*

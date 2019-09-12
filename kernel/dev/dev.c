@@ -21,6 +21,13 @@ extern void dev_init()
 }
 
 /*
+ * Api - Device list
+ */
+extern struct clist_definition_t *dev_get_dev_list() {
+    return &dev_list;
+}
+
+/*
  * Api - register device
  */
 extern void dev_register(struct dev_t* dev)

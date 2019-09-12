@@ -3,6 +3,7 @@
 #include <arch/pic.h>
 #include <arch/port.h>
 #include <arch/mmu.h>
+#include <dev/dev.h>
 #include <dev/tty.h>
 #include <dev/utils/ih_low.h>
 #include <ipc/ipc.h>
@@ -206,8 +207,13 @@ extern size_t ih_syscall(u_int* function)
         break;
     }
     case SYSCALL_TASK_LIST: {
-        /* get current task */
+        /* get tasks list */
         result = (size_t)task_get_task_list();
+        break;
+    }
+    case SYSCALL_DEVS_LIST: {
+        /* get devices list */
+        result = (size_t)dev_get_dev_list();
         break;
     }
     default:
