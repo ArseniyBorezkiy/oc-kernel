@@ -12,9 +12,9 @@
 #define TASK_MSG_BUFF_SIZE 16
 
 /* predefined tasks */
-#define TID_INIT 1
-#define TID_SH 2
-#define TID_USER 3
+#define TID_INIT 10
+#define TID_DQ 11
+#define TID_USER 20
 
 /* task status */
 #define TASK_UNINTERRUPTABLE 1

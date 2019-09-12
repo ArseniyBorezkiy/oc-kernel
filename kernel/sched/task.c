@@ -49,8 +49,6 @@ extern bool task_create(u_short tid, void* address, struct task_mem_t *task_mem)
     struct task_t* task;
     struct clist_head_t* entry;
 
-    printf(MSG_SCHED_TID_CREATE, tid, (u_int)address);
-
     /* allocate memory */
     entry = clist_insert_entry_after(&task_list, task_list.head);
     task = (struct task_t*)entry->data;
@@ -77,6 +75,8 @@ extern bool task_create(u_short tid, void* address, struct task_mem_t *task_mem)
     task->op_registers.k_esp = (u32)task->kstack + TASK_KSTACK_SIZE;
     task->op_registers.u_esp = (u32)task->ustack + TASK_USTACK_SIZE;
 
+    printf(MSG_SCHED_TID_CREATE, tid, (u_int)address, task->kstack, task->ustack);
+
     return true;
 }
 
@@ -93,6 +93,7 @@ extern void task_delete(struct task_t* task)
     free(task->ustack);
     task->kstack = null;
     task->ustack = null;
+    
     /* free user pages memory */
     if (task->task_mem.pages_count > 0) {
         mm_phys_free_pages(task->task_mem.pages, task->task_mem.pages_count);

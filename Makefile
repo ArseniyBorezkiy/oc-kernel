@@ -24,7 +24,8 @@ build: build-lib build-kernel build-initrd
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
-		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o ./bin/syscall.s.o \
+		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
+		./bin/sys.c.o ./bin/syscall.s.o \
 		./bin/reg.s.o ./bin/port.s.o ./bin/dt.s.o ./bin/ih.s.o ./bin/mmu.s.o \
 		./bin/dt.c.o ./bin/ih.c.o ./bin/pic.c.o ./bin/mmu.c.o \
 		./bin/task.c.o ./bin/sched.c.o \
@@ -34,6 +35,7 @@ build: build-lib build-kernel build-initrd
 		./bin/slist.c.o ./bin/clist.c.o \
 		./bin/mm.c.o \
 		./bin/initrd.c.o ./bin/elf.c.o ./bin/file.c.o \
+		./bin/dq.c \
 		./bin/tty.c.o ./bin/dev.c.o
 
 build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c ./lib/sys.c \
@@ -48,10 +50,13 @@ build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c
 	$(CC) $(CC_FLAGS) -c ./lib/data/slist.c -o ./bin/slist.c.o
 	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
 
-build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched \
+build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
               build-kernel-ipc build-kernel-sync build-kernel-dev build-kernel-vfs build-kernel-mm \
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
+
+build-kernel-tasks: ./kernel/tasks/dq.c
+	$(CC) $(CC_FLAGS) -c ./kernel/tasks/dq.c -o ./bin/dq.c
 
 build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/utils/kpanic.c ./kernel/utils/kheap.c ./kernel/utils/kassert.c
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kprint.c -o ./bin/kprint.c.o

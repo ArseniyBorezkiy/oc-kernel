@@ -4,6 +4,7 @@
 #include <dev/utils/keyboard.h>
 #include <dev/utils/video.h>
 #include <ipc/ipc.h>
+#include <tasks/dq.h>
 #include <lib/assert.h>
 #include <lib/data/clist.h>
 #include <lib/stdio.h>
@@ -20,6 +21,7 @@ static void tty_ioctl(struct io_buf_t* io_buf, int command);
 static void tty_write_ch(struct io_buf_t* io_buf, char ch);
 static char tty_read_ch(struct io_buf_t* io_buf);
 static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data);
+static void tty_keyboard_ih_high(struct message_t *msg);
 
 /*
  * Data
@@ -64,7 +66,7 @@ extern void tty_init()
 }
 
 /*
- * Key pressed
+ * Key press low half handler
  */
 static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data)
 {
@@ -78,8 +80,22 @@ static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data)
     if (is_echo && ch != '\n') {
       /* echo character to screen */
       *tty_output_buff_ptr++ = ch;
-      video_flush(tty_output_buff);
     }
+
+    /* register deffered execution */
+    struct message_t msg;
+    msg.type = IPC_MSG_TYPE_DQ_SCHED;
+    msg.len = 4;
+    *((size_t *)msg.data) = (size_t)tty_keyboard_ih_high;
+    ksend(TID_DQ, &msg);
+}
+
+/*
+ * Key press high half handler
+ */
+static void tty_keyboard_ih_high(struct message_t *msg)
+{
+    video_flush(tty_output_buff);
 }
 
 /*

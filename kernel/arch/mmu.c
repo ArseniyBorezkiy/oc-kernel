@@ -65,6 +65,14 @@ extern struct page_directory_entry_t* mmu_get_kdirectory()
 }
 
 /*
+ * Api - Get kernel page table
+ */
+extern struct page_table_entry_t* mmu_get_ktable()
+{
+    return kpage_table;
+}
+
+/*
  * Api - Set active page directory
  */
 extern void mmu_set_active_page_directory(struct page_directory_entry_t* upage_dir) {
@@ -163,8 +171,12 @@ extern bool mmu_occupy_user_page(struct page_table_entry_t* upage_table, void* p
  */
 extern void mmu_destroy_user_page_directory(struct page_directory_entry_t* upage_dir, struct page_table_entry_t* upage_table)
 {
-    free(upage_dir);
-    free(upage_table);
+    if (upage_dir != &kpage_directory) {
+        free(upage_dir);
+    }
+    if (upage_table != kpage_table) {
+        free(upage_table);
+    }
 }
 
 /*

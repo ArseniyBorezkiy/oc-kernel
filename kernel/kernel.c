@@ -17,12 +17,18 @@
 #include <mm/mm.h>
 #include <sched/sched.h>
 #include <sched/task.h>
+#include <tasks/dq.h>
 #include <utils/kdump.h>
 #include <utils/kheap.h>
 #include <utils/lib.h>
 #include <vfs/file.h>
 #include <vfs/initrd.h>
 
+static void create_kernel_tasks();
+
+/*
+ * Data
+ */
 void* kernel_stack = null;
 
 /*
@@ -61,6 +67,7 @@ extern void kernel_start(struct multiboot_t* multiboot, void* kstack)
 
     /* init scheduler */
     sched_init();
+    create_kernel_tasks();
 
     /* init vfs */
     initrd_autorun(multiboot->mods_addr, multiboot->mods_count);
@@ -74,4 +81,22 @@ extern void kernel_start(struct multiboot_t* multiboot, void* kstack)
     printf(MSG_KERNEL_STARTED);
     sched_yield();
     unreachable();
+}
+
+/*
+ * Prepare kernel tasks
+ */
+static void create_kernel_tasks() {
+    struct task_mem_t kernel_task_mem;
+    kernel_task_mem.pages = null;
+    kernel_task_mem.pages_count = 0;
+    kernel_task_mem.page_dir = mmu_get_kdirectory();
+    kernel_task_mem.page_table = mmu_get_ktable();
+
+    assert(task_create(TID_DQ, dq_task, &kernel_task_mem));
+    
+    struct task_t *task;
+    task = task_get_by_id(TID_DQ);
+    strcpy(task->name, dq_task_name);
+    task->status = TASK_RUNNING;
 }

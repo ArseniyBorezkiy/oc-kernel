@@ -40,6 +40,7 @@ extern void mmu_init();
 extern void mmu_enable();
 extern void mmu_dump();
 extern struct page_directory_entry_t* mmu_get_kdirectory();
+extern struct page_table_entry_t* mmu_get_ktable();
 extern struct page_table_entry_t* mmu_create_user_page_table();
 extern struct page_directory_entry_t* mmu_create_user_page_directory(struct page_table_entry_t* page_table);
 extern void mmu_destroy_user_page_directory(struct page_directory_entry_t* upage_dir, struct page_table_entry_t* upage_table);

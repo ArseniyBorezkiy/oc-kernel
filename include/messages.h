@@ -3,6 +3,7 @@
 /* suffixes */
 #define MSG_KERNEL_PREFIX "[KERNEL]: "
 #define MSG_SCHED_PREFIX "[SCHED]: "
+#define MSG_KTASK_PREFIX "[KTASK]: "
 #define MSG_INT_PREFIX "[INT]: "
 #define MSG_SYSCALL_PREFIX "[SYSCALL]: "
 #define MSG_CRLN "\n"
@@ -38,8 +39,11 @@
 #define MSG_SCHED_TID_EXISTS (MSG_SCHED_PREFIX "task id already exists" MSG_CRLN)
 #define MSG_SCHED_TID_UNKNOWN (MSG_SCHED_PREFIX "task id not found" MSG_CRLN)
 #define MSG_SCHED_TID_EXCEED (MSG_SCHED_PREFIX "tasks limit exceeded" MSG_CRLN)
-#define MSG_SCHED_TID_CREATE (MSG_SCHED_PREFIX "create task tid = %u, eip = %X" MSG_CRLN)
+#define MSG_SCHED_TID_CREATE (MSG_SCHED_PREFIX "create task tid = %u, eip = %X (ks = %X, us = %X)" MSG_CRLN)
 #define MSG_SCHED_TID_DELETE (MSG_SCHED_PREFIX "delete task tid = %u" MSG_CRLN)
 #define MSG_SCHED_NO_TASKS (MSG_SCHED_PREFIX "there are no tasks to run" MSG_CRLN)
 #define MSG_SCHED_NEXT (MSG_SCHED_PREFIX "scheduled tid=%u sp=%X eip=%X->%X" MSG_CRLN)
 #define MSG_TASK_FINISHED (MSG_SYSCALL_PREFIX "task %X finished errno=%u" MSG_CRLN)
+
+/* kernel tasks */
+#define MSG_DQ_SCHED (MSG_KTASK_PREFIX "deferred execution scheduled %X" MSG_CRLN)
