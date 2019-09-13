@@ -1,6 +1,7 @@
 #include <boot/multiboot.h>
 #include <arch/dt.h>
 #include <arch/ih.h>
+#include <arch/mmu.h>
 #include <lib/string.h>
 #include <lib/stdio.h>
 #include <utils/kheap.h>
@@ -23,6 +24,7 @@ extern void kernel_start(struct multiboot_t* multiboot, void* kstack)
 
     gdt_init();
     idt_init();
+    mmu_init();
 
     printf("[KERNEL]: kernel started\n");
 }
