@@ -4,6 +4,7 @@
 #include <lib/stdio.h>
 #include <lib/stdlib.h>
 #include <lib/string.h>
+#include <utils/kheap.h>
 
 extern void asm_enable_paging(void* page_directory);
 extern void asm_disable_paging();

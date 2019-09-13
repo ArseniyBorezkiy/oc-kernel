@@ -158,6 +158,67 @@ extern void* kmalloc(size_t size)
 }
 
 /*
+ * Api - Kernel aligned memory alloc
+ */
+extern void* kmalloc_a(size_t size, u_int align)
+{
+    struct kheap_entry_t* current_data = null;
+    struct slist_head_t* current = null;
+
+    assert(size > 0);
+
+    /* try to alloc new aligned block */
+    size_t heap_end_addr = KHEAP_START_ADDR;
+    /* calculate heap end address */
+    if (kheap_list.tail) {
+        current = kheap_list.tail;
+        current_data = (struct kheap_entry_t*)current->data;
+        heap_end_addr = current_data->addr + current_data->size;
+    }
+    size_t heap_end_addr_aligned = heap_end_addr + (align - heap_end_addr % align);
+    assert(heap_end_addr_aligned % align == 0);
+    /* check free memory size is enought */
+    if (heap_end_addr_aligned + size >= KHEAP_END_ADDR) {
+        abort("kernel heap exceeded\n");
+    }
+    /* allocate new hole */
+    if (heap_end_addr_aligned != heap_end_addr) {
+        /* allocate new heap memory block */
+        struct slist_head_t* tail = kheap_list.tail;
+        current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
+        current_data = (struct kheap_entry_t*)current->data;
+        assert((size_t)current == (size_t)current_data);
+        current_data->addr = heap_end_addr;
+        current_data->size = heap_end_addr_aligned - heap_end_addr;
+        current_data->is_buzy = false;
+        assert(current->next == null);
+        assert(current->prev == tail);
+        assert(current_data->addr >= KHEAP_START_ADDR);
+        assert(current_data->addr < KHEAP_END_ADDR);
+        assert(heap_end_addr_aligned > heap_end_addr);
+    }
+    if (kheap_list.tail) {
+        current = kheap_list.tail;
+        current_data = (struct kheap_entry_t*)current->data;
+        heap_end_addr = current_data->addr + current_data->size;
+    }
+    /* allocate new heap memory block */
+    struct slist_head_t* tail = kheap_list.tail;
+    current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
+    current_data = (struct kheap_entry_t*)current->data;
+    assert((size_t)current == (size_t)current_data);
+    current_data->addr = heap_end_addr;
+    current_data->size = size;
+    current_data->is_buzy = true;
+    assert(current->next == null);
+    assert(current->prev == tail);
+    assert(current_data->addr >= KHEAP_START_ADDR);
+    assert(current_data->addr < KHEAP_END_ADDR);
+    assert(heap_end_addr == heap_end_addr_aligned);
+    return (void*)current_data->addr;
+}
+
+/*
  * Api - Kernel memory free
  */
 extern void kfree(void* addr)
