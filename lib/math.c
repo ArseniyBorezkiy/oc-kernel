@@ -5,7 +5,7 @@
  * Api - Minimun of two numbers
  */
 
-extern unsigned int min(unsigned int a, unsigned int b)
+extern u_int int min(u_int a, u_int b)
 {
     if (a <= b) {
         return a;
@@ -18,7 +18,7 @@ extern unsigned int min(unsigned int a, unsigned int b)
  * Api - Maximum of two numbers
  */
 
-extern unsigned int max(unsigned int a, unsigned int b)
+extern u_int max(u_int a, u_int b)
 {
     if (a > b) {
         return a;
