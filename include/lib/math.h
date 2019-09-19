@@ -1,6 +1,6 @@
 #pragma once
 
-#include <lib/stdint.h>
+#include <lib/stdtypes.h>
 
 /*
  * POSIX math api

@@ -77,18 +77,14 @@ static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data)
     char ch = keyboard_map[index];
     *tty_input_buff_ptr++ = ch;
 
-	if (is_echo && ch != '\n' && ch != '\b') {
-		/* echo character to screen */
-		*tty_output_buff_ptr++ = ch;
-	}
-
-
-	else if (read_line_mode && is_echo && ch == '\b' && tty_input_buff_ptr-- != tty_input_buff) {
-		ch = '\0';
-		*tty_input_buff_ptr-- = ch;
-		*tty_output_buff_ptr-- = ch;
-
-	}
+    if (is_echo && ch != '\n' && ch != '\b') {
+        /* echo character to screen */
+        *tty_output_buff_ptr++ = ch;
+    } else if (read_line_mode && is_echo && ch == '\b' && tty_input_buff_ptr-- != tty_input_buff) {
+        ch = '\0';
+        *tty_input_buff_ptr-- = ch;
+        *tty_output_buff_ptr-- = ch;
+    }
 
     /* register deffered execution */
     struct message_t msg;
@@ -124,10 +120,6 @@ static void tty_write(struct io_buf_t* io_buf, void* data, u_int size)
 static u_int tty_read(struct io_buf_t* io_buf, void* buffer, u_int size)
 {
     char* ptr = buffer;
-
-    //assert((size_t)io_buf->ptr <= (size_t)tty_input_buff_ptr);
-    //assert((size_t)tty_input_buff_ptr >= (size_t)tty_input_buff);
-    //assert(size > 0);
 
     io_buf->is_eof = (size_t)io_buf->ptr == (size_t)tty_input_buff_ptr;
     if (read_line_mode) {
