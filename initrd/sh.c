@@ -97,7 +97,7 @@ static bool execute_command(char* cmd)
         printf(" -- device list\n");
         clist_for_each(dev_list, print_dev_info);
     } else {
-        printf("  There is no such command.\n  Available command list:\n");
+        printf("  There is no such command '%s'.\n  Available command list:\n", cmd);
         printf("    %s  %s  %s <pid>  %s <file.elf>  %s  %s\n", cmd_ps, cmd_exit, cmd_kill, cmd_exec, cmd_clear, cmd_dev);
     }
 

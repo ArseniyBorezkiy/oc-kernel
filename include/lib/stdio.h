@@ -8,6 +8,7 @@ struct io_buf_t {
     char* base; /* buffer beginning */
     char* ptr; /* position in buffer */
     bool is_eof; /* whether end of file */
+    bool is_eol; /* whether end of line */
     void* file; /* file definition */
 };
 

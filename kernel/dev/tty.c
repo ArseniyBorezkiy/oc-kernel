@@ -75,15 +75,23 @@ static void tty_keyboard_ih_low(int number, struct ih_low_data_t* data)
     int index = *keycode;
     assert(index < 128);
     char ch = keyboard_map[index];
-    *tty_input_buff_ptr++ = ch;
+
+    if (ch != '\b' || !read_line_mode) {
+        /* store character to keyboard buffer */
+        *tty_input_buff_ptr++ = ch;
+    }
 
     if (is_echo && ch != '\n' && ch != '\b') {
-        /* echo character to screen */
+        /* echo usual character to screen */
         *tty_output_buff_ptr++ = ch;
-    } else if (read_line_mode && is_echo && ch == '\b' && tty_input_buff_ptr-- != tty_input_buff) {
-        ch = '\0';
-        *tty_input_buff_ptr-- = ch;
-        *tty_output_buff_ptr-- = ch;
+    }
+    
+    if (read_line_mode && ch == '\b') {
+        /* erase previous character */
+        if (tty_input_buff_ptr > tty_input_buff) {
+            *--tty_input_buff_ptr = '\0';
+            *--tty_output_buff_ptr = ' ';
+        }
     }
 
     /* register deffered execution */
@@ -121,19 +129,14 @@ static u_int tty_read(struct io_buf_t* io_buf, void* buffer, u_int size)
 {
     char* ptr = buffer;
 
-    io_buf->is_eof = (size_t)io_buf->ptr == (size_t)tty_input_buff_ptr;
-    if (read_line_mode) {
-        io_buf->is_eof = !strchr(io_buf->ptr, '\n');
-    }
-
-    for (int i = 0; i < size - 1 && !io_buf->is_eof; ++i) {
+    do {
         char ch = tty_read_ch(io_buf);
-        *ptr++ = ch;
 
-        if (read_line_mode && ch == '\n') {
-            break;
+        if (ch != '\0') {
+            *ptr++ = ch;
+            size -= 1;
         }
-    }
+    } while (size > 0 && (read_line_mode ? !io_buf->is_eol && !io_buf->is_eof : !io_buf->is_eof));
 
     return (size_t)ptr - (size_t)buffer;
 }
@@ -226,10 +229,36 @@ static void tty_write_ch(struct io_buf_t* io_buf, char ch)
  */
 static char tty_read_ch(struct io_buf_t* io_buf)
 {
-    if ((size_t)io_buf->ptr < (size_t)tty_input_buff_ptr) {
-        return *io_buf->ptr++;
-    } else {
-        io_buf->is_eof = true;
-        return '\0';
+    io_buf->is_eof = (size_t)io_buf->ptr >= (size_t)tty_input_buff_ptr;
+    io_buf->is_eol = false;
+
+    if (!io_buf->is_eof && read_line_mode) {
+        /* skip line */
+        *((char *)tty_input_buff_ptr) = '\0';
+        if (strchr(io_buf->ptr, '\n') == null) {
+            io_buf->is_eof = true;
+            return '\0';
+        }
     }
+
+    /* whether new character available */
+    if (!io_buf->is_eof) {
+        /* read character */
+        char ch = *io_buf->ptr++;
+
+        if (read_line_mode && ch == '\n') {
+            io_buf->is_eof = true;
+            io_buf->is_eol = true;
+            tty_input_buff_ptr = tty_input_buff;
+            io_buf->ptr = tty_input_buff_ptr;
+            return '\0';
+        }
+
+        return ch;
+    } else {
+        /* correct pointer after backspace */
+        io_buf->ptr = tty_input_buff_ptr;
+    }
+
+    return '\0';
 }

@@ -66,6 +66,7 @@ extern struct io_buf_t* file_open(char* path, int mod_rw)
     file->io_buf.fd = next_fd++;
     file->io_buf.ptr = file->io_buf.base;
     file->io_buf.is_eof = false;
+    file->io_buf.is_eol = false;
     file->io_buf.file = file;
     strncpy(file->name, path, sizeof(file->name));
 
