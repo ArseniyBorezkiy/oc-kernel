@@ -217,6 +217,12 @@ debug:
 	gdb -x ./config/debug.script -s ./bin/kernel.elf
 
 #
+# Debug with VS Code(For QEMU)
+#
+qemu-debug:
+	qemu-system-i386 -kernel ./bin/kernel.elf -initrd ./bin/initrd.img -S -s
+
+#
 # Dup kernel
 #
 dump:
