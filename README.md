@@ -41,6 +41,7 @@ When shared folder is ready, install build tools.
 ```
 Linux lite (support qemu only):
 $ sudo apt-get install gcc
+$ sudo apt-get install gcc-arm-none-eabi
 $ sudo apt-get install qemu
 ```
 ```

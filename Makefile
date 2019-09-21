@@ -33,14 +33,19 @@ set-compiler-x86:
 
 set-compiler-arm:
 	$(eval ARCH := arm)
-	@echo "set-compiler-arm is not supported"
+	$(eval CC := arm-none-eabi-gcc)
+	$(eval AS := arm-none-eabi-as)
+	$(eval LD := arm-none-eabi-ld)
+	$(eval CC_FLAGS := -c -mthumb -ffreestanding -mlittle-endian -march=armv7-m -mcpu=cortex-m3)
+	$(eval AS_FLAGS := -c -mthumb -mlittle-endian -march=armv7-m -mcpu=cortex-m3)
+	$(eval LD_FLAGS :=)
 
 #
 # Build kernel elf
 #
 build-kernel-elf-x86: build-lib-arch-x86 build-kernel-arch-x86 build-initrd-arch-x86 \
                       build-lib build-kernel build-initrd
-	$(LD) $(LD_FLAGS) -T ./config/link.ld -o ./bin/kernel.elf \
+	$(LD) $(LD_FLAGS) -T ./config/link-x86.ld -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
 		./bin/lib.c.o \
@@ -58,8 +63,9 @@ build-kernel-elf-x86: build-lib-arch-x86 build-kernel-arch-x86 build-initrd-arch
 		./bin/dq.c ./bin/init.c \
 		./bin/tty.c.o ./bin/dev.c.o
 
-build-kernel-elf-arm: build-lib-arch-arm build-kernel-arch-arm build-initrd-arch-arm \
-                      build-lib build-kernel build-initrd
+build-kernel-elf-arm: build-kernel-arch-arm
+	$(LD) $(LD_FLAGS) -T ./config/link-arm.ld -o ./bin/kernel.elf \
+		./bin/entry.s.o ./bin/start.c.o
 
 #
 # Build kernel
@@ -123,7 +129,8 @@ build-kernel-arch-x86: ./kernel/arch/x86/entry.s ./kernel/arch/x86/reg.s ./kerne
 	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/video.c -o ./bin/video.c.o
 
 build-kernel-arch-arm:
-	@echo "arch is not supported"
+	$(AS) $(AS_FLAGS) ./kernel/arch/arm/entry.s -o ./bin/entry.s.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/arm/start.c -o ./bin/start.c.o
 
 #
 # Build lib
@@ -192,7 +199,10 @@ start-bochs-x86:
 	./config/run_bochs.sh
 
 start-qemu-arm:
-	@echo "start-qemu-arm is not supported"
+	@clear
+	@echo "Starting qemu (press 'CTRL+A X' to exit)"
+	qemu-system-arm -M lm3s811evb -kernel ./bin/kernel.elf -nographic
+	@clear
 
 #
 # Delete binary files
