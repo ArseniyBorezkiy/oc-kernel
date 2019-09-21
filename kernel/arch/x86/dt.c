@@ -1,6 +1,4 @@
-#include <arch/dt.h>
-#include <arch/ih.h>
-#include <arch/pic.h>
+#include <arch/arch.h>
 #include <lib/string.h>
 #include <kernel.h>
 

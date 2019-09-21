@@ -1,5 +1,5 @@
 #
-## Kernel make file
+# Make file
 #
 
 IDIR=./include
@@ -7,19 +7,39 @@ CC=gcc
 AS=as
 LD=ld
 DD=dd
-CC_FLAGS=-g -m32 -isystem $(IDIR) -I include -DKERNEL=1 -fno-stack-protector -Wall -Werror -fno-pie
-CC_USER_FLAGS=-g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror -fno-pie
-AS_FLAGS=-g --32
-LD_FLAGS=-m elf_i386
-LD_USER_FLAGS=-m elf_i386
 
-qemu: build start-qemu
-bochs: build start-bochs
+all:
+	@echo ""
+	@echo "Usage:"
+	@echo "  make qemu-x86"
+	@echo "  make bochs-x86"
+	@echo "  make qemu-arm"
+	@echo ""
+
+qemu-x86: set-compiler-x86 build-kernel-elf-x86 start-qemu-x86
+bochs-x86: set-compiler-x86 build-kernel-elf-x86 start-bochs-x86
+qemu-arm: set-compiler-arm build-kernel-elf-arm start-qemu-arm
+	@echo ""
+	@echo "Arm is currently not supported yet !!!"
+	@echo ""
+
+set-compiler-x86:
+	$(eval ARCH := x86)
+	$(eval CC_FLAGS := -g -m32 -isystem $(IDIR) -I include -DKERNEL=1 -fno-stack-protector -Wall -Werror -fno-pie)
+	$(eval CC_USER_FLAGS := -g -m32 -isystem $(IDIR) -I include -fno-stack-protector -Wall -Werror -fno-pie)
+	$(eval AS_FLAGS := -g --32)
+	$(eval LD_FLAGS := -m elf_i386)
+	$(eval LD_USER_FLAGS := -m elf_i386)
+
+set-compiler-arm:
+	$(eval ARCH := arm)
+	@echo "set-compiler-arm is not supported"
 
 #
-# Build kernel
+# Build kernel elf
 #
-build: build-lib build-kernel build-initrd
+build-kernel-elf-x86: build-lib-arch-x86 build-kernel-arch-x86 build-initrd-arch-x86 \
+                      build-lib build-kernel build-initrd
 	$(LD) $(LD_FLAGS) -T ./config/link.ld -o ./bin/kernel.elf \
 		./bin/entry.s.o ./bin/kernel.c.o \
 		./bin/kprint.c.o ./bin/kdump.c.o ./bin/kpanic.c.o ./bin/kheap.c.o ./bin/kassert.c.o \
@@ -38,19 +58,13 @@ build: build-lib build-kernel build-initrd
 		./bin/dq.c ./bin/init.c \
 		./bin/tty.c.o ./bin/dev.c.o
 
-build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c ./lib/sys.c \
-           ./lib/data/slist.c ./lib/data/clist.c
-	$(CC) $(CC_FLAGS) -c ./lib/assert.c -o ./bin/assert.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/stdio.c -o ./bin/stdio.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/sys.c -o ./bin/sys.c.o
-	$(AS) $(AS_FLAGS) ./lib/syscall.s -o ./bin/syscall.s.o
-	$(CC) $(CC_FLAGS) -c ./lib/data/slist.c -o ./bin/slist.c.o
-	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
+build-kernel-elf-arm: build-lib-arch-arm build-kernel-arch-arm build-initrd-arch-arm \
+                      build-lib build-kernel build-initrd
 
-build-kernel: build-kernel-utils build-kernel-arch build-kernel-sched build-kernel-tasks \
+#
+# Build kernel
+#
+build-kernel: build-kernel-utils build-kernel-sched build-kernel-tasks \
               build-kernel-ipc build-kernel-sync build-kernel-dev build-kernel-vfs build-kernel-mm \
               ./kernel/kernel.c
 	$(CC) $(CC_FLAGS) -c ./kernel/kernel.c -o ./bin/kernel.c.o
@@ -67,8 +81,7 @@ build-kernel-utils: ./kernel/utils/kprint.c ./kernel/utils/kdump.c ./kernel/util
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/kassert.c -o ./bin/kassert.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/utils/lib.c -o ./bin/lib.c.o
 
-build-kernel-dev: ./kernel/dev/utils/video.c ./kernel/dev/tty.c ./kernel/dev/dev.c
-	$(CC) $(CC_FLAGS) -c ./kernel/dev/utils/video.c -o ./bin/video.c.o
+build-kernel-dev: ./kernel/dev/tty.c ./kernel/dev/dev.c
 	$(CC) $(CC_FLAGS) -c ./kernel/dev/tty.c -o ./bin/tty.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/dev/dev.c -o ./bin/dev.c.o
 
@@ -80,21 +93,6 @@ build-kernel-vfs: ./kernel/vfs/initrd.c ./kernel/vfs/elf.c ./kernel/vfs/file.c
 build-kernel-mm: ./kernel/mm/mm.c
 	$(CC) $(CC_FLAGS) -c ./kernel/mm/mm.c -o ./bin/mm.c.o
 
-build-kernel-arch: ./kernel/arch/entry.s ./kernel/arch/reg.s ./kernel/arch/port.s \
-                   ./kernel/arch/dt.s ./kernel/arch/ih.s \
-                   ./kernel/arch/pic.c ./kernel/arch/dt.c ./kernel/arch/mmu.s \
-                   ./kernel/arch/mmu.c
-	$(AS) $(AS_FLAGS) ./kernel/arch/entry.s -o ./bin/entry.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/reg.s -o ./bin/reg.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/port.s -o ./bin/port.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/ih.s -o ./bin/ih.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/dt.s -o ./bin/dt.s.o
-	$(AS) $(AS_FLAGS) ./kernel/arch/mmu.s -o ./bin/mmu.s.o
-	$(CC) $(CC_FLAGS) -c ./kernel/arch/pic.c -o ./bin/pic.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/arch/dt.c -o ./bin/dt.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/arch/ih.c -o ./bin/ih.c.o
-	$(CC) $(CC_FLAGS) -c ./kernel/arch/mmu.c -o ./bin/mmu.c.o
-
 build-kernel-ipc: ./kernel/ipc/ipc.c
 	$(CC) $(CC_FLAGS) -c ./kernel/ipc/ipc.c -o ./bin/ipc.c.o
 
@@ -105,7 +103,55 @@ build-kernel-sched: ./kernel/sched/task.c ./kernel/sched/sched.c
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/task.c -o ./bin/task.c.o
 	$(CC) $(CC_FLAGS) -c ./kernel/sched/sched.c -o ./bin/sched.c.o
 
-build-initrd: build-initrd-elfs build-initrd-fs-generator ./bin/sh.elf
+#
+# Build kernel arch
+#
+build-kernel-arch-x86: ./kernel/arch/x86/entry.s ./kernel/arch/x86/reg.s ./kernel/arch/x86/port.s \
+                       ./kernel/arch/x86/ih.s ./kernel/arch/x86/dt.s ./kernel/arch/x86/mmu.s \
+                       ./kernel/arch/x86/pic.c ./kernel/arch/x86/dt.c \
+                       ./kernel/arch/x86/ih.c ./kernel/arch/x86/mmu.c ./kernel/arch/x86/video.c
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/entry.s -o ./bin/entry.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/reg.s -o ./bin/reg.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/port.s -o ./bin/port.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/ih.s -o ./bin/ih.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/dt.s -o ./bin/dt.s.o
+	$(AS) $(AS_FLAGS) ./kernel/arch/x86/mmu.s -o ./bin/mmu.s.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/pic.c -o ./bin/pic.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/dt.c -o ./bin/dt.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/ih.c -o ./bin/ih.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/mmu.c -o ./bin/mmu.c.o
+	$(CC) $(CC_FLAGS) -c ./kernel/arch/x86/video.c -o ./bin/video.c.o
+
+build-kernel-arch-arm:
+	@echo "arch is not supported"
+
+#
+# Build lib
+#
+build-lib: ./lib/assert.c ./lib/time.c ./lib/string.c ./lib/math.c ./lib/stdio.c ./lib/sys.c \
+           ./lib/data/slist.c ./lib/data/clist.c
+	$(CC) $(CC_FLAGS) -c ./lib/assert.c -o ./bin/assert.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/time.c -o ./bin/time.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/string.c -o ./bin/string.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/math.c -o ./bin/math.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/stdio.c -o ./bin/stdio.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/sys.c -o ./bin/sys.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/data/slist.c -o ./bin/slist.c.o
+	$(CC) $(CC_FLAGS) -c ./lib/data/clist.c -o ./bin/clist.c.o
+
+#
+# Build arch
+#
+build-lib-arch-x86: ./lib/syscall.s
+	$(AS) $(AS_FLAGS) ./lib/syscall.s -o ./bin/syscall.s.o
+
+build-lib-arch-arm:
+	@echo "build-lib-arch-arm is not supported"
+
+#
+# Build initial ram disk
+#
+build-initrd: build-initrd-fs-generator ./bin/sh.elf
 	touch ./bin/initrd.img
 	rm ./bin/initrd.img
 	touch ./bin/initrd.img
@@ -115,29 +161,43 @@ build-initrd: build-initrd-elfs build-initrd-fs-generator ./bin/sh.elf
 build-initrd-elfs: ./initrd/sh.c
 	$(CC) $(CC_USER_FLAGS) -c ./initrd/sh.c -o ./bin/sh.rd.c.o
 	$(CC) $(CC_USER_FLAGS) -c ./lib/data/clist.c -o ./bin/uclist.c.o
-	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/sh.elf ./bin/sh.rd.c.o \
-		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
-		./bin/sys.c.o ./bin/syscall.s.o ./bin/uclist.c.o
 
 build-initrd-fs-generator: ./initrd/utils/fsgen.c
 	$(CC) -o ./bin/fsgen.elf ./initrd/utils/fsgen.c
 
 #
+# Build initial ram disk arch
+#
+build-initrd-arch-x86: build-lib build-initrd-elfs build-lib-arch-x86 build-initrd-elfs-arch-x86
+build-initrd-arch-arm: build-lib build-initrd-elfs build-lib-arch-arm build-initrd-elfs-arch-arm
+
+build-initrd-elfs-arch-x86:
+	$(LD) $(LD_USER_FLAGS) -T ./config/link-task.ld -o ./bin/sh.elf ./bin/sh.rd.c.o \
+		./bin/assert.c.o ./bin/time.c.o ./bin/math.c.o ./bin/string.c.o ./bin/stdio.c.o \
+		./bin/sys.c.o ./bin/uclist.c.o \
+		./bin/syscall.s.o
+
+build-initrd-elfs-arch-arm:
+	@echo "build-initrd-elfs-arch-arm is not supported"
+
+#
 # Run kernel in emulator
 #   for qemu use -d int to debug mmu & faults & interrupts
 #
-start-qemu:
+start-qemu-x86:
 	qemu-system-i386 -no-reboot -no-shutdown -initrd ./bin/initrd.img -kernel ./bin/kernel.elf
 
-start-bochs:
+start-bochs-x86:
 	./config/update_image.sh
 	./config/run_bochs.sh
+
+start-qemu-arm:
+	@echo "start-qemu-arm is not supported"
 
 #
 # Delete binary files
 #
 clean:
-	find ./ -type f|xargs touch
 	rm -f ./bin/*
 
 #

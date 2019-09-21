@@ -1,5 +1,5 @@
-#include <arch/reg.h>
-#include <boot/multiboot.h>
+#include <arch/arch.h>
+#include <multiboot.h>
 #include <kernel.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>

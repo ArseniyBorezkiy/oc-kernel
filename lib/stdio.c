@@ -1,4 +1,4 @@
-#include <arch/ih.h>
+#include <arch/arch.h>
 #include <dev/tty.h>
 #include <dev/utils/video.h>
 #include <ipc/ipc.h>

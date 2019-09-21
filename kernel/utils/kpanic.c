@@ -1,4 +1,4 @@
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <lib/stdtypes.h>
 #include <messages.h>
 #include <utils/kpanic.h>

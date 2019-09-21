@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boot/multiboot.h>
+#include <multiboot.h>
 #include <lib/stdtypes.h>
 #include <vfs/elf.h>
 

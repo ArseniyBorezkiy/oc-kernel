@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boot/multiboot.h>
+#include <multiboot.h>
 
 extern void* kernel_stack; /* kernel stack begin */
 

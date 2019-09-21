@@ -1,7 +1,5 @@
-#include <arch/dt.h>
-#include <arch/mmu.h>
-#include <arch/pic.h>
-#include <boot/multiboot.h>
+#include <arch/arch.h>
+#include <multiboot.h>
 #include <dev/tty.h>
 #include <dev/utils/video.h>
 #include <kernel.h>

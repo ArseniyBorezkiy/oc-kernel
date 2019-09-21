@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boot/multiboot.h>
+#include <multiboot.h>
 #include <lib/stdtypes.h>
 
 #define INITRD_MAX_FILES 1

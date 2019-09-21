@@ -1,4 +1,4 @@
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <lib/assert.h>
 #include <lib/stdlib.h>
 #include <lib/time.h>

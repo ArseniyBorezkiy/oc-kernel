@@ -1,5 +1,4 @@
-#include <arch/pic.h>
-#include <arch/port.h>
+#include <arch/arch.h>
 #include <lib/stdtypes.h>
 
 /*

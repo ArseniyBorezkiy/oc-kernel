@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <ipc/ipc.h>
 #include <lib/data/clist.h>
 #include <lib/stdtypes.h>

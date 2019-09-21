@@ -53,21 +53,27 @@ $ sudo apt-get install bochs-x
 ### Build sources and run on qemu
 
 ```
-Qemu:
+Qemu x86:
 $ mkdir bin
-$ sudo make qemu
+$ sudo make qemu-x86
+```
+
+```
+Qemu arm:
+$ mkdir bin
+$ sudo make qemu-arm
 ```
 
 ### Build sources and run on bochs
 
 ```
-Bochs:
+Bochs x86:
 $ sudo mkdir bin
 $ sudo mkdir /mnt/kernel_u
 $ sudo losetup -a               # check loop13 is free
 $ sudo losetup -d /dev/loop13   # release it if not free
 $ sudo losetup -a               # make shure loop13 is not present
-$ sudo make bochs
+$ sudo make bochs-x86
 ```
 
 ### Shell commands

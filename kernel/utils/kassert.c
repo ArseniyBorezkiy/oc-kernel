@@ -1,4 +1,4 @@
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <kernel.h>
 #include <messages.h>
 #include <utils/kassert.h>

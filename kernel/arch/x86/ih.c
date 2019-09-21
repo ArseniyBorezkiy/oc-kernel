@@ -1,8 +1,4 @@
-#include <arch/dt.h>
-#include <arch/ih.h>
-#include <arch/pic.h>
-#include <arch/port.h>
-#include <arch/mmu.h>
+#include <arch/arch.h>
 #include <dev/dev.h>
 #include <dev/tty.h>
 #include <dev/utils/ih_low.h>

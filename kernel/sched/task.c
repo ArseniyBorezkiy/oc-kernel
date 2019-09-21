@@ -1,6 +1,4 @@
-#include <arch/dt.h>
-#include <arch/mmu.h>
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <ipc/ipc.h>
 #include <lib/assembly.h>
 #include <lib/assert.h>

@@ -1,4 +1,4 @@
-#include <arch/mmu.h>
+#include <arch/arch.h>
 #include <kernel.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>

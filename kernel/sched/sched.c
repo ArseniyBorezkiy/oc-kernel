@@ -1,5 +1,4 @@
-#include <arch/dt.h>
-#include <arch/reg.h>
+#include <arch/arch.h>
 #include <lib/assert.h>
 #include <lib/stdio.h>
 #include <lib/stdlib.h>
