@@ -8,6 +8,7 @@
 #define malloc(size) kmalloc(size)
 #define malloc_a(size, align) kmalloc_a(size, align)
 #define free(addr) kfree(addr)
+#define free_a(addr) kfree_a(addr)
 #define abort(addr, ...) kpanic(addr, ##__VA_ARGS__)
 #else
 #define malloc(size) umalloc(size)
