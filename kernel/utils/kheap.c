@@ -176,7 +176,9 @@ extern void* kmalloc_a(size_t size, u_int align)
 
     size_t const data_addr = ((size_t) malloc_ptr) + align;
 
-    void* const aligned_ptr = (void *) (data_addr & -align);
+    size_t mask = ~(align - 1);
+
+    void* const aligned_ptr = (void *) (data_addr & mask);
 
     // Store the original malloc value where it can be found by operator free.
     ((void **) aligned_ptr)[-1] = malloc_ptr;
@@ -318,12 +320,28 @@ static void kheap_test_aligned()
     /* test aligned adresses */
     void* addr1 = kmalloc_a(1024, 4096);
     assert((size_t)addr1 % 4096 == 0);
+
     void* addr2 = kmalloc_a(20, 4096);
     assert((size_t)addr2 % 4096 == 0);
-    assert((size_t)addr2 == (size_t)addr1 + 4096);
+
+    void* addr3 = kmalloc_a(8, 16);
+    assert((size_t)addr3 % 16 == 0);
+
+    void* addr4 = kmalloc_a(32, 32);
+    assert((size_t)addr3 % 32 == 0);
+
+    kfree_a(addr2);
+
+    void* addr5 = kmalloc_a(64, 2048);
+    assert((size_t)addr5 % 2048 == 0);
+    assert((size_t)addr5 == (size_t)addr1 + 2048);
 
     kfree_a(addr1);
-    kfree_a(addr2);
+    kfree_a(addr3);
+    kfree_a(addr4);
+    kfree_a(addr5);
+
+
     /* clear heap table */
     memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);
     kheap_list.head = null;
