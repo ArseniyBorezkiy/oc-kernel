@@ -172,10 +172,10 @@ extern bool mmu_occupy_user_page(struct page_table_entry_t* upage_table, void* p
 extern void mmu_destroy_user_page_directory(struct page_directory_entry_t* upage_dir, struct page_table_entry_t* upage_table)
 {
     if (upage_dir != &kpage_directory) {
-        free(upage_dir);
+        free_a(upage_dir);
     }
     if (upage_table != kpage_table) {
-        free(upage_table);
+        free_a(upage_table);
     }
 }
 
