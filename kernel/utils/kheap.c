@@ -17,6 +17,7 @@ struct slist_definition_t kheap_list = { .head = null,
     .base = (size_t)kheap_blocks };
 
 static void kheap_test();
+static void kheap_test_aligned();
 
 /*
  * Api - Kernel memory init
@@ -29,6 +30,7 @@ extern void kheap_init()
     kheap_list.tail = null;
     /* run tests */
     kheap_test();
+    kheap_test_aligned();
 }
 
 /*
@@ -167,60 +169,30 @@ extern void* kmalloc(size_t size)
  */
 extern void* kmalloc_a(size_t size, u_int align)
 {
-    struct kheap_entry_t* current_data = null;
-    struct slist_head_t* current = null;
+    void* const malloc_ptr = kmalloc(size + align);
+    if(!malloc_ptr) {
+        return null;
+    }
 
-    assert(size > 0);
+    size_t const data_addr = ((size_t) malloc_ptr) + align;
 
-    /* try to alloc new aligned block */
-    size_t heap_end_addr = KHEAP_START_ADDR;
-    /* calculate heap end address */
-    if (kheap_list.tail) {
-        current = kheap_list.tail;
-        current_data = (struct kheap_entry_t*)current->data;
-        heap_end_addr = current_data->addr + current_data->size;
-    }
-    size_t heap_end_addr_aligned = heap_end_addr + (align - heap_end_addr % align);
-    assert(heap_end_addr_aligned % align == 0);
-    /* check free memory size is enought */
-    if (heap_end_addr_aligned + size >= KHEAP_END_ADDR) {
-        abort(MSG_KERNEL_HEAP_EXCEED);
-    }
-    /* allocate new hole */
-    if (heap_end_addr_aligned != heap_end_addr) {
-        /* allocate new heap memory block */
-        struct slist_head_t* tail = kheap_list.tail;
-        current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
-        current_data = (struct kheap_entry_t*)current->data;
-        assert((size_t)current == (size_t)current_data);
-        current_data->addr = heap_end_addr;
-        current_data->size = heap_end_addr_aligned - heap_end_addr;
-        current_data->is_buzy = false;
-        assert(current->next == null);
-        assert(current->prev == tail);
-        assert(current_data->addr >= KHEAP_START_ADDR);
-        assert(current_data->addr < KHEAP_END_ADDR);
-        assert(heap_end_addr_aligned > heap_end_addr);
-    }
-    if (kheap_list.tail) {
-        current = kheap_list.tail;
-        current_data = (struct kheap_entry_t*)current->data;
-        heap_end_addr = current_data->addr + current_data->size;
-    }
-    /* allocate new heap memory block */
-    struct slist_head_t* tail = kheap_list.tail;
-    current = slist_insert_entry_after(&kheap_list, kheap_list.tail);
-    current_data = (struct kheap_entry_t*)current->data;
-    assert((size_t)current == (size_t)current_data);
-    current_data->addr = heap_end_addr;
-    current_data->size = size;
-    current_data->is_buzy = true;
-    assert(current->next == null);
-    assert(current->prev == tail);
-    assert(current_data->addr >= KHEAP_START_ADDR);
-    assert(current_data->addr < KHEAP_END_ADDR);
-    assert(heap_end_addr == heap_end_addr_aligned);
-    return (void*)current_data->addr;
+    size_t mask = ~(align - 1);
+
+    void* const aligned_ptr = (void *) (data_addr & mask);
+
+    // Store the original malloc value where it can be found by operator free.
+    ((void **) aligned_ptr)[-1] = malloc_ptr;
+
+    return aligned_ptr;
+}
+
+/*
+ * Api- Kernel free aligned memory
+ */
+
+extern void kfree_a(void* addr)
+{
+    kfree(((void **)addr)[-1]);
 }
 
 /*
@@ -332,15 +304,43 @@ static void kheap_test()
     assert(addr10 == (void*)KHEAP_START_ADDR);
     kfree(addr10);
 
-    /* test aligned adresses */
-    void* addr11 = kmalloc_a(1024, 4096);
-    assert((size_t)addr11 % 4096 == 0);
-    void* addr12 = kmalloc_a(20, 4096);
-    assert((size_t)addr12 % 4096 == 0);
-    assert((size_t)addr12 == (size_t)addr11 + 4096);
+    /* clear heap table */
+    memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);
+    kheap_list.head = null;
+    kheap_list.tail = null;
+#endif
+}
 
-    kfree(addr11);
-    kfree(addr12);
+/*
+ * Smoke test
+ */
+static void kheap_test_aligned()
+{
+#ifdef TEST
+    /* test aligned adresses */
+    void* addr1 = kmalloc_a(1024, 4096);
+    assert((size_t)addr1 % 4096 == 0);
+
+    void* addr2 = kmalloc_a(20, 4096);
+    assert((size_t)addr2 % 4096 == 0);
+
+    void* addr3 = kmalloc_a(8, 16);
+    assert((size_t)addr3 % 16 == 0);
+
+    void* addr4 = kmalloc_a(32, 32);
+    assert((size_t)addr3 % 32 == 0);
+
+    kfree_a(addr2);
+
+    void* addr5 = kmalloc_a(64, 2048);
+    assert((size_t)addr5 % 2048 == 0);
+    assert((size_t)addr5 == (size_t)addr1 + 2048);
+
+    kfree_a(addr1);
+    kfree_a(addr3);
+    kfree_a(addr4);
+    kfree_a(addr5);
+
 
     /* clear heap table */
     memset(kheap_blocks, 0, sizeof(struct kheap_entry_t) * KHEAP_MAX_ENTRIES);

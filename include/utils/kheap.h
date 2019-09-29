@@ -22,4 +22,5 @@ extern void kheap_init();
 extern void* kmalloc(size_t size);
 extern void* kmalloc_a(size_t size, u_int align);
 extern void kfree(void* addr);
+extern void kfree_a(void* addr);
 extern void kheap_dump();
