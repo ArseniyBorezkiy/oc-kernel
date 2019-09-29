@@ -169,30 +169,27 @@ extern void* kmalloc(size_t size)
  */
 extern void* kmalloc_a(size_t size, u_int align)
 {
-    void* const malloc_ptr = kmalloc(size + align);
-    if(!malloc_ptr) {
+    void* const ptr = kmalloc(size + align);
+
+    if (!ptr) {
         return null;
     }
 
-    size_t const data_addr = ((size_t) malloc_ptr) + align;
-
+    size_t const data_addr = ((size_t) ptr) + align;
     size_t mask = ~(align - 1);
-
     void* const aligned_ptr = (void *) (data_addr & mask);
-
-    // Store the original malloc value where it can be found by operator free.
-    ((void **) aligned_ptr)[-1] = malloc_ptr;
+    ((void **) aligned_ptr)[-1] = ptr; /* original address */
 
     return aligned_ptr;
 }
 
 /*
- * Api- Kernel free aligned memory
+ * Api - Kernel free aligned memory
  */
-
 extern void kfree_a(void* addr)
 {
-    kfree(((void **)addr)[-1]);
+    void* ptr = ((void **)addr)[-1];
+    kfree(ptr);
 }
 
 /*
